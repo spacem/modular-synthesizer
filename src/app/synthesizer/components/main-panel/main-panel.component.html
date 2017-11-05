@@ -1,3 +1,25 @@
-<p>
-  main-panel works!
-</p>
+<section>
+
+	<button #play (click)="togglePlay()">Play</button>
+
+	<select #waveform (change)="readWaveformType()">
+		<option>sine</option>
+		<option>square</option>
+		<option>sawtooth</option>
+		<option>triangle</option>
+	</select>
+
+	<input #tone style="width:100%" type="range" value="0" min="0" max="2000" step="1" (mousemove)="readTone()">
+
+	<div class="keyboard">
+		<button
+			class="key"
+			*ngFor="let note of notes;"
+			(click)="playNote(note.index)"
+			[ngClass]="{'key--black':note.accidental, 'key--white':!note.accidental}"
+		>
+			{{note.scientificName}}
+		</button>
+	</div>
+
+</section>

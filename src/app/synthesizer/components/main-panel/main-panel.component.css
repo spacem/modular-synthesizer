@@ -1,0 +1,22 @@
+.keyboard
+{
+
+}
+
+.key
+{
+	display:inline;
+	vertical-align: top;
+}
+
+.key--black
+{
+	width:40px;
+	padding:30px 0 0 0;
+}
+
+.key--white
+{
+	width:50px;
+	padding:80px 0 0 0;
+}
