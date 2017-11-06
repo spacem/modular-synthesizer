@@ -1,4 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {KeyboardLayout} from '../../models/keyboard-layout';
 
 @Component({
 	selector: 'app-main-panel',
@@ -15,63 +16,18 @@ export class MainPanelComponent implements OnInit
 	protected oscillatorNode:OscillatorNode;
 	protected mainGain:GainNode;
 	protected started:boolean = false;
-	protected notes:any[];
-
-	static noteToFrequency(note:number):number
-	{
-		return Math.pow(2, (note - 49) / 12) * 440.0;
-	}
+	protected keyboard:KeyboardLayout = new KeyboardLayout();
 
 	constructor(){}
 
 	ngOnInit()
 	{
-		this.generateNotes();
 		this.audioContext = new AudioContext();
 		this.mainGain = this.audioContext.createGain();
 		this.mainGain.connect(this.audioContext.destination);
 		this.start();
 	}
 
-	generateNotes():void
-	{
-		const minNote = 24;
-		const maxNote = minNote + 18;
-		const layout =
-		[
-			{ en:'C', fr:'do', accidental:false},
-			{ en:'C#', fr:'do#', accidental:true},
-			{ en:'D', fr:'ré', accidental:false},
-			{ en:'D#', fr:'ré#', accidental:true},
-			{ en:'E', fr:'mi', accidental:false},
-			{ en:'E#', fr:'mi#', accidental:true},
-			{ en:'F', fr:'fa', accidental:false},
-			{ en:'G', fr:'sol', accidental:false},
-			{ en:'G#', fr:'sol#',accidental:true},
-			{ en:'A', fr:'la', accidental:false},
-			{ en:'A#', fr:'la#', accidental:true},
-			{ en:'B', fr:'si', accidental:false}
-		];
-
-		this.notes = [];
-		for( let i=minNote; i<=maxNote; i++ )
-		{
-			const octave = Math.floor(i/12);
-			const note = i%12;
-			const key = layout[note];
-
-			this.notes.push({
-				index:i,
-				octave: octave,
-				accidental: key.accidental,
-				name: key.en,
-				scientificName: key.en + octave.toString(),
-				frequency: MainPanelComponent.noteToFrequency(i-8)
-			});
-		}
-
-		console.log(this.notes);
-	}
 
 	togglePlay():void
 	{
@@ -127,9 +83,8 @@ export class MainPanelComponent implements OnInit
 		this.started = false;
 	}
 
-	playNote(i:number)
+	playNote(frequency:number)
 	{
-		const frequency:number = MainPanelComponent.noteToFrequency(this.notes[0].index + i );
 		console.log(frequency);
 		this.setTone(frequency);
 		this.readTone();
