@@ -2,25 +2,15 @@
 
 	<button #play (click)="togglePlay()">Play</button>
 
-	<select #waveform (change)="readWaveformType()">
+	<select title="Waveform type" #waveform (change)="readWaveformType()">
 		<option>sine</option>
 		<option>square</option>
 		<option>sawtooth</option>
 		<option>triangle</option>
 	</select>
 
-	<input #tone style="width:100%" type="range" value="0" min="0" max="2000" step="1" (mousemove)="readTone()">
+	<input #tone style="width:100%" title="tone" type="range" value="0" min="0" max="2500" step="1" (mousemove)="setTone(tone.value)">
 
-	<div class="keyboard">
-		<button
-			class="key"
-			*ngFor="let key of keyboard.keys;"
-			(click)="playNote(key.frequency)"
-			[ngClass]="{'key--black':key.accidental, 'key--white':!key.accidental}"
-		>
-			{{key.scientificName}}
-		</button>
-
-	</div>
+	<app-keyboard></app-keyboard>
 
 </section>

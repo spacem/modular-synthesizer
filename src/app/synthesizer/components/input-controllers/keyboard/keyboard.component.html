@@ -1,0 +1,11 @@
+<div class="keyboard">
+	<button
+		class="key"
+		*ngFor="let key of keyboard.keys;"
+		(click)="playNote(key.frequency)"
+		[ngClass]="{'key--black':key.accidental, 'key--white':!key.accidental}"
+	>
+		{{key.scientificName}}
+	</button>
+
+</div>

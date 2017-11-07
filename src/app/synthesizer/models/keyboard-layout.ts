@@ -6,7 +6,17 @@ import {Key} from './key';
 
 export class KeyboardLayout
 {
-	public readonly keys:Key[] = this.generateKeys();
+	public readonly keys:Key[];
+	public readonly minKey:number;
+	public readonly maxKey:number;
+
+	constructor( minKey:number=24, maxKey:number=84 )
+	{
+		this.minKey = minKey;
+		this.maxKey = maxKey;
+		this.keys = KeyboardLayout.generateKeys( minKey, maxKey );
+	}
+
 	/**
 	 * Generate the keyboard layout keys model.
 	 *
@@ -19,7 +29,7 @@ export class KeyboardLayout
 	 * @return {Key[]}
 	 * 	The generated keyboard layout.
 	 */
-	private generateKeys( minKey:number=24, maxKey:number=42 ):Key[]
+	public static generateKeys( minKey:number, maxKey:number ):Key[]
 	{
 		const keys:Key[] = [];
 		for( let i=minKey; i<=maxKey; i++ )
@@ -32,16 +42,5 @@ export class KeyboardLayout
 		}
 		console.log(keys);
 		return keys;
-	}
-
-	/**
-	 * Return the associated key number of the prebuilt keyboard layout.
-	 *
-	 * @param {number} keyNumber
-	 * 	The key number of the prebuilt keyboard layout
-	 */
-	public key( keyNumber:number)
-	{
-		return this.keys[keyNumber];
 	}
 }

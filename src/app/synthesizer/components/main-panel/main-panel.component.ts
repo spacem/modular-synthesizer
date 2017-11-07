@@ -1,5 +1,4 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {KeyboardLayout} from '../../models/keyboard-layout';
 
 @Component({
 	selector: 'app-main-panel',
@@ -16,7 +15,6 @@ export class MainPanelComponent implements OnInit
 	protected oscillatorNode:OscillatorNode;
 	protected mainGain:GainNode;
 	protected started:boolean = false;
-	protected keyboard:KeyboardLayout = new KeyboardLayout();
 
 	constructor(){}
 
@@ -41,16 +39,13 @@ export class MainPanelComponent implements OnInit
 
 	setTone( tone:number ):void
 	{
+		console.log(tone);
 		this.toneRange.nativeElement.value = tone ;
-		//oscillatorNode.frequency.setValueAtTime(frequency, audioContext.currentTime);
-	}
-
-	readTone():void
-	{
 		if(this.oscillatorNode)
 		//	this.oscillatorNode.frequency.value = +this.toneRange.nativeElement.value;
 			this.oscillatorNode.frequency.setValueAtTime(+this.toneRange.nativeElement.value, this.audioContext.currentTime);
 	}
+
 
 	readWaveformType():void
 	{
@@ -65,9 +60,9 @@ export class MainPanelComponent implements OnInit
 
 		this.oscillatorNode = this.create();
 		this.readWaveformType();
-		this.readTone();
 		this.oscillatorNode.connect(this.mainGain);
 		this.oscillatorNode.start(0);
+		this.setTone(0);
 
 		this.started = true;
 	}
@@ -83,10 +78,4 @@ export class MainPanelComponent implements OnInit
 		this.started = false;
 	}
 
-	playNote(frequency:number)
-	{
-		console.log(frequency);
-		this.setTone(frequency);
-		this.readTone();
-	}
 }
