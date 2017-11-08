@@ -1,5 +1,10 @@
-export class Key
+export class Note
 {
+	/**
+	 * Chromatic scale octave base reference with scientific pitch notation.
+	 *
+	 * @see https://en.wikipedia.org/wiki/Chromatic_scale
+	 */
 	private static octave =
 	[
 		{ en:'C', fr:'do', accidental:false},
@@ -18,24 +23,30 @@ export class Key
 
 	public number:number=0;
 	public octave:number=0;
+	public noteNumberInOctave:number=0;
 	public accidental:boolean=false;
 	public fr:string;
 	public en:string;
+
+	/**
+	 * @see https://en.wikipedia.org/wiki/Scientific_pitch_notation
+	 */
 	public scientificName:string;
+
 	public frequency:number=0;
 
 	/**
-	 * Calculate the key frequency using C0 as note zero.
+	 * Calculate the note frequency where A4(440Hz) is note with a value of 0.
 	 *
 	 * @param {number} note
-	 * 	The note number for which to calculate the frequency.
+	 * 	The key number for which to calculate the frequency.
 	 *
 	 * @return {number}
 	 * 	The calculated frequency of the note.
 	 */
 	private static noteToFrequency( note:number ):number
 	{
-		return Math.pow(2, (note - 49) / 12) * 440.0;
+		return Math.pow(2,(note-1)/12 ) * 440.0;
 	}
 
 	/**
@@ -49,7 +60,10 @@ export class Key
 	 */
 	constructor( octave:number=0, note:number=0 )
 	{
-		const octaveKey = Key.octave[note%12];
+		// Force the note to be contained in the 0 and 11 range.
+		this.noteNumberInOctave = Math.abs(note)%12;
+
+		const octaveKey = Note.octave[this.noteNumberInOctave];
 
 		this.number = octave*12 + note;
 		this.octave = octave;
@@ -57,6 +71,12 @@ export class Key
 		this.fr = octaveKey.fr;
 		this.en = octaveKey.en;
 		this.scientificName = octaveKey.en + octave;
-		this.frequency = Key.noteToFrequency(this.number-8);
+
+		/*
+		 * -56 = 0 - 8 - 48 :
+		 * 	-8 // We are talking with C notes as reference on the keyboard and octaves, but frequencies use A notes as reference.
+		 * 	-48 // Distance on the chromatic scale between C4 and C0 note.
+		 */
+		this.frequency = Note.noteToFrequency(this.number - 56 );
 	}
 }
