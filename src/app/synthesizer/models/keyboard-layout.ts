@@ -2,15 +2,28 @@
  * Model used to populate the piano keys.
  * @see https://en.wikipedia.org/wiki/Piano_key_frequencies
  */
-import {Key} from './key';
+import {Note} from './note';
+
+// We don't really need a Key object model, so let's use an interface instead.
+interface Key {
+	note:Note;
+	number:number;
+}
 
 export class KeyboardLayout
 {
 	public readonly keys:Key[];
+
 	public readonly minKey:number;
 	public readonly maxKey:number;
 
-	constructor( minKey:number=24, maxKey:number=84 )
+	/**
+	 * Build the keyboard layout choosing its min and max key.
+	 *
+	 * @param {number} minKey
+	 * @param {number} maxKey
+	 */
+	constructor( minKey:number=48, maxKey:number=120 )
 	{
 		this.minKey = minKey;
 		this.maxKey = maxKey;
@@ -18,7 +31,7 @@ export class KeyboardLayout
 	}
 
 	/**
-	 * Generate the keyboard layout keys model.
+	 * Generate the keyboard layout using notes as keys.
 	 *
 	 * @param {number} minKey
 	 * 	Lower key on the keyboard layout.
@@ -26,7 +39,7 @@ export class KeyboardLayout
 	 * @param {number} maxKey
 	 * 	Upper key on the keyboard layout.
 	 *
-	 * @return {Key[]}
+	 * @return {Note[]}
 	 * 	The generated keyboard layout.
 	 */
 	public static generateKeys( minKey:number, maxKey:number ):Key[]
@@ -35,12 +48,15 @@ export class KeyboardLayout
 		for( let i=minKey; i<=maxKey; i++ )
 		{
 			const octave = Math.floor(i/12);
-			const note = i%12;
-			const key:Key = new Key(octave,note);
 
-			keys.push(key);
+			// @see https://stackoverflow.com/questions/18618136/how-to-calculate-modulo-of-negative-integers-in-javascript
+			const noteNumberInOctave = (i%12+12)%12;
+
+			keys.push({note:new Note(octave,noteNumberInOctave), number:i});
 		}
+
 		console.log(keys);
+
 		return keys;
 	}
 }

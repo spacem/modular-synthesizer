@@ -74,7 +74,7 @@ export class Note
 
 		/*
 		 * -56 = 0 - 8 - 48 :
-		 * 	-8 // We are talking with C notes as reference on the keyboard and octaves, but frequencies use A notes as reference.
+		 * 	-8 // We are talking with C notes as reference on octaves, but frequencies use A notes as reference.
 		 * 	-48 // Distance on the chromatic scale between C4 and C0 note.
 		 */
 		this.frequency = Note.noteToFrequency(this.number - 56 );
