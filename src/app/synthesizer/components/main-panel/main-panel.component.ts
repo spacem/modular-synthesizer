@@ -16,6 +16,10 @@ export class MainPanelComponent implements OnInit
 	protected mainGain:GainNode;
 	protected started:boolean = false;
 
+	//FIXME Remove
+	minKey:number;
+	maxKey:number;
+
 	constructor(){}
 
 	ngOnInit()
@@ -26,6 +30,12 @@ export class MainPanelComponent implements OnInit
 		this.start();
 	}
 
+	//FIXME Remove
+	setKeyboardLayout( minKey, maxKey )
+	{
+		this.minKey = minKey;
+		this.maxKey = maxKey;
+	}
 
 	togglePlay():void
 	{
@@ -39,7 +49,9 @@ export class MainPanelComponent implements OnInit
 
 	setTone( tone:number ):void
 	{
+		//TODO parse value
 		console.log(tone);
+
 		this.toneRange.nativeElement.value = tone ;
 		if(this.oscillatorNode)
 		//	this.oscillatorNode.frequency.value = +this.toneRange.nativeElement.value;

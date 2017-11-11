@@ -9,8 +9,11 @@
 		<option>triangle</option>
 	</select>
 
-	<input #tone style="width:100%" title="tone" type="range" value="0" min="0" max="24000" step="1" (mousemove)="setTone(tone.value)">
+	<input #tone style="width:100%" title="tone" type="range" value="440" min="0" max="24000" step="1" (mousemove)="setTone(tone.value)">
 
-	<app-keyboard></app-keyboard>
+	<input #minKeyRange style="width:100%" title="left" type="range" value="0" min="0" max="60" step="1" (mousemove)="setKeyboardLayout(minKeyRange.value,maxKeyRange.value)">
+	<input #maxKeyRange style="width:100%" title="right" type="range" value="120" min="60" max="120" step="1" (mousemove)="setKeyboardLayout(minKeyRange.value,maxKeyRange.value)">
+
+	<app-keyboard #keyboard [minKey]="minKey" [maxKey]="maxKey"></app-keyboard>
 
 </section>

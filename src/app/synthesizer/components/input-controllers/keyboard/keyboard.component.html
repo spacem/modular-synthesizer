@@ -1,13 +1,10 @@
-<div class="keyboard">
-	<ul>
-		<li
-			class="key"
-			*ngFor="let key of keyboard.keys;"
-			(click)="playNote(key.note.frequency)"
-			[ngClass]="{'key_sharp':key.note.accidental, 'key_natural':!key.note.accidental}"
-		>
-			{{key.note.scientificName}} {{ key.number }}
-		</li>
-	</ul>
-
-</div>
+<ul>
+	<li
+		class="key"
+		*ngFor="let key of keys;"
+		(click)="playNote(key.note.frequency)"
+		[ngClass]="{'key_sharp':key.note.accidental, 'key_natural':!key.note.accidental}"
+	>
+		{{key.note.scientificName}} {{ key.number }}
+	</li>
+</ul>
