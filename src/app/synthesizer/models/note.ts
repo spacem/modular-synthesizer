@@ -21,12 +21,12 @@ export class Note
 		{ en:'B', fr:'si', accidental:false}
 	];
 
-	public number:number=0;
-	public octave:number=0;
-	public noteNumberInOctave:number=0;
-	public accidental:boolean=false;
-	public fr:string;
-	public en:string;
+	public readonly number:number=0;
+	public readonly octave:number=0;
+	public readonly noteNumberInOctave:number=0;
+	public readonly accidental:boolean=false;
+	public readonly fr:string;
+	public readonly en:string;
 
 	/**
 	 * @see https://en.wikipedia.org/wiki/Scientific_pitch_notation
