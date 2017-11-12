@@ -26,8 +26,8 @@ export class KeyboardComponent implements OnInit, OnChanges
 	 */
 	static readonly MAX_KEY_UPPER_LIMIT:number = 120;
 
-	protected _octave:number;
-	protected _octaves:number;
+	protected _octave:number = Math.floor(KeyboardComponent.MIN_KEY_LOWER_LIMIT/12);
+	protected _octaves:number = Math.floor(KeyboardComponent.MAX_KEY_UPPER_LIMIT/12) - Math.floor(KeyboardComponent.MIN_KEY_LOWER_LIMIT/12);
 	protected _minKey:number = KeyboardComponent.MIN_KEY_LOWER_LIMIT;
 	protected _maxKey:number = KeyboardComponent.MAX_KEY_UPPER_LIMIT;
 	protected _keys:Key[] = [];
@@ -149,15 +149,34 @@ export class KeyboardComponent implements OnInit, OnChanges
 
 	ngOnChanges( changes:SimpleChanges )
 	{
+		let	minKey:number, maxKey:number;
+
+		if( changes.octave )
+			this.octave = changes.octave.currentValue;
+
+		if( changes.octaves )
+			this.octaves = changes.octaves.currentValue;
+
 		if( changes.minKey )
 			this.minKey = changes.minKey.currentValue;
 
 		if( changes.maxKey )
 			this.maxKey = changes.maxKey.currentValue;
 
-		// To reduce key range errors, maxKey can't be lower than minKey value.
-		const maxKey:number = Math.max(this._minKey,this._maxKey);
-		this._keys = KeyboardComponent.generateKeys(this._minKey,maxKey);
+		if( changes.octave || changes.octaves )
+		{
+			minKey = this.octave*12 ;
+			maxKey = minKey + this.octaves*12;
+		}
+		else
+		if( changes.minKey || changes.maxKey )
+		{
+			// To reduce key range errors, maxKey can't be lower than minKey value.
+			maxKey = Math.max(this._minKey,this._maxKey);
+			minKey = this._minKey;
+		}
+
+		this._keys = KeyboardComponent.generateKeys(minKey,maxKey);
 
 		console.log(this._minKey,this._maxKey,this._keys);
 	}
