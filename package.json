@@ -5,7 +5,7 @@
 	"scripts": {
 		"ng": "ng",
 		"start": "ng serve",
-		"ng:publish": "ng build --prod --aot --named-chunks --output-path dist",
+		"ng:publish": "ng build --prod --aot --named-chunks --output-path dist --base-href=/blogfiles/modular-synthesizer/",
 		"test": "ng test",
 		"lint": "ng lint",
 		"e2e": "ng e2e"
