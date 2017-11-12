@@ -2,7 +2,9 @@
 	<li
 		class="key"
 		*ngFor="let key of keys;"
-		(click)="playNote(key.note.frequency)"
+		(mousedown)="keyDown(key)"
+		(mouseup)="keyUp(key)"
+		(mouseleave)="keyUp(key)"
 		[ngClass]="{'key_sharp':key.note.accidental, 'key_natural':!key.note.accidental}"
 	>
 		{{key.note.scientificName}} {{ key.number }}
