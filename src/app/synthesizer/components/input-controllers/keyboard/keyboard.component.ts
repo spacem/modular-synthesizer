@@ -12,45 +12,45 @@ import {Key} from '../../../models/key';
 @Component({
 	selector: 'app-keyboard',
 	templateUrl: './keyboard.component.html',
-	styleUrls: ['./keyboard.component.css']
+	styleUrls: ['./keyboard.component.scss']
 })
 export class KeyboardComponent implements OnInit, OnChanges
 {
 	/**
-	 * Corresponding to key C-1 at near 8Hz.
+	 * The very lower key the keyboard will ever display: corresponding to key C-1 at near 8Hz.
 	 */
-	static readonly MIN_KEY_LOWER_LIMIT:number = -12;
+	static readonly LOWER_KEY_LIMIT:number = -12;
 
 	/**
-	 * Corresponding to key C10 at near 16744Hz.
+	 * The very upper key the keyboard will ever display: corresponding to key C10 at near 16744Hz.
 	 */
-	static readonly MAX_KEY_UPPER_LIMIT:number = 120;
+	static readonly UPPER_KEY_LIMIT:number = 120;
 
-	protected _octave:number = Math.floor(KeyboardComponent.MIN_KEY_LOWER_LIMIT/12);
-	protected _octaves:number = Math.floor(KeyboardComponent.MAX_KEY_UPPER_LIMIT/12) - Math.floor(KeyboardComponent.MIN_KEY_LOWER_LIMIT/12);
-	protected _minKey:number = KeyboardComponent.MIN_KEY_LOWER_LIMIT;
-	protected _maxKey:number = KeyboardComponent.MAX_KEY_UPPER_LIMIT;
+	protected _octave:number = Math.floor(KeyboardComponent.LOWER_KEY_LIMIT/12);
+	protected _octaves:number = Math.floor(KeyboardComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardComponent.LOWER_KEY_LIMIT/12);
+	protected _lowerKey:number = KeyboardComponent.LOWER_KEY_LIMIT;
+	protected _upperKey:number = KeyboardComponent.UPPER_KEY_LIMIT;
 	protected _keys:Key[] = [];
 
 	/**
 	 * Generate the keyboard layout using current min and max key with C0 as the reference zero key (A4 being key 57).
 	 *
-	 * @param {number} minKey
+	 * @param {number} lowerKey
 	 * 	Lower key on the keyboard layout.
 	 *
-	 * @param {number} maxKey
+	 * @param {number} upperKey
 	 * 	Upper key on the keyboard layout.
 	 *
 	 * @return {Key[]}
 	 * 	The generated keyboard layout.
 	 */
-	public static generateKeys( minKey:number, maxKey:number ):Key[]
+	public static generateKeys( lowerKey:number, upperKey:number ):Key[]
 	{
-		if( isNaN(minKey) || isNaN(maxKey) || minKey>maxKey )
-			throw(Error(`Key range error: ${minKey} => ${maxKey}`));
+		if( isNaN(lowerKey) || isNaN(upperKey) || lowerKey>upperKey )
+			throw(Error(`Key range error: ${lowerKey} => ${upperKey}`));
 
 		const keys:Key[] = [];
-		for( let i=minKey; i<=maxKey; i++ )
+		for( let i=lowerKey; i<=upperKey; i++ )
 			keys.push(KeyboardComponent.createKey(i));
 
 		return keys;
@@ -117,30 +117,30 @@ export class KeyboardComponent implements OnInit, OnChanges
 	 * Lower left key on the keyboard.
 	 */
 	@Input()
-	public get minKey():number{ return this._minKey; }
-	public set minKey( value:number )
+	public get lowerKey():number{ return this._lowerKey; }
+	public set lowerKey(value:number )
 	{
 		console.log(value);
 
-		value = Math.max(KeyboardComponent.MIN_KEY_LOWER_LIMIT, Math.min(Math.floor(value),KeyboardComponent.MAX_KEY_UPPER_LIMIT));
+		value = Math.max(KeyboardComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardComponent.UPPER_KEY_LIMIT));
 
 		if( !isNaN(value) )
-			this._minKey = value;
+			this._lowerKey = value;
 	}
 
 	/**
 	 * Upper right key on the keyboard.
 	 */
 	@Input()
-	public get maxKey():number{ return this._maxKey; }
-	public set maxKey( value:number )
+	public get upperKey():number{ return this._upperKey; }
+	public set upperKey( value:number )
 	{
 		console.log(value);
 
-		value = Math.max(KeyboardComponent.MIN_KEY_LOWER_LIMIT, Math.min(Math.floor(value),KeyboardComponent.MAX_KEY_UPPER_LIMIT));
+		value = Math.max(KeyboardComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardComponent.UPPER_KEY_LIMIT));
 
 		if( !isNaN(value) )
-			this._maxKey = value;
+			this._upperKey = value;
 	}
 
 	constructor(@Host() private panel:MainPanelComponent){}
@@ -149,7 +149,7 @@ export class KeyboardComponent implements OnInit, OnChanges
 
 	ngOnChanges( changes:SimpleChanges )
 	{
-		let	minKey:number, maxKey:number;
+		let	lowerKey:number, upperKey:number;
 
 		if( changes.octave )
 			this.octave = changes.octave.currentValue;
@@ -157,28 +157,28 @@ export class KeyboardComponent implements OnInit, OnChanges
 		if( changes.octaves )
 			this.octaves = changes.octaves.currentValue;
 
-		if( changes.minKey )
-			this.minKey = changes.minKey.currentValue;
+		if( changes.lowerKey )
+			this.lowerKey = changes.lowerKey.currentValue;
 
-		if( changes.maxKey )
-			this.maxKey = changes.maxKey.currentValue;
+		if( changes.upperKey )
+			this.upperKey = changes.upperKey.currentValue;
 
 		if( changes.octave || changes.octaves )
 		{
-			minKey = this.octave*12 ;
-			maxKey = minKey + this.octaves*12;
+			lowerKey = this.octave*12 ;
+			upperKey = lowerKey + this.octaves*12;
 		}
 		else
-		if( changes.minKey || changes.maxKey )
+		if( changes.lowerKey || changes.upperKey )
 		{
-			// To reduce key range errors, maxKey can't be lower than minKey value.
-			maxKey = Math.max(this._minKey,this._maxKey);
-			minKey = this._minKey;
+			// To reduce key range errors, upperKey can't be lower than lowerKey value.
+			upperKey = Math.max(this._lowerKey,this._upperKey);
+			lowerKey = this._lowerKey;
 		}
 
-		this._keys = KeyboardComponent.generateKeys(minKey,maxKey);
+		this._keys = KeyboardComponent.generateKeys(lowerKey,upperKey);
 
-		console.log(this._minKey,this._maxKey,this._keys);
+		console.log(this._lowerKey,this._upperKey,this._keys);
 	}
 
 	/**

@@ -3,7 +3,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 @Component({
 	selector: 'app-main-panel',
 	templateUrl: './main-panel.component.html',
-	styleUrls: ['./main-panel.component.css']
+	styleUrls: ['./main-panel.component.scss']
 })
 export class MainPanelComponent implements OnInit
 {
@@ -56,7 +56,7 @@ export class MainPanelComponent implements OnInit
 	start():void
 	{
 		this.playButton.nativeElement.innerText = 'Stop';
-		this.mainGain.gain.value = 1;
+		this.mainGain.gain.setValueAtTime(1, this.audioContext.currentTime);
 
 		this.oscillatorNode = this.create();
 		this.readWaveformType();
@@ -70,7 +70,7 @@ export class MainPanelComponent implements OnInit
 	stop():void
 	{
 		this.playButton.nativeElement.innerText = 'Play';
-		this.mainGain.gain.value = 0;
+		this.mainGain.gain.setValueAtTime(0, this.audioContext.currentTime)
 
 		this.oscillatorNode.disconnect(this.mainGain);
 		this.oscillatorNode = null;

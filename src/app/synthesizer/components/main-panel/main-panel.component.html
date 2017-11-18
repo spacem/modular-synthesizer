@@ -11,10 +11,11 @@
 
 	<input #tone style="width:100%" title="tone" type="range" value="440" min="0" max="24000" step="1" (mousemove)="setTone(tone.value)">
 
-	<input title="minKey" type="number" [value]="keyboard.minKey" min="-12" max="60" step="1" (input)="keyboard.minKey = +$event.target.value">
-	<input title="maxKey" type="number" [value]="keyboard.maxKey" min="60" max="120" step="1" (input)="keyboard.maxKey = +$event.target.value">
+	<
+	<input title="lowerKey" type="number" [value]="keyboard.lowerKey" min="-12" max="60" step="1" (input)="keyboard.lowerKey = +$event.target.value">
+	<input title="upperKey" type="number" [value]="keyboard.upperKey" min="60" max="120" step="1" (input)="keyboard.upperKey = +$event.target.value">
 	<input title="octave" type="number" [value]="keyboard.octave" min="-1" max="10" step="1" (input)="keyboard.octave = +$event.target.value">
 	<input title="octaves" type="number" [value]="keyboard.octaves" min="0" max="10" step="1" (input)="keyboard.octaves = +$event.target.value">
-	<app-keyboard #keyboard [minKey]="keyboard.minKey" [maxKey]="keyboard.maxKey" [octave]="keyboard.octave" [octaves]="keyboard.octaves"></app-keyboard>
+	<app-keyboard #keyboard [lowerKey]="keyboard.lowerKey" [upperKey]="keyboard.upperKey" [octave]="keyboard.octave" [octaves]="keyboard.octaves"></app-keyboard>
 
 </section>
