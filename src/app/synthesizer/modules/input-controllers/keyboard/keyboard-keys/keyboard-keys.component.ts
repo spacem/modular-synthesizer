@@ -1,7 +1,7 @@
-import {Component, Host, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {MainPanelComponent} from '../../main-panel/main-panel.component';
-import {Note} from '../../../models/note';
-import {Key} from '../../../models/key';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Note} from '../../../../models/note';
+import {Key} from '../../../../models/key';
+import {MainPanelService} from '../../../../services/main-panel.service';
 
 /**
 * User Interface component for the musical keyboard component.
@@ -10,11 +10,11 @@ import {Key} from '../../../models/key';
 * @see https://en.wikipedia.org/wiki/Accidental_(music)
 */
 @Component({
-	selector: 'app-keyboard',
-	templateUrl: './keyboard.component.html',
-	styleUrls: ['./keyboard.component.scss']
+	selector: 'app-keyboard-keys',
+	templateUrl: './keyboard-keys.component.html',
+	styleUrls: ['./keyboard-keys.component.scss']
 })
-export class KeyboardComponent implements OnInit, OnChanges
+export class KeyboardKeysComponent implements OnInit, OnChanges
 {
 	/**
 	 * The very lower key the keyboard will ever display: corresponding to key C-1 at near 8Hz.
@@ -26,10 +26,10 @@ export class KeyboardComponent implements OnInit, OnChanges
 	 */
 	static readonly UPPER_KEY_LIMIT:number = 120;
 
-	protected _octave:number = Math.floor(KeyboardComponent.LOWER_KEY_LIMIT/12);
-	protected _octaves:number = Math.floor(KeyboardComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardComponent.LOWER_KEY_LIMIT/12);
-	protected _lowerKey:number = KeyboardComponent.LOWER_KEY_LIMIT;
-	protected _upperKey:number = KeyboardComponent.UPPER_KEY_LIMIT;
+	protected _octave:number = Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);
+	protected _octaves:number = Math.floor(KeyboardKeysComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);
+	protected _lowerKey:number = KeyboardKeysComponent.LOWER_KEY_LIMIT;
+	protected _upperKey:number = KeyboardKeysComponent.UPPER_KEY_LIMIT;
 	protected _keys:Key[] = [];
 
 	/**
@@ -51,7 +51,7 @@ export class KeyboardComponent implements OnInit, OnChanges
 
 		const keys:Key[] = [];
 		for( let i=lowerKey; i<=upperKey; i++ )
-			keys.push(KeyboardComponent.createKey(i));
+			keys.push(KeyboardKeysComponent.createKey(i));
 
 		return keys;
 	}
@@ -122,7 +122,7 @@ export class KeyboardComponent implements OnInit, OnChanges
 	{
 		console.log(value);
 
-		value = Math.max(KeyboardComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardComponent.UPPER_KEY_LIMIT));
+		value = Math.max(KeyboardKeysComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardKeysComponent.UPPER_KEY_LIMIT));
 
 		if( !isNaN(value) )
 			this._lowerKey = value;
@@ -137,13 +137,13 @@ export class KeyboardComponent implements OnInit, OnChanges
 	{
 		console.log(value);
 
-		value = Math.max(KeyboardComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardComponent.UPPER_KEY_LIMIT));
+		value = Math.max(KeyboardKeysComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardKeysComponent.UPPER_KEY_LIMIT));
 
 		if( !isNaN(value) )
 			this._upperKey = value;
 	}
 
-	constructor(@Host() private panel:MainPanelComponent){}
+	constructor(private mainPanelService:MainPanelService){}
 
 	ngOnInit(){}
 
@@ -176,7 +176,7 @@ export class KeyboardComponent implements OnInit, OnChanges
 			lowerKey = this._lowerKey;
 		}
 
-		this._keys = KeyboardComponent.generateKeys(lowerKey,upperKey);
+		this._keys = KeyboardKeysComponent.generateKeys(lowerKey,upperKey);
 
 		console.log(this._lowerKey,this._upperKey,this._keys);
 	}
@@ -207,6 +207,6 @@ export class KeyboardComponent implements OnInit, OnChanges
 	//TODO Will be removed when implementing connexion between components.
 	playNote( frequency:number )
 	{
-		this.panel.setTone(frequency);
+		this.mainPanelService.setTone(frequency);
 	}
 }
