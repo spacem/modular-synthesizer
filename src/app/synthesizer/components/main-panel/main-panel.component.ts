@@ -50,7 +50,7 @@ export class MainPanelComponent implements OnInit
 			this.oscillatorNode.frequency.setValueAtTime(+this.toneRange.nativeElement.value, this.audioContext.currentTime);
 	}
 
-	protected readWaveformType():void
+	public setWaveformType():void
 	{
 		if(this.oscillatorNode)
 			this.oscillatorNode.type = this.waveformSelect.nativeElement.value;
@@ -62,7 +62,7 @@ export class MainPanelComponent implements OnInit
 		this.mainGain.gain.setValueAtTime(1, this.audioContext.currentTime);
 
 		this.oscillatorNode = this.create();
-		this.readWaveformType();
+		this.setWaveformType();
 		this.oscillatorNode.connect(this.mainGain);
 		this.oscillatorNode.start(0);
 		this.setTone(0);
