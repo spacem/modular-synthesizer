@@ -1,10 +1,14 @@
-input[type=number]
+.controls
 {
-	font-family: LCD, monospace;
-	color: #d8d7e3;
-	text-shadow: #f0f0f0 2px 2px 5px;
-	border-style: inset;
-	background: transparent;
-	text-align: right;
-	font-size: 1em;
+	input[type=number]
+	{
+		font-family: LCD, monospace;
+		color: #d8d7e3;
+		text-shadow: #f0f0f0 2px 2px 5px;
+		border-style: inset;
+		background: transparent;
+		text-align: right;
+		font-size: 1em;
+	}
 }
+

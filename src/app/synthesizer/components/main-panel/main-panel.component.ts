@@ -1,4 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {MainPanelService} from '../../services/main-panel.service';
 
 @Component({
 	selector: 'app-main-panel',
@@ -16,7 +17,10 @@ export class MainPanelComponent implements OnInit
 	protected mainGain:GainNode;
 	protected started:boolean = false;
 
-	constructor(){}
+	constructor( mainPanelService:MainPanelService )
+	{
+		mainPanelService.toneSource$.subscribe( tone => this.setTone(tone) );
+	}
 
 	ngOnInit()
 	{
@@ -26,17 +30,17 @@ export class MainPanelComponent implements OnInit
 		this.start();
 	}
 
-	togglePlay():void
+	public togglePlay():void
 	{
 		this.started ? this.stop() : this.start();
 	}
 
-	create():OscillatorNode
+	protected create():OscillatorNode
 	{
 		return this.audioContext.createOscillator();
 	}
 
-	setTone( tone:number ):void
+	public setTone( tone:number ):void
 	{
 		//TODO parse value
 		this.toneRange.nativeElement.value = tone ;
@@ -46,14 +50,13 @@ export class MainPanelComponent implements OnInit
 			this.oscillatorNode.frequency.setValueAtTime(+this.toneRange.nativeElement.value, this.audioContext.currentTime);
 	}
 
-
-	readWaveformType():void
+	protected readWaveformType():void
 	{
 		if(this.oscillatorNode)
 			this.oscillatorNode.type = this.waveformSelect.nativeElement.value;
 	}
 
-	start():void
+	public start():void
 	{
 		this.playButton.nativeElement.innerText = 'Stop';
 		this.mainGain.gain.setValueAtTime(1, this.audioContext.currentTime);
@@ -67,10 +70,10 @@ export class MainPanelComponent implements OnInit
 		this.started = true;
 	}
 
-	stop():void
+	public stop():void
 	{
 		this.playButton.nativeElement.innerText = 'Play';
-		this.mainGain.gain.setValueAtTime(0, this.audioContext.currentTime)
+		this.mainGain.gain.setValueAtTime(0, this.audioContext.currentTime);
 
 		this.oscillatorNode.disconnect(this.mainGain);
 		this.oscillatorNode = null;

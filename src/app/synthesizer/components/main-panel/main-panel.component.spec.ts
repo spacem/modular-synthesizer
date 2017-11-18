@@ -1,7 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {MainPanelComponent} from './main-panel.component';
-import {KeyboardComponent} from '../input-controllers/keyboard/keyboard.component';
+import {KeyboardKeysComponent} from '../../modules/input-controllers/keyboard/keyboard-keys/keyboard-keys.component';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -9,7 +9,7 @@ describe('MainPanelComponent', () => {
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
-			declarations: [MainPanelComponent,KeyboardComponent]
+			declarations: [MainPanelComponent,KeyboardKeysComponent]
 		})
 			.compileComponents();
 	}));
