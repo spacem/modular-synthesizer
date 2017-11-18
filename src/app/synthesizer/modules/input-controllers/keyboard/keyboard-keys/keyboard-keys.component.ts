@@ -1,7 +1,7 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, Host, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Note} from '../../../../models/note';
 import {Key} from '../../../../models/key';
-import {MainPanelService} from '../../../../services/main-panel.service';
+import {KeyboardComponent} from '../keyboard.component';
 
 /**
 * User Interface component for the musical keyboard component.
@@ -143,7 +143,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 			this._upperKey = value;
 	}
 
-	constructor(private mainPanelService:MainPanelService){}
+	constructor( @Host() private keyboard:KeyboardComponent ){}
 
 	ngOnInit(){}
 
@@ -207,6 +207,6 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	//TODO Will be removed when implementing connexion between components.
 	playNote( frequency:number )
 	{
-		this.mainPanelService.setTone(frequency);
+		this.keyboard.setTone(frequency);
 	}
 }

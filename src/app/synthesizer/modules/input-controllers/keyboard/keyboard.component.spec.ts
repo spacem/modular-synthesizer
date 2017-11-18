@@ -1,6 +1,8 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {KeyboardComponent} from './keyboard.component';
+import {MainPanelService} from '../../../services/main-panel.service';
+import {KeyboardKeysComponent} from './keyboard-keys/keyboard-keys.component';
+
 
 describe('KeyboardComponent', () =>
 {
@@ -10,7 +12,8 @@ describe('KeyboardComponent', () =>
 	beforeEach(async(() =>
 	{
 		TestBed.configureTestingModule({
-			declarations: [KeyboardComponent]
+			providers:[MainPanelService],
+			declarations: [KeyboardComponent,KeyboardKeysComponent]
 		})
 			.compileComponents();
 	}));
