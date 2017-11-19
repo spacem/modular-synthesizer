@@ -10,7 +10,7 @@ import {AppRoutingModule} from './app-routing.module';
 	],
 	imports: [
 		BrowserModule,
-		AppRoutingModule // <= Module import order matters, see: https://angular.io/guide/router#module-import-order-matters
+		AppRoutingModule // <= Modules import order matters, see: https://angular.io/guide/router#module-import-order-matters
 	],
 	providers: [],
 	bootstrap: [AppComponent]
