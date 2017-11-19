@@ -1,13 +1,14 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MainPanelService} from '../../services/main-panel.service';
+import {MainPanelService} from '../shared/services/main-panel.service';
 
 @Component({
-	selector: 'app-main-panel',
-	templateUrl: './main-panel.component.html',
-	styleUrls: ['./main-panel.component.scss']
+  selector: 'app-main-panel',
+  templateUrl: './main-panel.component.html',
+  styleUrls: ['./main-panel.component.scss']
 })
 export class MainPanelComponent implements OnInit
 {
+
 	@ViewChild('play') playButton:ElementRef;
 	@ViewChild('waveform') waveformSelect:ElementRef;
 	@ViewChild('tone') toneRange:ElementRef;
@@ -80,5 +81,4 @@ export class MainPanelComponent implements OnInit
 
 		this.started = false;
 	}
-
 }

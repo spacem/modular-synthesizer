@@ -1,6 +1,6 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {KeyboardComponent} from './keyboard.component';
-import {MainPanelService} from '../../../services/main-panel.service';
+import {MainPanelService} from '../../../../shared/services/main-panel.service';
 import {KeyboardKeysComponent} from './keyboard-keys/keyboard-keys.component';
 
 

@@ -4,8 +4,9 @@
 	"license": "MIT",
 	"scripts": {
 		"ng": "ng",
-		"start": "ng serve --host 192.168.1.19",
-		"ng:publish": "ng build --prod --aot --named-chunks --output-path dist --base-href=/blogfiles/modular-synthesizer/",
+		"start": "ng build --prod --aot --named-chunks --output-path dist --base-href=/ && node node_modules/http-server/bin/http-server dist -o",
+		"ng:serve": "ng serve",
+		"ng:publish": "ng test --single-run --code-coverage && ng build --prod --aot --named-chunks --output-path dist --base-href=/blogfiles/modular-synthesizer/",
 		"test": "ng test",
 		"lint": "ng lint",
 		"e2e": "ng e2e"
@@ -35,6 +36,7 @@
 		"@types/jasminewd2": "~2.0.2",
 		"@types/node": "^6.0.92",
 		"codelyzer": "~3.2.0",
+		"http-server": "^0.10.0",
 		"jasmine-core": "~2.6.2",
 		"jasmine-spec-reporter": "~4.1.0",
 		"karma": "~1.7.0",

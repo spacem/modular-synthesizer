@@ -10,13 +10,17 @@ It is built with [Angular](https://angular.io/)
 - [Node.js](https://nodejs.org/en/) (it contains the also required NPM package manager)
 - [Angular-cli](https://cli.angular.io/) with: `npm install -g @angular/cli`
 
-### And run:
-- npm install
-- npm start and open a browser on [http://localhost:4200](http://localhost:4200)
+### For local development:
+- `npm install`
+- `npm ng:serve` and open a browser on [http://localhost:4200]().
 
-### Publish
-- npm ng:publish
 
+### For local development with AOT:
+- `npm start` Then open a browser on [http://localhost:8080](), it will run http-server on files published with AOT.
+
+
+### Publish files with AOT.
+- `npm ng:publish`
 
 ### Test
-- ng test
+- `ng test`
