@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MainPanelService} from '../../services/main-panel.service';
+import {MainPanelService} from '../../../shared/services/main-panel.service';
 
 @Component({
 	selector: 'app-main-panel',
