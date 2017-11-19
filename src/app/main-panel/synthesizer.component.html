@@ -1,3 +1,15 @@
-<div>
-	<router-outlet #synthesizerRouterOutlet="outlet"></router-outlet>
-</div>
+<section>
+
+	<button #play (click)="togglePlay()">Play</button>
+
+	<select title="Waveform type" #waveform (change)="setWaveformType()">
+		<option>sine</option>
+		<option>square</option>
+		<option>sawtooth</option>
+		<option>triangle</option>
+	</select>
+
+	<input #tone style="width:100%" title="tone" type="range" value="440" min="0" max="24000" step="1" (mousemove)="setTone(tone.value)">
+
+	<app-keyboard></app-keyboard>
+</section>
