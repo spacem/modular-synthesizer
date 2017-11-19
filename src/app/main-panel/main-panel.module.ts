@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {SynthesizerComponent} from './synthesizer.component';
-import {SynthesizerRoutingModule} from './synthesizer-routing.module';
+import {MainPanelComponent} from './main-panel.component';
+import {MainPanelRoutingModule} from './main-panel-routing.module';
 import {KeyboardModule} from './modules/input-controllers/keyboard/keyboard.module';
 import {SharedModule} from '../shared/shared.module';
 
@@ -9,10 +9,10 @@ import {SharedModule} from '../shared/shared.module';
 	imports: [
 		CommonModule,
 		SharedModule,
-		SynthesizerRoutingModule,
+		MainPanelRoutingModule,
 		KeyboardModule
 	],
-	declarations: [SynthesizerComponent]
+	declarations: [MainPanelComponent]
 })
-export class SynthesizerModule {
+export class MainPanelModule {
 }

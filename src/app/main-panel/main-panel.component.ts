@@ -2,11 +2,11 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MainPanelService} from '../shared/services/main-panel.service';
 
 @Component({
-  selector: 'app-synthesizer',
-  templateUrl: './synthesizer.component.html',
-  styleUrls: ['./synthesizer.component.scss']
+  selector: 'app-main-panel',
+  templateUrl: './main-panel.component.html',
+  styleUrls: ['./main-panel.component.scss']
 })
-export class SynthesizerComponent implements OnInit
+export class MainPanelComponent implements OnInit
 {
 
 	@ViewChild('play') playButton:ElementRef;

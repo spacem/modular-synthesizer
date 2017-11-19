@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes:Routes =
 [
-	{ path: '', loadChildren: 'app/main-panel/synthesizer.module#SynthesizerModule' },
+	{ path: '', loadChildren: 'app/main-panel/main-panel.module#MainPanelModule' },
 	{ path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 
