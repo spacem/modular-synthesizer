@@ -3,8 +3,8 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes:Routes =
 [
-	{ path: 'synthesizer', loadChildren: 'app/main-panel/synthesizer.module#SynthesizerModule' },
-	{ path: '**', redirectTo: 'synthesizer', pathMatch: 'full' }
+	{ path: '', loadChildren: 'app/main-panel/synthesizer.module#SynthesizerModule' },
+	{ path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 
 @NgModule( {

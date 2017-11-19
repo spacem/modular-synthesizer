@@ -11,8 +11,8 @@ const routes:Routes =
 		component: SynthesizerComponent,
 		children:
 		[
-			{ path: '', redirectTo: 'main-panel', pathMatch:'full' },
-			{ path: 'main-panel', component: MainPanelComponent }
+			{ path: '', component: MainPanelComponent },
+			{ path: '**', redirectTo: '', pathMatch:'full' }
 		]
 	}
 ];

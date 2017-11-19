@@ -193,6 +193,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 		this.playNote(key.note.frequency);
 	}
 
+	// noinspection JSUnusedLocalSymbols
 	/**
 	 * Process the given key as released.
 	 *
