@@ -2,7 +2,7 @@
 
 	<button #play (click)="togglePlay()">Play</button>
 
-	<select title="Waveform type" #waveform (change)="setWaveformType()">
+	<select title="Waveform type" #waveform (change)="setWaveformType(waveform.value)">
 		<option>sine</option>
 		<option>square</option>
 		<option>sawtooth</option>

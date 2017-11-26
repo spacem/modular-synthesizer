@@ -4,7 +4,6 @@ import {Subject} from 'rxjs/Subject';
 @Injectable()
 export class MainPanelService
 {
-
 	private toneSource = new Subject<number>();
 	public toneSource$ = this.toneSource.asObservable();
 

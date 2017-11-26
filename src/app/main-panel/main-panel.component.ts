@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MainPanelService} from '../shared/services/main-panel.service';
+import {WebmidiService} from '../shared/services/webmidi.service';
 
 @Component({
   selector: 'app-main-panel',
@@ -18,9 +19,11 @@ export class MainPanelComponent implements OnInit
 	protected mainGain:GainNode;
 	protected started:boolean = false;
 
-	constructor( mainPanelService:MainPanelService )
+	constructor( mainPanelService:MainPanelService, webmidiService:WebmidiService )
 	{
 		mainPanelService.toneSource$.subscribe( tone => this.setTone(tone) );
+		webmidiService.toneSource$.subscribe( tone => this.setTone(tone) );
+		webmidiService.programSource$.subscribe( bank => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][bank%4] as OscillatorType ) );
 	}
 
 	ngOnInit()
@@ -51,10 +54,12 @@ export class MainPanelComponent implements OnInit
 			this.oscillatorNode.frequency.setValueAtTime(+this.toneRange.nativeElement.value, this.audioContext.currentTime);
 	}
 
-	public setWaveformType():void
+	public setWaveformType( waveformType:OscillatorType ):void
 	{
+		this.waveformSelect.nativeElement.value = waveformType;
+
 		if(this.oscillatorNode)
-			this.oscillatorNode.type = this.waveformSelect.nativeElement.value;
+			this.oscillatorNode.type = waveformType;
 	}
 
 	public start():void
@@ -63,7 +68,7 @@ export class MainPanelComponent implements OnInit
 		this.mainGain.gain.setValueAtTime(1, this.audioContext.currentTime);
 
 		this.oscillatorNode = this.create();
-		this.setWaveformType();
+		this.setWaveformType(this.waveformSelect.nativeElement.value);
 		this.oscillatorNode.connect(this.mainGain);
 		this.oscillatorNode.start(0);
 		this.setTone(0);

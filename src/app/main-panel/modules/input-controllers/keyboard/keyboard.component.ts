@@ -15,7 +15,6 @@ export class KeyboardComponent implements OnInit
 
 	ngOnInit()
 	{
-
 	}
 
 	//TODO Transmit notes, not tones.
