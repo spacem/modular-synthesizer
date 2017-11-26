@@ -94,7 +94,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	public get octave():number{ return this._octave; }
 	public set octave( value:number )
 	{
-		console.log(value);
+		//console.log(value);
 
 		if( !isNaN(value) )
 			this._octave = value;
@@ -107,7 +107,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	public get octaves():number{ return this._octaves; }
 	public set octaves( value:number )
 	{
-		console.log(value);
+		//console.log(value);
 
 		if( !isNaN(value) )
 			this._octaves = value;
@@ -120,7 +120,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	public get lowerKey():number{ return this._lowerKey; }
 	public set lowerKey(value:number )
 	{
-		console.log(value);
+		//console.log(value);
 
 		value = Math.max(KeyboardKeysComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardKeysComponent.UPPER_KEY_LIMIT));
 
@@ -135,7 +135,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	public get upperKey():number{ return this._upperKey; }
 	public set upperKey( value:number )
 	{
-		console.log(value);
+		//console.log(value);
 
 		value = Math.max(KeyboardKeysComponent.LOWER_KEY_LIMIT, Math.min(Math.floor(value),KeyboardKeysComponent.UPPER_KEY_LIMIT));
 

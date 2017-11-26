@@ -11,5 +11,4 @@ export class MainPanelService
 	{
 		this.toneSource.next(tone);
 	}
-
 }

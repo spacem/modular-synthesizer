@@ -7,12 +7,15 @@ export class WebmidiService
 	private toneSource = new Subject<number>();
 	public toneSource$ = this.toneSource.asObservable();
 
+	private programSource = new Subject<number>();
+	public programSource$ = this.programSource.asObservable();
+
 	private inputs/*WebMidi.MIDIInputMap*/;
 	private outputs/*WebMidi.MIDIOutputMap*/;
 
 	constructor()
 	{
-		//TODO Defer!!!
+		//TODO Defer to manage rights to use WebMidi on Sysex.
 		this.setupMidi();
 	}
 
@@ -33,18 +36,69 @@ export class WebmidiService
 		}
 	}
 
-	private onMIDIMessage( event/*WebMidi.MIDIMessageEvent*/ )
+	/**
+	 * @see http://computermusicresource.com/MIDI.Commands.html
+	 * @param {WebMidi.MIDIMessageEvent} event
+	 */
+	private onMidiMessage( event/*WebMidi.MIDIMessageEvent*/ )
 	{
-		console.log( event );
-		this.outputs.forEach( output =>
+		// Implementation for passthru, but it needs to avoid to loopback on emitting port.
+		//this.outputs.forEach( output =>	output.send(event.data, event.timeStamp) );
+
+		const data:Uint8Array = event.data;
+		const timestamp:number = event.timeStamp;
+		console.log( `onMidiMessage: data=${data}, timestamp=${timestamp}` );
+
+		// Always in the range 128-255
+		const status:number = data[0];
+		const b1:number = data[1];
+		const b2:number = data[2];
+
+		switch(true)
 		{
-			//output.send(event.data, event.timeStamp);
-		} );
+			// Note Off (channel 1-16)
+			case status>=128 && status<=143:
+				console.log( `onMidiNote: channel=${status-128+1}, midiNote=${b1}, velocity=${b2}` );
+				this.onMidiNote( status-128+1, b1, 0 );
+			break;
 
-		const midiNote:number = event.data[ 1 ];
-		const on:boolean = event.data[ 2 ] > 0;
+			// Note On (channel 1-16)
+			case status>=144 && status<=159:
+				console.log( `onMidiNote: channel=${status-144+1}, midiNote=${b1}, velocity=${b2}` );
+				this.onMidiNote( status-144+1, b1, b2 );
+			break;
 
-		const frequency:number = WebmidiService.midiNoteToFrequency( on ? midiNote : 0 );
+			// Control (channel 1-16)
+			case status>=176 && status<=191:
+				console.info(`Control: channel=${status-176+1}, control=${b1}, value=${b2}`);
+			break;
+
+			// Program (channel 1-16)
+			case status>=192 && status<=207:
+				console.info(`Program: channel=${status-192+1}, value=${b1}`);
+				this.onProgramChange( status-192+1, b1);
+			break;
+
+			// Pressure (channel 1-16)
+			case status>=208 && status<=223:
+				console.info(`Pressure: channel=${status-208+1}, value=${b1}`);
+			break;
+
+			default:
+				console.warn(`Unsupported MIDI message type: ${status}`);
+		}
+	}
+
+	private onProgramChange( channel:number, program:number ):void
+	{
+		this.programSource.next( program );
+	}
+
+	private onMidiNote( channel:number, midiNote:number, velocity:number )
+	{
+		const noteOn:boolean = velocity>0;
+
+		const frequency:number = WebmidiService.midiNoteToFrequency( noteOn ? midiNote : 0 );
 		this.setTone( frequency );
 	}
 
@@ -76,7 +130,7 @@ export class WebmidiService
 				if( input.state === 'connected' && input.connection === 'closed' )
 				{
 					console.log( `Connected to MIDI input port: ${input.name}`, input );
-					input.addEventListener( 'midimessage', ( event/*WebMidi.MIDIMessageEvent*/ ) => this.onMIDIMessage( event ) );
+					input.addEventListener( 'midimessage', ( event/*WebMidi.MIDIMessageEvent*/ ) => this.onMidiMessage( event ) );
 					input.addEventListener( 'statechange', event => console.log( event ) );
 				}
 			} );
