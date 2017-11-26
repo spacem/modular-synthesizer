@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { Key } from "../../../main-panel/models/key";
 
 @Injectable()
 export class WebmidiService
 {
-	private toneSource = new Subject<number>();
-	public toneSource$ = this.toneSource.asObservable();
+	private keySource = new Subject<Key>();
+	public keySource$ = this.keySource.asObservable();
 
 	private programSource = new Subject<number>();
 	public programSource$ = this.programSource.asObservable();
@@ -98,18 +99,14 @@ export class WebmidiService
 	{
 		const noteOn:boolean = velocity>0;
 
-		const frequency:number = WebmidiService.midiNoteToFrequency( noteOn ? midiNote : 0 );
-		this.setTone( frequency );
+		const key:Key = new Key(midiNote);
+		key.on = noteOn;
+		this.setKey( key );
 	}
 
-	private setTone( tone:number ):void
+	private setKey( key:Key ):void
 	{
-		this.toneSource.next( tone );
-	}
-
-	private static midiNoteToFrequency( note:number ):number
-	{
-		return Math.pow( 2, (note - 69) / 12 ) * 440.0;
+		this.keySource.next( key );
 	}
 
 	private onMIDISuccess( midiAccess/*WebMidi.MIDIAccess*/ )

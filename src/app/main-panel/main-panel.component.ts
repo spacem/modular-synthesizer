@@ -22,7 +22,7 @@ export class MainPanelComponent implements OnInit
 	constructor( mainPanelService:MainPanelService, webmidiService:WebmidiService )
 	{
 		mainPanelService.toneSource$.subscribe( tone => this.setTone(tone) );
-		webmidiService.toneSource$.subscribe( tone => this.setTone(tone) );
+		webmidiService.keySource$.subscribe( key => this.setTone(key.on ? key.frequency : 0) );
 		webmidiService.programSource$.subscribe( bank => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][bank%4] as OscillatorType ) );
 	}
 
