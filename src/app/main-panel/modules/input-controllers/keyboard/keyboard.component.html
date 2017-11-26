@@ -1,10 +1,15 @@
 <div>
 	<section class="controls">
-		<input title="lowerKey" type="number" [value]="keyboard.lowerKey" min="-12" max="60" step="1" (input)="keyboard.lowerKey = +$event.target.value">
-		<input title="upperKey" type="number" [value]="keyboard.upperKey" min="60" max="120" step="1" (input)="keyboard.upperKey = +$event.target.value">
-		<input title="octave" type="number" [value]="keyboard.octave" min="-1" max="10" step="1" (input)="keyboard.octave = +$event.target.value">
-		<input title="octaves" type="number" [value]="keyboard.octaves" min="0" max="10" step="1" (input)="keyboard.octaves = +$event.target.value">
+		<input title="lowerKey" type="number" [value]="keyboard.lowerKey*1" min="0" max="60" step="1" (input)="keyboard.lowerKey = $event.target.value*1">
+		<input title="upperKey" type="number" [value]="keyboard.upperKey*1" min="60" max="120" step="1" (input)="keyboard.upperKey = $event.target.value*1">
+		<input title="octave" type="number" [value]="keyboard.octave*1" min="-1" max="10" step="1" (input)="keyboard.octave = $event.target.value*1">
+		<input title="octaves" type="number" [value]="keyboard.octaves*1" min="0" max="10" step="1" (input)="keyboard.octaves = $event.target.value*1">
 	</section>
 
-	<app-keyboard-keys #keyboard [lowerKey]="keyboard.lowerKey" [upperKey]="keyboard.upperKey" [octave]="keyboard.octave" [octaves]="keyboard.octaves"></app-keyboard-keys>
+	<app-keyboard-keys #keyboard
+		[lowerKey]="keyboard.lowerKey*1"
+		[upperKey]="keyboard.upperKey*1"
+		[octave]="keyboard.octave*1"
+		[octaves]="keyboard.octaves*1"
+	></app-keyboard-keys>
 </div>

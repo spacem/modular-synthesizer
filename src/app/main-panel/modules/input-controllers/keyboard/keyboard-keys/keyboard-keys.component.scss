@@ -16,12 +16,17 @@
 	background-color: #97b2c3;
 	border: black thin solid;
 	color:black;
+
+	&.key_pressed
+	{
+		background-color: #b9d7e8;
+	}
 }
 
 .key_sharp
 {
 	width:35px;
-	padding:30px 0 3px 0;
+	padding:40px 0 3px 0;
 	background-color: #121517;
 	border: black thin solid;
 	color: white;
@@ -30,4 +35,9 @@
 	margin-right: -20px;
 	position: relative;
 	z-index: 100;
+
+	&.key_pressed
+	{
+		background-color: #596163;
+	}
 }

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MainPanelService} from '../../../../shared/services/main-panel.service';
+import {MainPanelService} from '../../../../shared/services/main-panel/main-panel.service';
 
 @Component({
 	selector: 'app-keyboard',

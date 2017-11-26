@@ -1,11 +1,11 @@
 <ul>
 	<li
 		class="key"
-		*ngFor="let key of keys;"
+		*ngFor="let key of keys"
 		(mousedown)="keyDown(key)"
 		(mouseup)="keyUp(key)"
 		(mouseleave)="keyUp(key)"
-		[ngClass]="{'key_sharp':key.note.accidental, 'key_natural':!key.note.accidental}"
+		[ngClass]="{'key_sharp':key.note.accidental, 'key_natural':!key.note.accidental,'key_pressed':key.note.on}"
 	>
 		{{key.note.scientificName}}
 	</li>

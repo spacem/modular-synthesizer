@@ -33,10 +33,22 @@ export class Note
 	 */
 	public scientificName:string;
 
+	/**
+	 * Note base frequency.
+	 *
+	 * @type {number}
+	 */
 	public frequency:number=0;
 
 	/**
-	 * Calculate the note frequency where A4(440Hz) is note with a value of 0.
+	 * State of the note in the midi flow.
+	 *
+	 * @type {boolean}
+	 */
+	public on:boolean = false;
+
+	/**
+	 * Calculate the note frequency where C-1 is the zero note (A4 is note #69 when referring to C-1…).
 	 *
 	 * @param {number} note
 	 * 	The key number for which to calculate the frequency.
@@ -46,37 +58,34 @@ export class Note
 	 */
 	private static noteToFrequency( note:number ):number
 	{
-		return Math.pow(2,(note-1)/12 ) * 440.0;
+		return Math.pow(2,(note- 69)/12 ) * 440.0;
 	}
 
 	/**
-	 * Build a key referring its octave and its note position on the given octave.
-	 *
-	 * @param {number} octave
-	 * 	The key octave.
+	 * Build a note object referring to its note position using C0 (first note of the zero octave) as the reference zero
+	 * note.
 	 *
 	 * @param {number} note
-	 * 	The note number in the given octave (or in the keyboard layout starting from C0).
+	 * 	The note number in the given octave.
 	 */
-	constructor( octave:number=0, note:number=0 )
+	constructor( note:number=0 )
 	{
+		// C-1 reference zero note, is obviously on the octave -1.
+		const octave = Math.floor(note/12) -1;
+
 		// Force the note to be contained in the 0 and 11 range.
-		this.noteNumberInOctave = Math.abs(note)%12;
+		// @see https://stackoverflow.com/questions/18618136/how-to-calculate-modulo-of-negative-integers-in-javascript
+		this.noteNumberInOctave = Math.abs((note%12+12)%12);
 
 		const octaveKey = Note.octave[this.noteNumberInOctave];
 
-		this.number = octave*12 + note;
+		this.number = note;
 		this.octave = octave;
 		this.accidental= octaveKey.accidental;
 		this.fr = octaveKey.fr;
 		this.en = octaveKey.en;
 		this.scientificName = octaveKey.en + octave;
 
-		/*
-		 * -56 = 0 - 8 - 48 :
-		 * 	-8 // We are talking with C notes as reference on octaves, but frequencies use A notes as reference.
-		 * 	-48 // Distance on the chromatic scale between C4 and C0 note.
-		 */
-		this.frequency = Note.noteToFrequency(this.number - 56 );
+		this.frequency = Note.noteToFrequency(this.number);
 	}
 }

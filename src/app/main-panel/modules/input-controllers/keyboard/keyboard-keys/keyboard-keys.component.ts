@@ -19,21 +19,21 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	/**
 	 * The very lower key the keyboard will ever display: corresponding to key C-1 at near 8Hz.
 	 */
-	static readonly LOWER_KEY_LIMIT:number = -12;
+	static readonly LOWER_KEY_LIMIT:number = 0;
 
 	/**
 	 * The very upper key the keyboard will ever display: corresponding to key C10 at near 16744Hz.
 	 */
 	static readonly UPPER_KEY_LIMIT:number = 120;
 
-	protected _octave:number = Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);
+	protected _octave:number = Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12)-1;
 	protected _octaves:number = Math.floor(KeyboardKeysComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);
 	protected _lowerKey:number = KeyboardKeysComponent.LOWER_KEY_LIMIT;
 	protected _upperKey:number = KeyboardKeysComponent.UPPER_KEY_LIMIT;
 	protected _keys:Key[] = [];
 
 	/**
-	 * Generate the keyboard layout using current min and max key with C0 as the reference zero key (A4 being key 57).
+	 * Generate the keyboard layout using current min and max key with C-1 as the reference zero key (A4 being key 69).
 	 *
 	 * @param {number} lowerKey
 	 * 	Lower key on the keyboard layout.
@@ -57,10 +57,10 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	}
 
 	/**
-	 * Generate a single key using its key number with C0 as the reference zero key.
+	 * Generate a single key using its key number with C-1 as the reference zero key.
 	 *
 	 * @param {number} keyNumber
-	 * 	Key number for the key to create with C0 as the reference zero key.
+	 * 	Key number for the key to create with C-1 as the reference zero key.
 	 *
 	 * @return {Key}
 	 * 	The newly created key.
@@ -70,12 +70,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 		if( isNaN(keyNumber) )
 			throw(Error(`Key range error: ${keyNumber}`));
 
-		const octave = Math.floor(keyNumber/12);
-
-		// @see https://stackoverflow.com/questions/18618136/how-to-calculate-modulo-of-negative-integers-in-javascript
-		const noteNumberInOctave = (keyNumber%12+12)%12;
-
-		const note:Note = new Note(octave,noteNumberInOctave);
+		const note:Note = new Note(keyNumber);
 		return new Key(note,keyNumber);
 	}
 
@@ -152,20 +147,20 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 		let	lowerKey:number, upperKey:number;
 
 		if( changes.octave )
-			this.octave = changes.octave.currentValue;
+			this.octave = +changes.octave.currentValue;
 
 		if( changes.octaves )
-			this.octaves = changes.octaves.currentValue;
+			this.octaves = +changes.octaves.currentValue;
 
 		if( changes.lowerKey )
-			this.lowerKey = changes.lowerKey.currentValue;
+			this.lowerKey = +changes.lowerKey.currentValue;
 
 		if( changes.upperKey )
-			this.upperKey = changes.upperKey.currentValue;
+			this.upperKey = +changes.upperKey.currentValue;
 
 		if( changes.octave || changes.octaves )
 		{
-			lowerKey = this.octave*12 ;
+			lowerKey = (this.octave+1)*12;
 			upperKey = lowerKey + this.octaves*12;
 		}
 		else
@@ -174,6 +169,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 			// To reduce key range errors, upperKey can't be lower than lowerKey value.
 			upperKey = Math.max(this._lowerKey,this._upperKey);
 			lowerKey = this._lowerKey;
+			this.octave = Math.floor(lowerKey/12)-1
 		}
 
 		this._keys = KeyboardKeysComponent.generateKeys(lowerKey,upperKey);
@@ -191,6 +187,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	{
 		console.log(key.note.frequency);
 		this.playNote(key.note.frequency);
+		key.note.on = true;
 	}
 
 	// noinspection JSUnusedLocalSymbols
@@ -203,6 +200,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	keyUp( key:Key )
 	{
 		this.playNote(0);
+		key.note.on = false;
 	}
 
 	//TODO Will be removed when implementing connexion between components.

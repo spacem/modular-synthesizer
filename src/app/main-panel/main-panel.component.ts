@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {MainPanelService} from '../shared/services/main-panel.service';
-import {WebmidiService} from '../shared/services/webmidi.service';
+import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
+import {WebmidiService} from '../shared/services/webmidi/webmidi.service';
 
 @Component({
   selector: 'app-main-panel',
