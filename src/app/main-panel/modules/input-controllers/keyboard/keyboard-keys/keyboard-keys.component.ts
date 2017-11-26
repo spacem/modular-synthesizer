@@ -1,5 +1,4 @@
 import {Component, Host, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Note} from '../../../../models/note';
 import {Key} from '../../../../models/key';
 import {KeyboardComponent} from '../keyboard.component';
 
@@ -70,8 +69,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 		if( isNaN(keyNumber) )
 			throw(Error(`Key range error: ${keyNumber}`));
 
-		const note:Note = new Note(keyNumber);
-		return new Key(note,keyNumber);
+		return new Key(keyNumber);
 	}
 
 	/**
@@ -185,9 +183,9 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	 */
 	keyDown( key:Key )
 	{
-		console.log(key.note.frequency);
-		this.playNote(key.note.frequency);
-		key.note.on = true;
+		console.log(key.frequency);
+		this.playNote(key.frequency);
+		key.on = true;
 	}
 
 	// noinspection JSUnusedLocalSymbols
@@ -200,7 +198,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	keyUp( key:Key )
 	{
 		this.playNote(0);
-		key.note.on = false;
+		key.on = false;
 	}
 
 	//TODO Will be removed when implementing connexion between components.
