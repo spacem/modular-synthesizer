@@ -19,16 +19,17 @@ export class MainPanelComponent implements OnInit
 	protected mainGain:GainNode;
 	protected started:boolean = false;
 
-	constructor( mainPanelService:MainPanelService, webmidiService:WebmidiService )
+	constructor( private mainPanelService:MainPanelService,  private webmidiService:WebmidiService )
 	{
-		mainPanelService.toneSource$.subscribe( tone => this.setTone(tone) );
-		webmidiService.keySource$.subscribe( key => this.setTone(key.on ? key.frequency : 0) );
-		webmidiService.programSource$.subscribe( bank => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][bank%4] as OscillatorType ) );
 	}
 
 	ngOnInit()
 	{
-		this.audioContext = new AudioContext();
+		this.mainPanelService.toneSource$.subscribe( tone => this.setTone(tone) );
+		this.webmidiService.keySource$.subscribe( key => this.setTone(key.on ? key.frequency : 0) );
+		this.webmidiService.programSource$.subscribe( bank => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][bank%4] as OscillatorType ) );
+
+		this.audioContext = new (window['AudioContext'] || window['webkitAudioContext'])();
 		this.mainGain = this.audioContext.createGain();
 		this.mainGain.connect(this.audioContext.destination);
 		this.start();
