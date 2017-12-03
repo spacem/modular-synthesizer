@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
-import {WebmidiService} from '../shared/services/webmidi/webmidi.service';
+import {WebMIDIService} from '../shared/services/webmidi/webmidi.service';
 
 @Component({
   selector: 'app-main-panel',
@@ -19,7 +19,7 @@ export class MainPanelComponent implements OnInit
 	protected mainGain:GainNode;
 	protected started:boolean = false;
 
-	constructor( private mainPanelService:MainPanelService,  private webmidiService:WebmidiService )
+	constructor( private mainPanelService:MainPanelService,  private webmidiService:WebMIDIService )
 	{
 	}
 
