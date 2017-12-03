@@ -167,7 +167,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 			// To reduce key range errors, upperKey can't be lower than lowerKey value.
 			upperKey = Math.max(this._lowerKey,this._upperKey);
 			lowerKey = this._lowerKey;
-			this.octave = Math.floor(lowerKey/12)-1
+			this.octave = Math.floor(lowerKey/12)-1;
 		}
 
 		this._keys = KeyboardKeysComponent.generateKeys(lowerKey,upperKey);
