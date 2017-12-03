@@ -4,7 +4,7 @@ import {MainPanelComponent} from './main-panel.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {KeyboardModule} from './modules/input-controllers/keyboard/keyboard.module';
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
-import { WebmidiService } from "../shared/services/webmidi/webmidi.service";
+import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -14,7 +14,7 @@ describe('MainPanelComponent', () => {
 		TestBed.configureTestingModule({
 			imports: [RouterTestingModule,KeyboardModule],
 			declarations: [MainPanelComponent],
-			providers:[MainPanelService,WebmidiService]
+			providers:[MainPanelService,WebMIDIService]
 		})
 			.compileComponents();
 	}));

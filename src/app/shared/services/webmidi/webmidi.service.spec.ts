@@ -1,15 +1,18 @@
-import { TestBed, inject } from '@angular/core/testing';
+import { inject, TestBed } from '@angular/core/testing';
 
-import { WebmidiService } from './webmidi.service';
+import { WebMIDIService } from './webmidi.service';
 
-describe('WebmidiService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [WebmidiService]
-    });
-  });
+describe( 'WebMIDIService', () =>
+{
+	beforeEach( () =>
+	{
+		TestBed.configureTestingModule( {
+			providers: [ WebMIDIService ]
+		} );
+	} );
 
-  it('should be created', inject([WebmidiService], (service: WebmidiService) => {
-    expect(service).toBeTruthy();
-  }));
-});
+	it( 'should be created', inject( [ WebMIDIService ], ( service:WebMIDIService ) =>
+	{
+		expect( service ).toBeTruthy();
+	} ) );
+} );
