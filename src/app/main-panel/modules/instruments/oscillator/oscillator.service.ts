@@ -3,8 +3,6 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class OscillatorService
 {
-
-	protected audioContext:AudioContext;
 	protected oscillatorNode:OscillatorNode;
 	private outNode:AudioNode;
 	private tone:number;
@@ -24,8 +22,10 @@ export class OscillatorService
 		if( this.oscillatorNode )
 		{
 			//this.oscillatorNode.frequency.value = +this.toneRange.nativeElement.value;
-			this.oscillatorNode.frequency.setValueAtTime( tone, this.audioContext.currentTime );
+			this.oscillatorNode.frequency.setValueAtTime( tone, this.oscillatorNode.context.currentTime );
 		}
+		else
+			throw Error( `Trying to set oscillator tone on an oscillator that's not connected.` );
 
 		this.tone = tone;
 	}
@@ -45,12 +45,12 @@ export class OscillatorService
 
 	public connect( node:AudioNode )
 	{
-		this.outNode = node;
-
 		if( !this.oscillatorNode )
-			this.createOscillatorNode( this.outNode );
+			this.createOscillatorNode( node );
 		else
-			console.error( `Trying to connect a new node on an already connected oscillator.` );
+			throw Error( `Trying to connect a new node on an already connected oscillator.` );
+
+		this.outNode = node;
 	}
 
 	public start():void
@@ -65,11 +65,16 @@ export class OscillatorService
 		this.oscillatorNode = null;
 	}
 
-	private createOscillatorNode( outNode:AudioNode ):OscillatorNode
+	private createOscillatorNode( outNode:AudioNode )
 	{
-		const oscillatorNode:OscillatorNode = this.audioContext.createOscillator();
-		oscillatorNode.connect( outNode );
+		if( outNode )
+		{
+			const oscillatorNode:OscillatorNode = outNode.context.createOscillator();
+			oscillatorNode.connect( outNode );
 
-		return oscillatorNode;
+			this.oscillatorNode = oscillatorNode;
+		}
+		else
+			throw Error(`Trying to create an OscillatorNode without any output AudioNode.`);
 	}
 }

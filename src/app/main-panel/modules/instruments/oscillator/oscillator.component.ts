@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
+import { OscillatorService } from './oscillator.service';
 
 @Component( {
 	selector: 'app-oscillator',
@@ -12,10 +13,7 @@ export class OscillatorComponent implements OnInit
 	@ViewChild('waveform') waveformSelect:ElementRef;
 	@ViewChild('tone') toneRange:ElementRef;
 
-	protected audioContext:AudioContext;
-	protected oscillatorNode:OscillatorNode;
-
-	constructor( private mainPanelService:MainPanelService,  private webMIDIService:WebMIDIService ){}
+	constructor( private mainPanelService:MainPanelService,  private webMIDIService:WebMIDIService, private oscillatorService:OscillatorService ){}
 
 	ngOnInit()
 	{
@@ -23,42 +21,32 @@ export class OscillatorComponent implements OnInit
 		this.webMIDIService.programSource$.subscribe( bank => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][bank%4] as OscillatorType ) );
 	}
 
-	protected create():OscillatorNode
-	{
-		return this.audioContext.createOscillator();
-	}
-
 	public setTone( tone:number ):void
 	{
-		//TODO parse value
-		this.toneRange.nativeElement.value = tone ;
+		this.oscillatorService.setTone(tone);
 
-		if(this.oscillatorNode)
-		//	this.oscillatorNode.frequency.value = +this.toneRange.nativeElement.value;
-			this.oscillatorNode.frequency.setValueAtTime(+this.toneRange.nativeElement.value, this.audioContext.currentTime);
+		//TODO parse value
+		this.toneRange.nativeElement.value =  this.oscillatorService.getTone();
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void
 	{
-		this.waveformSelect.nativeElement.value = waveformType;
-
-		if(this.oscillatorNode)
-			this.oscillatorNode.type = waveformType;
+		this.oscillatorService.setWaveformType(waveformType);
+		this.waveformSelect.nativeElement.value = this.oscillatorService.getWaveformType();
 	}
 
 	public start():void
 	{
-		this.oscillatorNode = this.create();
-		this.setWaveformType(this.waveformSelect.nativeElement.value);
-		this.oscillatorNode.connect(this.mainPanelService.getMainGain());
-		this.oscillatorNode.start(0);
+		this.oscillatorService.setWaveformType(this.waveformSelect.nativeElement.value);
+
+		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
+		this.oscillatorService.connect(this.mainPanelService.getMainGain());
+		this.oscillatorService.start();
 		this.setTone(0);
 	}
 
 	public stop():void
 	{
-		this.oscillatorNode.disconnect(this.mainPanelService.getMainGain());
-		this.oscillatorNode = null;
+		this.oscillatorService.stop();
 	}
-
 }
