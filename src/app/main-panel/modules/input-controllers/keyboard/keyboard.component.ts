@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {MainPanelService} from '../../../../shared/services/main-panel/main-panel.service';
+import { Component, OnInit } from '@angular/core';
+import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
+import { OscillatorService } from '../../instruments/oscillator/oscillator.service';
 
 @Component({
 	selector: 'app-keyboard',
@@ -9,9 +10,7 @@ import {MainPanelService} from '../../../../shared/services/main-panel/main-pane
 export class KeyboardComponent implements OnInit
 {
 
-	constructor(private mainPanelService:MainPanelService)
-	{
-	}
+	constructor(private mainPanelService:MainPanelService, private oscillatorService:OscillatorService){}
 
 	ngOnInit()
 	{
@@ -20,6 +19,7 @@ export class KeyboardComponent implements OnInit
 	//TODO Transmit notes, not tones.
 	setTone(tone:number)
 	{
-		this.mainPanelService.setTone(tone);
+		//TODO Make the real connection thing.
+		this.oscillatorService.setTone(tone);
 	}
 }
