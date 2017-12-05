@@ -1,14 +1,29 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class MainPanelService
 {
-	private toneSource = new Subject<number>();
-	public toneSource$ = this.toneSource.asObservable();
+	protected audioContext:AudioContext;
+	protected mainGain:GainNode;
 
-	setTone( tone:number ):void
+	public getMainGain():GainNode
 	{
-		this.toneSource.next(tone);
+		return this.mainGain;
+	}
+
+	public start():void
+	{
+		//TODO Check for AudioContext availability.
+		//TODO Destroy the old AudioContext first.
+		this.audioContext = new (window['AudioContext'] || window['webkitAudioContext'])();
+		this.mainGain = this.audioContext.createGain();
+		this.mainGain.connect(this.audioContext.destination);
+		this.mainGain.gain.setValueAtTime(1, this.audioContext.currentTime);
+	}
+
+	public stop():void
+	{
+		if( this.mainGain )
+			this.mainGain.gain.setValueAtTime(0, this.audioContext.currentTime);
 	}
 }
