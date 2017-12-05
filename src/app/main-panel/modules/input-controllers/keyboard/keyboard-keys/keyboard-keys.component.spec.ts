@@ -1,8 +1,9 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {KeyboardKeysComponent} from './keyboard-keys.component';
-import {KeyboardComponent} from '../keyboard.component';
-import {MainPanelService} from '../../../../../shared/services/main-panel/main-panel.service';
+import { KeyboardKeysComponent } from './keyboard-keys.component';
+import { KeyboardComponent } from '../keyboard.component';
+import { MainPanelService } from '../../../../../shared/services/main-panel/main-panel.service';
+import { OscillatorService } from '../../../instruments/oscillator/oscillator.service';
 
 describe('KeyboardKeysComponent', () =>
 {
@@ -13,7 +14,7 @@ describe('KeyboardKeysComponent', () =>
 	{
 		TestBed.configureTestingModule({
 			declarations: [KeyboardKeysComponent],
-			providers: [KeyboardComponent,MainPanelService]
+			providers: [KeyboardComponent,MainPanelService,OscillatorService]
 		})
 			.compileComponents();
 	}));

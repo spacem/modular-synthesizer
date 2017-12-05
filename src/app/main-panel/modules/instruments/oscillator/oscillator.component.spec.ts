@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OscillatorComponent } from './oscillator.component';
+import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
+import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
+import { OscillatorService } from './oscillator.service';
 
 describe( 'OscillatorComponent', () =>
 {
@@ -10,7 +13,8 @@ describe( 'OscillatorComponent', () =>
 	beforeEach( async( () =>
 	{
 		TestBed.configureTestingModule( {
-			declarations: [ OscillatorComponent ]
+			declarations: [ OscillatorComponent ],
+			providers: [MainPanelService,WebMIDIService,OscillatorService]
 		} )
 			.compileComponents();
 	} ) );

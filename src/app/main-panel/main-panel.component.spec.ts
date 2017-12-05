@@ -5,6 +5,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {KeyboardModule} from './modules/input-controllers/keyboard/keyboard.module';
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
 import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
+import { OscillatorModule } from './modules/instruments/oscillator/oscillator.module';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -12,7 +13,7 @@ describe('MainPanelComponent', () => {
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
-			imports: [RouterTestingModule,KeyboardModule],
+			imports: [RouterTestingModule,KeyboardModule,OscillatorModule],
 			declarations: [MainPanelComponent],
 			providers:[MainPanelService,WebMIDIService]
 		})
