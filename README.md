@@ -1,8 +1,10 @@
 # ModularSynthesizer
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.0.
+The project is built upon [Angular](https://angular.io/) using TypeScript [TypeScript](www.typescriptlang.org/).
 
-It is built with [Angular](https://angular.io/)
+## Demo
+
+You can [run a live demo](https://tekool.net/blogfiles/modular-synthesizer/) (mirror each git push while work in progress). 
 
 ## Installation
 
