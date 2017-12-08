@@ -4,6 +4,7 @@ import { OscillatorComponent } from './oscillator.component';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { OscillatorService } from './oscillator.service';
+import {WindowService} from '../../../../core/services/window/window.service';
 
 describe( 'OscillatorComponent', () =>
 {
@@ -14,7 +15,7 @@ describe( 'OscillatorComponent', () =>
 	{
 		TestBed.configureTestingModule( {
 			declarations: [ OscillatorComponent ],
-			providers: [MainPanelService,WebMIDIService,OscillatorService]
+			providers: [MainPanelService,WebMIDIService,OscillatorService,WindowService]
 		} )
 			.compileComponents();
 	} ) );

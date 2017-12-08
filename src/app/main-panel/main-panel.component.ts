@@ -17,10 +17,13 @@ export class MainPanelComponent implements OnInit
 
 	protected started:boolean = false;
 
-	constructor(private mainPanelService:MainPanelService){}
+	constructor(private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService,){}
 
 	ngOnInit()
 	{
+		//TODO Create a menu to configure MIDI when MIDI is detected.
+		this.webMIDIService.setupMidi();
+
 		this.start();
 	}
 

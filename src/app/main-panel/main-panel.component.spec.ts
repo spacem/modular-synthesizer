@@ -6,6 +6,7 @@ import {KeyboardModule} from './modules/input-controllers/keyboard/keyboard.modu
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
 import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
 import { OscillatorModule } from './modules/instruments/oscillator/oscillator.module';
+import {WindowService} from '../core/services/window/window.service';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -15,7 +16,7 @@ describe('MainPanelComponent', () => {
 		TestBed.configureTestingModule({
 			imports: [RouterTestingModule,KeyboardModule,OscillatorModule],
 			declarations: [MainPanelComponent],
-			providers:[MainPanelService,WebMIDIService]
+			providers:[MainPanelService,WebMIDIService,WindowService]
 		})
 			.compileComponents();
 	}));

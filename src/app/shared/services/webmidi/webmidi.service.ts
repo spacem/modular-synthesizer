@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Key } from '../../../main-panel/models/key';
 import { Observable } from 'rxjs/Observable';
+import {WindowService} from '../../../core/services/window/window.service';
 
 /**
  * Main entry point and adapter for the browser Web MIDI API.
@@ -18,10 +19,18 @@ export class WebMIDIService
 	private inputs/*WebMidi.MIDIInputMap*/;
 	private outputs/*WebMidi.MIDIOutputMap*/;
 
-	constructor()
+	constructor( private windowService:WindowService){}
+
+	/**
+	 * Tells if browser supports Web MIDI. It will help in activate MIDI functionalities.
+	 *
+	 * It doesn't guaranty that MIDI access is effective, which is an asynchronous operation.
+	 *
+	 * @returns {boolean}
+	 */
+	public browserHasMidi():boolean
 	{
-		//TODO Defer to manage rights to use WebMidi on Sysex.
-		this.setupMidi();
+		return this.windowService.has('requestMIDIAccess');
 	}
 
 	/**
@@ -29,9 +38,9 @@ export class WebMIDIService
 	 */
 	public setupMidi()
 	{
-		if( navigator[ 'requestMIDIAccess' ] )
+		if( this.browserHasMidi() )
 		{
-			console.log( 'Browser supports MIDI!' );
+			console.info( 'Browser supports MIDI!' );
 			navigator[ 'requestMIDIAccess' ]().then
 			(
 				midiAccess => this.onMIDISuccess( midiAccess ),
@@ -158,7 +167,7 @@ export class WebMIDIService
 	 */
 	private onMIDISuccess( midiAccess/*WebMidi.MIDIAccess*/ ):void
 	{
-		console.info('Web MIDI accessed');
+		console.info('Web MIDI successfully accessed');
 
 		midiAccess.addEventListener( 'statechange', ( event/*WebMidi.MIDIConnectionEvent*/ ) =>
 		{
