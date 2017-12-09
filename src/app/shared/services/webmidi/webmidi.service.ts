@@ -26,17 +26,19 @@ export class WebMIDIService
 	 *
 	 * It doesn't guaranty that MIDI access is effective, which is an asynchronous operation.
 	 *
-	 * @returns {boolean}
+	 * @returns
+	 *  Browser supports Web MIDI or not.
 	 */
 	public browserHasMidi():boolean
 	{
-		return this.windowService.has('requestMIDIAccess');
+		// We have to cast to 'keyof Window' because as of today 11/09/2017 'requestMIDIAccess' is not declared in lib.es6.d.ts ECMAScript APIs TypeScript definition.
+		return this.windowService.get('requestMIDIAccess' as keyof Window);
 	}
 
 	/**
 	 * Launch the MIDI ports detection and configuration.
 	 */
-	public setupMidi()
+	public setupMidi():void
 	{
 		if( this.browserHasMidi() )
 		{
@@ -58,10 +60,10 @@ export class WebMIDIService
 	 *
 	 * @see http://computermusicresource.com/MIDI.Commands.html
 	 *
-	 * @param {WebMidi.MIDIMessageEvent} event
+	 * @param event
 	 * 	The corresponding MIDI message event containing the MIDI data to extract.
 	 */
-	private onMidiMessage( event/*WebMidi.MIDIMessageEvent*/ )
+	private onMidiMessage( event/*WebMidi.MIDIMessageEvent*/ ):void
 	{
 		// Implementation for passthru, but it needs to avoid loopback on emitting port.
 		//this.outputs.forEach( output =>	output.send(event.data, event.timeStamp) );
@@ -113,10 +115,10 @@ export class WebMIDIService
 	/**
 	 * Called on each «Program Change» MIDI message.
 	 *
-	 * @param {number} channel
+	 * @param channel
 	 * 	The MIDI channel on which the program change occurred.
 	 *
-	 * @param {number} program
+	 * @param program
 	 * 	The new program number on which to map MIDI notes for this channel.
 	 */
 	private onProgramChange( channel:number, program:number ):void
@@ -127,13 +129,13 @@ export class WebMIDIService
 	/**
 	 * Called on each «Note On/Off» MIDI message.
 	 *
-	 * @param {number} channel
+	 * @param channel
 	 * 	The MIDI channel on which the «Note On/Off» message occurred.
 	 *
-	 * @param {number} midiNote
+	 * @param midiNote
 	 * 	The note to take into account (with C-1 as reference zero note and G-9 as upper note, following MIDI standard).
 	 *
-	 * @param {number} velocity
+	 * @param velocity
 	 * 	The velocity of the note to take into account (from 0 to 127, following MIDI standard).
 	 */
 	private onMidiNote( channel:number, midiNote:number, velocity:number ):void
@@ -149,7 +151,7 @@ export class WebMIDIService
 	/**
 	 * Emit a key change event to all subscribers of the $keySource Observable.
 	 *
-	 * @param {Key} key
+	 * @param key
 	 * 	The key object associated to the key change event.
 	 */
 	private setKey( key:Key ):void
@@ -162,7 +164,7 @@ export class WebMIDIService
 	 *
 	 * Will start the MIDI service configuration and connection depending on found MIDI I/O ports.
 	 *
-	 * @param {WebMidi.MIDIAccess} midiAccess
+	 * @param midiAccess
 	 * 	The Web MIDI Access object on which to operate I/O connections.
 	 */
 	private onMIDISuccess( midiAccess/*WebMidi.MIDIAccess*/ ):void
@@ -204,7 +206,7 @@ export class WebMIDIService
 	/**
 	 * Connect to the given MIDI input port to start receiving MIDI messages.
 	 *
-	 * @param {WebMidi.MIDIInput} input
+	 * @param input
 	 * 	The MIDI input port from which to start receiving messages.
 	 */
 	private connectInput( input/*WebMidi.MIDIInput*/ ):void
@@ -217,7 +219,7 @@ export class WebMIDIService
 	/**
 	 * Called when the MIDI access attempt to Web MIDI API failed.
 	 *
-	 * @param {string} message
+	 * @param message
 	 * 	The MIDI input port from which to start receiving messages.
 	 */
 	private onMIDIFailure( message:string ):void
