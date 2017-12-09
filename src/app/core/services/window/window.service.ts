@@ -1,56 +1,71 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 /**
- * Private access point to window.
- *
- * @returns {Window}
- */
-function getWindow():Window
-{
-	return window;
-}
-
-/**
- * Offers an injectable and unit-testable access point to the browser native window object.
+ * Offers an injectable and unit-testable unique access point to the browser window object.
  */
 @Injectable()
 export class WindowService
 {
-	private window:Window = getWindow();
+	private window:Window;
 
 	/**
-	 * @param {Window} window
-	 * 	Convenient method to inject and use another window object than the browser native window into the application.
+	 * Build the WindowService class.
+	 *
+	 * @param document
+	 * 	Convenient method to inject another window object than the browser native window into the application or tests.
 	 */
-	constructor( window:Window )
-	{
-		this.window = window || getWindow();
-	}
+	constructor( @Inject(DOCUMENT) private document:Document ){}
 
 	/**
-	 * Return teh reference to the window object to use into the application.
+	 * Return the reference to the browser native window object.
 	 *
-	 * @param {string} propertyName
-	 * 	The property name to check it exists.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/defaultView
+	 * @see https://github.com/maxisam/ngx-window-token
+	 * @see https://stackoverflow.com/questions/1338224/how-do-i-get-the-window-object-from-the-document-object
 	 *
-	 * @returns {boolean}
+	 * @returns
+	 * 	The reference to the browser native window object.
 	 */
-	public getWindow( propertyName:string ):Window
+	public getWindow():Window
 	{
-		return this.window;
+		const window:Window = this.window || (this.document['parentWindow'] as Window) || this.document.defaultView;
+
+		if( !window )
+			throw Error(`Can't access the application container window.`);
+
+		return window;
 	}
 
 	/**
 	 * Check for the existence of a particular window property
 	 * (some could need special check in the future).
 	 *
-	 * @param {string} propertyName
+	 * @param propertyName
 	 * 	The property name to check it exists.
 	 *
-	 * @returns {boolean}
+	 * @returns
+	 * 	The property exists on window or not.
 	 */
-	public has( propertyName:string ):boolean
+	public has<K extends keyof Window>( propertyName:K ):boolean
 	{
-		return propertyName in this.window;
+		return propertyName in this.getWindow();
+	}
+
+	/**
+	 * Return the requested window property.
+	 *
+	 * @param propertyName
+	 * 	The requested property name.
+	 *
+	 * @param defaultValue
+	 * 	The value to return when the searched property doesn't exist onto window.
+	 *
+	 * @returns
+	 * 	Requested property value on Window.
+	 */
+	public get<K extends keyof Window>( propertyName:K, defaultValue?:Window[K] ):Window[K]
+	{
+		return !this.has(propertyName) ? defaultValue : this.getWindow()[propertyName];
 	}
 }
