@@ -38,8 +38,12 @@ export class WindowService
 		return window;
 	}
 
+	// noinspection JSUnusedGlobalSymbols
 	/**
-	 * Check for the existence of a particular window property.
+	 * Check for the existence of a particular window property
+	 *
+	 * It doesn't use lodash.has, because some window property are not enumerable, so we have to retrieve it first to
+	 * test for their existence.
 	 *
 	 * @param path
 	 * 	The property path name to check it exists.
@@ -51,7 +55,7 @@ export class WindowService
 	 */
 	public has<K extends keyof Window>( path:K ):boolean
 	{
-		return lodash.has( this.getWindow(), path );
+		return typeof lodash.get( this.getWindow(), path ) !== 'undefined';
 	}
 
 	/**
