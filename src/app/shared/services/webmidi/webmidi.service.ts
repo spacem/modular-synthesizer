@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { Key } from '../../../main-panel/models/key';
 import { Observable } from 'rxjs/Observable';
-import {WindowService} from '../../../core/services/window/window.service';
+import { WindowService } from '../../../core/services/window/window.service';
+
 
 /**
  * Main entry point and adapter for the browser Web MIDI API.
@@ -19,7 +20,7 @@ export class WebMIDIService
 	private inputs/*WebMidi.MIDIInputMap*/;
 	private outputs/*WebMidi.MIDIOutputMap*/;
 
-	constructor( private windowService:WindowService){}
+	constructor( private windowService:WindowService ){}
 
 	/**
 	 * Tells if browser supports Web MIDI. It will help in activate MIDI functionalities.
@@ -31,8 +32,10 @@ export class WebMIDIService
 	 */
 	public browserHasMidi():boolean
 	{
-		// We have to cast to 'keyof Window' because as of today 11/09/2017 'requestMIDIAccess' is not declared in lib.es6.d.ts ECMAScript APIs TypeScript definition.
-		return this.windowService.get('requestMIDIAccess' as keyof Window);
+		// We have to cast to 'keyof Window' because as of today 11/09/2017 'requestMIDIAccess' is not declared in
+		// lib.es6.d.ts ECMAScript APIs TypeScript definition.
+		//@see https://github.com/Microsoft/TypeScript/blob/master/lib/lib.es6.d.ts
+		return this.windowService.has('requestMIDIAccess' as keyof Window);
 	}
 
 	/**
@@ -221,7 +224,11 @@ export class WebMIDIService
 	 *
 	 * @param message
 	 * 	The MIDI input port from which to start receiving messages.
+	 *
+	 *
 	 */
+	/* tslint:disable */
+	// noinspection JSMethodCanBeStatic
 	private onMIDIFailure( message:string ):void
 	{
 		console.log('Failed to get MIDI access - ' + message );
