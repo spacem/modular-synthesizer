@@ -2,61 +2,109 @@ import { TestBed } from '@angular/core/testing';
 
 import { WindowService } from './window.service';
 
-describe('WindowService', () => {
-	beforeEach(() =>
+describe( 'WindowService', () =>
+{
+	const documentMock:Document =
 	{
-		TestBed.configureTestingModule(	{
-			providers: [WindowService]
-		});
-	});
+		defaultView:
+		{
+			name: 'mockedWindowName',
+			navigator:
+			{
+				languages:
+				{
+					length: 4
+				}
+			}
+		}
+	} as Document;
 
-	it('should be created', () =>
+	beforeEach( () =>
 	{
-		const service = TestBed.get(WindowService);
-		expect(service).toBeTruthy();
-	});
+		TestBed.configureTestingModule( {
+			providers: [ { provide:WindowService, useValue: new WindowService( documentMock ) } ]
+		} );
+	} );
 
-	it('::getWindow() should return the injected documentMock.defaultView',  () =>
+	it( 'should be created', () =>
 	{
-		const documentMock:Document = { defaultView: {} } as Document;
-		TestBed.overrideProvider(WindowService, { useValue : new WindowService(documentMock) });
+		const service = TestBed.get( WindowService );
+		expect( service ).toBeTruthy();
+	} );
 
-		const service = TestBed.get(WindowService);
-		expect(service.getWindow()).toBe(documentMock.defaultView);
-	});
+	it( '::getWindow() should return the injected documentMock.defaultView', () =>
+	{
+		const service = TestBed.get( WindowService );
+		expect( service.getWindow() ).toBe( documentMock.defaultView );
+	} );
 
-	it('::getWindow() should return the real browser window when it exists',  () =>
+	it( '::getWindow() should return the real browser window when it exists', () =>
 	{
 		TestBed.overrideProvider(WindowService, { useValue : new WindowService(document) });
 
-		const service = TestBed.get(WindowService);
-		expect(service.getWindow()).toBe(window);
-	});
+		const service = TestBed.get( WindowService );
+		expect( service.getWindow() ).toBe( window );
+	} );
 
-	it(`::has() should return true when window has the requested property`,  () =>
+	it( `::has() should return true when window has the requested property`, () =>
 	{
-		const documentMock:Document = { defaultView: { name:'mockedWindowName' } } as Document;
-		TestBed.overrideProvider(WindowService, { useValue : new WindowService(documentMock) });
+		const service = TestBed.get( WindowService );
+		expect( service.has( 'name' ) ).toBe( true );
+	} );
 
-		const service = TestBed.get(WindowService);
-		expect(service.has('name')).toBeTruthy();
-	});
-
-	it(`::has() should return false when window does not have the requested property`,  () =>
+	it( `::has() should return false when window does not have the requested property`, () =>
 	{
-		const documentMock:Document = { defaultView: {} } as Document;
-		TestBed.overrideProvider(WindowService, { useValue : new WindowService(documentMock) });
+		const service = TestBed.get( WindowService );
+		expect( service.has( 'console' ) ).toBe( false );
+	} );
 
-		const service = TestBed.get(WindowService);
-		expect(service.has('name')).toBeFalsy();
-	});
-
-	it('::get() should return the requested property value on the browser window',  () =>
+	it( `::has() should return true when window has the requested property using a path`, () =>
 	{
-		const documentMock:Document = { defaultView: { name:'mockedWindowName' } } as Document;
-		TestBed.overrideProvider(WindowService, { useValue : new WindowService(documentMock) });
+		const service = TestBed.get( WindowService );
+		expect( service.has( 'navigator.languages.length' ) ).toBe( true );
+	} );
 
-		const service = TestBed.get(WindowService);
-		expect(service.get('name')).toBe('mockedWindowName');
-	});
-});
+	it( `::has() should return false when window does not have the requested property using a path`, () =>
+	{
+		const service = TestBed.get( WindowService );
+		expect( service.has( 'navigator.userAgent.length' ) ).toBe( false );
+	} );
+
+	it( '::get() should return the requested property value on the browser window', () =>
+	{
+		const service = TestBed.get( WindowService );
+		expect( service.get( 'name' ) ).toBe( 'mockedWindowName' );
+	} );
+
+	it( '::get() should return the requested property value on the browser window using a path', () =>
+	{
+		const service = TestBed.get( WindowService );
+		expect( service.get( 'navigator.languages.length' ) ).toBe( 4 );
+	} );
+
+	it( `::get() should return undefined when the requested property value doesn't exist on the browser window`, () =>
+	{
+		const service = TestBed.get( WindowService );
+		expect( service.get( 'screenX' ) ).toBeUndefined();
+	} );
+
+	it( `::get() should return undefined when the requested property value doesn't exist on the browser window using a path`, () =>
+	{
+		const service = TestBed.get( WindowService );
+		expect( service.get( 'navigator.userAgent.length' ) ).toBeUndefined();
+	} );
+
+	it( `::get() should return the default value when the requested property value doesn't exist on the browser window`, () =>
+	{
+		const foo = 'bar';
+		const service = TestBed.get( WindowService );
+		expect( service.get( 'screenX', foo ) ).toBe(foo);
+	} );
+
+	it( `::get() should return the default value when the requested property value doesn't exist on the browser window using a path`, () =>
+	{
+		const foo = 'bar';
+		const service = TestBed.get( WindowService );
+		expect( service.get( 'navigator.userAgent.length', foo ) ).toBe(foo);
+	} );
+} );

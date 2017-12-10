@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import * as lodash from 'lodash-es';
 
 /**
  * Offers an injectable and unit-testable unique access point to the browser window object.
@@ -38,34 +39,37 @@ export class WindowService
 	}
 
 	/**
-	 * Check for the existence of a particular window property
-	 * (some could need special check in the future).
+	 * Check for the existence of a particular window property.
 	 *
-	 * @param propertyName
-	 * 	The property name to check it exists.
+	 * @param path
+	 * 	The property path name to check it exists.
+	 *
+	 * 	e.g: 'navigator.languages.length'
 	 *
 	 * @returns
 	 * 	The property exists on window or not.
 	 */
-	public has<K extends keyof Window>( propertyName:K ):boolean
+	public has<K extends keyof Window>( path:K ):boolean
 	{
-		return propertyName in this.getWindow();
+		return lodash.has( this.getWindow(), path );
 	}
 
 	/**
 	 * Return the requested window property.
 	 *
-	 * @param propertyName
-	 * 	The requested property name.
+	 * @param path
+	 * 	The requested property path to get.
+	 *
+	 * 	e.g: 'navigator.languages.length'
 	 *
 	 * @param defaultValue
 	 * 	The value to return when the searched property doesn't exist onto window.
 	 *
 	 * @returns
-	 * 	Requested property value on Window.
+	 * 	The requested property value on Window.
 	 */
-	public get<K extends keyof Window>( propertyName:K, defaultValue?:Window[K] ):Window[K]
+	public get<K extends keyof Window>( path:K, defaultValue?:Window[K] ):Window[K]
 	{
-		return !this.has(propertyName) ? defaultValue : this.getWindow()[propertyName];
+		return lodash.get( this.getWindow(), path, defaultValue);
 	}
 }
