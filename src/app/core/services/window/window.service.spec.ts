@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { WindowService } from './window.service';
+import { DOCUMENT } from '@angular/common';
 
 describe( 'WindowService', () =>
 {
@@ -22,7 +23,7 @@ describe( 'WindowService', () =>
 	beforeEach( () =>
 	{
 		TestBed.configureTestingModule( {
-			providers: [ { provide:WindowService, useValue: new WindowService( documentMock ) } ]
+			providers: [WindowService, { provide:DOCUMENT, useValue: documentMock } ]
 		} );
 	} );
 
@@ -35,6 +36,7 @@ describe( 'WindowService', () =>
 	it( '::getWindow() should return the injected documentMock.defaultView', () =>
 	{
 		const service = TestBed.get( WindowService );
+		debugger;
 		expect( service.getWindow() ).toBe( documentMock.defaultView );
 	} );
 
