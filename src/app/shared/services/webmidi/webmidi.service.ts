@@ -45,7 +45,7 @@ export class WebMIDIService
 	{
 		if( this.browserHasMidi() )
 		{
-			console.info( 'Browser supports MIDI!' );
+			console.info( 'Browser supports Web MIDI.' );
 
 			const requestMIDIAccess/*requestMIDIAccess*/ = this.windowService.get('navigator.requestMIDIAccess' as keyof Window);
 			requestMIDIAccess().then
