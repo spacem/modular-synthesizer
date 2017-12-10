@@ -30,6 +30,8 @@ export class WindowService
 	 */
 	public getWindow():Window
 	{
+		// We have to cast 'parentWindow' to 'Window' because as of today 11/10/2017 'parentWindow' is not declared in
+		// lib.es6.d.ts ECMAScript APIs TypeScript definition.
 		const window:Window = this.window || (this.document['parentWindow'] as Window) || this.document.defaultView;
 
 		if( !window )

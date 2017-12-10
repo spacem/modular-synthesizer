@@ -5,7 +5,7 @@ import { DOCUMENT } from '@angular/common';
 
 describe( 'WindowService', () =>
 {
-	const documentMock:Document =
+	const documentMock =
 	{
 		defaultView:
 		{
@@ -18,12 +18,12 @@ describe( 'WindowService', () =>
 				}
 			}
 		}
-	} as Document;
+	};
 
 	beforeEach( () =>
 	{
 		TestBed.configureTestingModule( {
-			providers: [WindowService, { provide:DOCUMENT, useValue: documentMock } ]
+			providers: [{ provide:DOCUMENT, useValue: documentMock }, WindowService ]
 		} );
 	} );
 
@@ -33,16 +33,27 @@ describe( 'WindowService', () =>
 		expect( service ).toBeTruthy();
 	} );
 
-	it( '::getWindow() should return the injected documentMock.defaultView', () =>
+	it( '::getWindow() should return document.parentWindow when it exists', () =>
 	{
+		const documentMock2 = {	parentWindow:{}	};
+		TestBed.overrideProvider(DOCUMENT, { useValue : documentMock2 });
+
 		const service = TestBed.get( WindowService );
-		debugger;
-		expect( service.getWindow() ).toBe( documentMock.defaultView );
+		expect( service.getWindow() ).toBe( documentMock2.parentWindow );
+	} );
+
+	it( '::getWindow() should return document.defaultView when it exists', () =>
+	{
+		const documentMock2 = {	defaultView:{}	};
+		TestBed.overrideProvider(DOCUMENT, { useValue : documentMock2 });
+
+		const service = TestBed.get( WindowService );
+		expect( service.getWindow() ).toBe( documentMock2.defaultView );
 	} );
 
 	it( '::getWindow() should return the real browser window when it exists', () =>
 	{
-		TestBed.overrideProvider(WindowService, { useValue : new WindowService(document) });
+		TestBed.overrideProvider(DOCUMENT, { useValue : document });
 
 		const service = TestBed.get( WindowService );
 		expect( service.getWindow() ).toBe( window );
