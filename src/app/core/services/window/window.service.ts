@@ -8,8 +8,6 @@ import * as lodash from 'lodash-es';
 @Injectable()
 export class WindowService
 {
-	private window:Window;
-
 	/**
 	 * Build the WindowService class.
 	 *
@@ -32,7 +30,7 @@ export class WindowService
 	{
 		// We have to cast 'parentWindow' to 'Window' because as of today 11/10/2017 'parentWindow' is not declared in
 		// lib.es6.d.ts ECMAScript APIs TypeScript definition.
-		const window:Window = this.window || (this.document['parentWindow'] as Window) || this.document.defaultView;
+		const window:Window = (this.document['parentWindow'] as Window) || this.document.defaultView;
 
 		if( !window )
 			throw Error(`Can't access the application container window.`);
