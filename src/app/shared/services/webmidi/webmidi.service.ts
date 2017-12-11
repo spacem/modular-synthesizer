@@ -208,19 +208,6 @@ export class WebMIDIService
 			console.warn('No output MIDI port detected.');
 	}
 
-	/**
-	 * Connect to the given MIDI input port to start receiving MIDI messages.
-	 *
-	 * @param input
-	 * 	The MIDI input port from which to start receiving messages.
-	 */
-	private connectInput( input/*WebMidi.MIDIInput*/ ):void
-	{
-		console.log( `Connected to MIDI input port: ${input.name}` );
-		input.addEventListener( 'statechange', event => console.info( `Midi Input statechange event:`, event) );
-		input.addEventListener( 'midimessage', ( event/*WebMidi.MIDIMessageEvent*/ ) => this.onMidiMessage( event ) );
-	}
-
 	// noinspection JSMethodCanBeStatic
 	/**
 	 * Called when the MIDI access attempt to Web MIDI API failed.
@@ -233,5 +220,18 @@ export class WebMIDIService
 	private onMIDIFailure( message:string ):void
 	{
 		console.log('Failed to get MIDI access - ' + message );
+	}
+
+	/**
+	 * Connect to the given MIDI input port to start receiving MIDI messages.
+	 *
+	 * @param input
+	 * 	The MIDI input port from which to start receiving messages.
+	 */
+	private connectInput( input/*WebMidi.MIDIInput*/ ):void
+	{
+		console.log( `Connected to MIDI input port: ${input.name}` );
+		input.addEventListener( 'statechange', event => console.info( `Midi Input statechange event:`, event) );
+		input.addEventListener( 'midimessage', ( event/*WebMidi.MIDIMessageEvent*/ ) => this.onMidiMessage( event ) );
 	}
 }

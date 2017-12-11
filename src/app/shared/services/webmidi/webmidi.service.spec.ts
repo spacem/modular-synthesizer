@@ -37,8 +37,8 @@ describe( 'WebMIDIService', () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
-
 		const service = TestBed.get( WebMIDIService );
+
 		expect( service.browserHasMidi() ).toBe(true);
 	} );
 
@@ -46,8 +46,8 @@ describe( 'WebMIDIService', () =>
 	{
 		const documentMock2 = {	defaultView:{navigator:{}}};
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
-
 		const service = TestBed.get( WebMIDIService );
+
 		expect( service.browserHasMidi() ).toBe(false);
 	} );
 
@@ -55,13 +55,14 @@ describe( 'WebMIDIService', () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
-
 		const service = TestBed.get( WebMIDIService );
+
 		spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(new Promise(function(){}));
 		const spy = spyOn( console, 'info' );
 
 		service.setupMidi();
 
+		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalledWith('Browser supports Web MIDI.');
 	} );
 
@@ -69,12 +70,13 @@ describe( 'WebMIDIService', () =>
 	{
 		const documentMock2 = {	defaultView:{navigator:{}}};
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
+		const service = TestBed.get( WebMIDIService );
 
 		const spy = spyOn( console, 'warn' );
 
-		const service = TestBed.get( WebMIDIService );
 		service.setupMidi();
 
+		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalledWith('Browser does not support Web MIDI.');
 	} );
 
@@ -82,16 +84,56 @@ describe( 'WebMIDIService', () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
+		const service = TestBed.get( WebMIDIService );
 
-		const spyRequestMIDIAccess = spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(new Promise(function(){}));
+		// noinspection JSUnusedLocalSymbols
+		const fakePromise = { then: (resolve, reject)=> void 0 };
+		const spyRequestMIDIAccess = spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
 		spyOn( console, 'info' );
 
-		const service = TestBed.get( WebMIDIService );
 		service.setupMidi();
 
+		// noinspection JSIgnoredPromiseFromCall
 		expect( spyRequestMIDIAccess ).toHaveBeenCalled();
 	} );
 
+	it( `::setupMidi() requestMIDIAccess promise should call ::onMIDISuccess() when succeeding`, () =>
+	{
+		const documentMock2 = lodash.cloneDeep(documentMock);
+		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
+		const service = TestBed.get( WebMIDIService );
 
+		// The promise is immediately resolved, but it is only valid while we do not need true async behavior.
+		// noinspection JSUnusedLocalSymbols
+		const fakePromise = {then: (resolve, reject) => resolve('midiSuccess')};
+		spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
+		spyOn( console, 'info' );
 
+		const spyOnMIDISuccess = spyOn( service, 'onMIDISuccess' );
+
+		service.setupMidi();
+
+		// noinspection JSIgnoredPromiseFromCall
+		expect( spyOnMIDISuccess ).toHaveBeenCalledWith('midiSuccess');
+	} );
+
+	it( `::setupMidi() requestMIDIAccess promise should call ::onMIDIFailure() when failing`, () =>
+	{
+		const documentMock2 = lodash.cloneDeep(documentMock);
+		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
+		const service = TestBed.get( WebMIDIService );
+
+		// The promise is immediately resolved, but it is only valid while we do not need true async behavior.
+		// noinspection JSUnusedLocalSymbols
+		const fakePromise = {then: (resolve, reject) => reject('midiFailure')};
+		spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
+		spyOn( console, 'info' );
+
+		const spyOnMIDISuccess = spyOn( service, 'onMIDIFailure' );
+
+		service.setupMidi();
+
+		// noinspection JSIgnoredPromiseFromCall
+		expect( spyOnMIDISuccess ).toHaveBeenCalledWith('midiFailure');
+	} );
 } );
