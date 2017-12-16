@@ -1,3 +1,5 @@
+import { ToneHelper } from '../../shared/helpers/tone-helper';
+
 export class Key
 {
 	/**
@@ -41,28 +43,14 @@ export class Key
 	public frequency:number=0;
 
 	/**
-	 * State of the note in the midi flow.
+	 * Current state of the key (released or pressed).
 	 *
 	 * @type {boolean}
 	 */
-	public on:boolean = false;
+	public pressed:boolean = false;
 
 	/**
-	 * Calculate the note frequency where C-1 is the zero note (A4 is note #69 when referring to C-1…).
-	 *
-	 * @param {number} note
-	 * 	The key number for which to calculate the frequency.
-	 *
-	 * @return {number}
-	 * 	The calculated frequency of the note.
-	 */
-	private static noteToFrequency( note:number ):number
-	{
-		return Math.pow(2,(note- 69)/12 ) * 440.0;
-	}
-
-	/**
-	 * Build a note object referring to its note position using C0 (first note of the zero octave) as the reference zero
+	 * Build a note object referring to its note position using C-1 (first note of the zero octave) as the reference zero
 	 * note.
 	 *
 	 * @param {number} note
@@ -86,6 +74,6 @@ export class Key
 		this.en = octaveKey.en;
 		this.scientificName = octaveKey.en + octave;
 
-		this.frequency = Key.noteToFrequency(this.number);
+		this.frequency = ToneHelper.noteToFrequency(this.number);
 	}
 }
