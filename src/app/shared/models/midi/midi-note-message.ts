@@ -6,7 +6,7 @@ export class MidiNoteMessage
 	 * @param {number} channel
 	 * 	The MIDI channel on which the «Note On/Off» message occurred.
 	 *
-	 * @param {number} midiNote
+	 * @param {number} note
 	 * 	The note to take into account (with C-1 as reference zero note and G-9 as upper note, following MIDI standard).
 	 *
 	 * @param {number} velocity
@@ -18,7 +18,7 @@ export class MidiNoteMessage
 	constructor
 	(
 		readonly channel:number,
-		readonly midiNote:number,
+		readonly note:number,
 		readonly velocity:number,
 		readonly on:boolean
 	){}
