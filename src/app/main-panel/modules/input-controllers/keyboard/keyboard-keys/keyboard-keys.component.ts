@@ -72,6 +72,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 		return new Key(keyNumber);
 	}
 
+
 	/**
 	 * Displayed list of the keys on the keyboard.
 	 */
@@ -185,7 +186,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	{
 		console.log(key.frequency);
 		this.playNote(key.frequency);
-		key.on = true;
+		key.pressed = true;
 	}
 
 	// noinspection JSUnusedLocalSymbols
@@ -198,7 +199,7 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	keyUp( key:Key )
 	{
 		this.playNote(0);
-		key.on = false;
+		key.pressed = false;
 	}
 
 	//TODO Will be removed when implementing connexion between components.
