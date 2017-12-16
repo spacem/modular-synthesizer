@@ -24,7 +24,7 @@ export class OscillatorComponent implements OnInit, OnDestroy
 	ngOnInit()
 	{
 		this.noteSourceSubscription = this.webMIDIService.noteSource$.subscribe( note => this.setNote(note) );
-		this.programSubscription = this.webMIDIService.programSource$.subscribe( program => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][program%4] as OscillatorType ) );
+		this.programSubscription = this.webMIDIService.programSource$.subscribe( program => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][program.program%4] as OscillatorType ) );
 	}
 
 	ngOnDestroy()
