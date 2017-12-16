@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { Key } from '../../../main-panel/models/key';
 import { Observable } from 'rxjs/Observable';
 import { WindowService } from '../../../core/services/window/window.service';
+import { MidiNoteMessage } from '../../models/midi/midi-note-message';
+import { MidiProgramChangeMessage } from '../../models/midi/midi-program-change-message';
 
 /**
  * Main entry point and adapter for the browser Web MIDI API.
@@ -10,11 +11,11 @@ import { WindowService } from '../../../core/services/window/window.service';
 @Injectable()
 export class WebMIDIService
 {
-	private keySource:Subject<Key> = new Subject<Key>();
-	public keySource$:Observable<Key> = this.keySource.asObservable();
+	private noteSource:Subject<MidiNoteMessage> = new Subject<MidiNoteMessage>();
+	public noteSource$:Observable<MidiNoteMessage> = this.noteSource.asObservable();
 
-	private programSource:Subject<number> = new Subject<number>();
-	public programSource$:Observable<number> = this.programSource.asObservable();
+	private programSource:Subject<MidiProgramChangeMessage> = new Subject<MidiProgramChangeMessage>();
+	public programSource$:Observable<MidiProgramChangeMessage> = this.programSource.asObservable();
 
 	private inputs/*WebMidi.MIDIInputMap*/;
 	private outputs/*WebMidi.MIDIOutputMap*/;
@@ -65,7 +66,7 @@ export class WebMIDIService
 	 *
 	 * @see http://computermusicresource.com/MIDI.Commands.html
 	 *
-	 * @param event
+	 * @param {WebMidi.MIDIMessageEvent} event
 	 * 	The corresponding MIDI message event containing the MIDI data to extract.
 	 */
 	private onMidiMessage( event/*WebMidi.MIDIMessageEvent*/ ):void
@@ -87,13 +88,13 @@ export class WebMIDIService
 			// Note Off (channel 1-16)
 			case status>=128 && status<=143:
 				console.log( `Note Off: channel=${status-128+1}, midiNote=${b1}, velocity=${b2}` );
-				this.onMidiNote( status-128+1, b1, 0 );
+				this.onMidiNoteMessage( status-128+1, b1, b2, false );
 			break;
 
 			// Note On (channel 1-16)
 			case status>=144 && status<=159:
 				console.log( `Note On: channel=${status-144+1}, midiNote=${b1}, velocity=${b2}` );
-				this.onMidiNote( status-144+1, b1, b2 );
+				this.onMidiNoteMessage( status-144+1, b1, b2, true );
 			break;
 
 			// Control (channel 1-16)
@@ -104,7 +105,7 @@ export class WebMIDIService
 			// Program (channel 1-16)
 			case status>=192 && status<=207:
 				console.info(`Program: channel=${status-192+1}, value=${b1}`);
-				this.onProgramChange( status-192+1, b1);
+				this.onProgramChangeMessage( status-192+1, b1);
 			break;
 
 			// Pressure (channel 1-16)
@@ -120,48 +121,37 @@ export class WebMIDIService
 	/**
 	 * Called on each «Program Change» MIDI message.
 	 *
-	 * @param channel
+	 * @param {number} channel
 	 * 	The MIDI channel on which the program change occurred.
 	 *
-	 * @param program
+	 * @param {number} program
 	 * 	The new program number on which to map MIDI notes for this channel.
 	 */
-	private onProgramChange( channel:number, program:number ):void
+	private onProgramChangeMessage( channel:number, program:number ):void
 	{
-		this.programSource.next( program );
+		const midiProgramChangeMessage:MidiProgramChangeMessage = new MidiProgramChangeMessage( channel, program );
+		this.programSource.next( midiProgramChangeMessage );
 	}
 
 	/**
-	 * Called on each «Note On/Off» MIDI message.
+	 * Called on each note MIDI message.
 	 *
-	 * @param channel
+	 * @param {number} channel
 	 * 	The MIDI channel on which the «Note On/Off» message occurred.
 	 *
-	 * @param midiNote
+	 * @param {number} note
 	 * 	The note to take into account (with C-1 as reference zero note and G-9 as upper note, following MIDI standard).
 	 *
-	 * @param velocity
+	 * @param {boolean} on
+	 * 	The note on or off state.
+	 *
+	 * @param {number} velocity
 	 * 	The velocity of the note to take into account (from 0 to 127, following MIDI standard).
 	 */
-	private onMidiNote( channel:number, midiNote:number, velocity:number ):void
+	private onMidiNoteMessage( channel:number, note:number, velocity:number, on:boolean ):void
 	{
-		//TODO Create a true onMidiNoteOn and onMidiNoteOff message support.
-		const noteOn:boolean = velocity>0;
-
-		const key:Key = new Key(midiNote);
-		key.on = noteOn;
-		this.setKey( key );
-	}
-
-	/**
-	 * Emit a key change event to all subscribers of the $keySource Observable.
-	 *
-	 * @param key
-	 * 	The key object associated to the key change event.
-	 */
-	private setKey( key:Key ):void
-	{
-		this.keySource.next( key );
+		const midiNoteMessage:MidiNoteMessage = new MidiNoteMessage( channel, note, velocity, on );
+		this.noteSource.next( midiNoteMessage );
 	}
 
 	/**

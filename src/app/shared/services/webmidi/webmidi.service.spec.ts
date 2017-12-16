@@ -5,6 +5,9 @@ import { WindowService } from '../../../core/services/window/window.service';
 import { DOCUMENT } from '@angular/common';
 import * as lodash from 'lodash-es';
 
+import { MidiNoteMessage } from '../../models/midi/midi-note-message';
+import { MidiProgramChangeMessage } from '../../models/midi/midi-program-change-message';
+
 describe( 'WebMIDIService', () =>
 {
 	const documentMock =
@@ -88,13 +91,13 @@ describe( 'WebMIDIService', () =>
 
 		// noinspection JSUnusedLocalSymbols
 		const fakePromise = { then: (resolve, reject)=> void 0 };
-		const spyRequestMIDIAccess = spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
+		const spy = spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
 		spyOn( console, 'info' );
 
 		service.setupMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
-		expect( spyRequestMIDIAccess ).toHaveBeenCalled();
+		expect( spy ).toHaveBeenCalled();
 	} );
 
 	it( `::setupMidi() requestMIDIAccess promise should call ::onMIDISuccess() when succeeding`, () =>
@@ -109,12 +112,12 @@ describe( 'WebMIDIService', () =>
 		spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
 		spyOn( console, 'info' );
 
-		const spyOnMIDISuccess = spyOn( service, 'onMIDISuccess' );
+		const spy = spyOn( service, 'onMIDISuccess' );
 
 		service.setupMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
-		expect( spyOnMIDISuccess ).toHaveBeenCalledWith('midiSuccess');
+		expect( spy ).toHaveBeenCalledWith('midiSuccess');
 	} );
 
 	it( `::setupMidi() requestMIDIAccess promise should call ::onMIDIFailure() when failing`, () =>
@@ -129,11 +132,59 @@ describe( 'WebMIDIService', () =>
 		spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
 		spyOn( console, 'info' );
 
-		const spyOnMIDISuccess = spyOn( service, 'onMIDIFailure' );
+		const spy = spyOn( service, 'onMIDIFailure' );
 
 		service.setupMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
-		expect( spyOnMIDISuccess ).toHaveBeenCalledWith('midiFailure');
+		expect( spy ).toHaveBeenCalledWith('midiFailure');
+	} );
+
+	it( `::onProgramChangeMessage() should notify programSource$ of changes`, done =>
+	{
+		const service = TestBed.get( WebMIDIService );
+
+		const steps =
+		[
+			new MidiProgramChangeMessage(10, 2),
+			new MidiProgramChangeMessage(5, 127),
+			new MidiProgramChangeMessage(0, 0),
+			new MidiProgramChangeMessage(16, 127)
+		];
+
+		let step = 0;
+		service.programSource$.subscribe( value =>
+		{
+			// noinspection JSIgnoredPromiseFromCall
+			expect( JSON.stringify(value) ).toBe(JSON.stringify(steps[step]));
+			if( ++step >= steps.length )
+				done();
+		});
+
+		steps.forEach( programChange => service.onProgramChangeMessage( programChange.channel, programChange.program ) );
+	} );
+
+	it( `::onMidiNoteMessage() should notify noteSource$ of changes`, done =>
+	{
+		const service = TestBed.get( WebMIDIService );
+
+		const steps =
+		[
+			new MidiNoteMessage(10, 2, 38, true),
+			new MidiNoteMessage(5, 127, 24, false),
+			new MidiNoteMessage(0, 0, 0, true),
+			new MidiNoteMessage(16, 127, 127, false)
+		];
+
+		let step = 0;
+		service.noteSource$.subscribe( value =>
+		{
+			// noinspection JSIgnoredPromiseFromCall
+			expect( JSON.stringify(value) ).toBe(JSON.stringify(steps[step]));
+			if( ++step >= steps.length )
+				done();
+		});
+
+		steps.forEach( midiNote => service.onMidiNoteMessage( midiNote.channel, midiNote.note, midiNote.velocity, midiNote.on ) );
 	} );
 } );
