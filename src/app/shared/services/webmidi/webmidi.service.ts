@@ -20,6 +20,9 @@ export class WebMIDIService
 	private inputs/*WebMidi.MIDIInputMap*/;
 	private outputs/*WebMidi.MIDIOutputMap*/;
 
+	private midiMessageEventListener:Function = this.onMidiMessage.bind(this);
+	private stateChangeEventListener:Function = this.onStateChange.bind(this);
+
 	constructor( private windowService:WindowService ){}
 
 	/**
@@ -30,26 +33,23 @@ export class WebMIDIService
 	 * @returns
 	 *  Browser supports Web MIDI or not.
 	 */
-	public browserHasMidi():boolean
+	public browserHasWebMidi():boolean
 	{
-		// We have to cast to 'keyof Window' because as of today 11/09/2017 'requestMIDIAccess' is not declared in
-		// lib.es6.d.ts ECMAScript APIs TypeScript definition.
-		//
 		//@see https://github.com/Microsoft/TypeScript/blob/master/lib/lib.es6.d.ts
-		return this.windowService.has('navigator.requestMIDIAccess' as keyof Window);
+		return this.windowService.hasPath('navigator.requestMIDIAccess');
 	}
 
 	/**
-	 * Launch the MIDI ports detection and configuration.
+	 * Launch the MIDI ports detection and Web MIDI configuration.
 	 */
-	public setupMidi():void
+	public connectWebMidi():void
 	{
-		if( this.browserHasMidi() )
+		if( this.browserHasWebMidi() )
 		{
 			console.info( 'Browser supports Web MIDI.' );
 
-			const requestMIDIAccess/*requestMIDIAccess*/ = this.windowService.get('navigator.requestMIDIAccess' as keyof Window);
-			requestMIDIAccess().then
+			// Can't use this.windowService.get('navigator.requestMIDIAccess') because the browser doesn't want a reference to a native function and warn about an illegal access.
+			this.windowService.get('navigator').requestMIDIAccess().then
 			(
 				midiAccess => this.onMIDISuccess( midiAccess ),
 				message => this.onMIDIFailure( message )
@@ -59,6 +59,51 @@ export class WebMIDIService
 		{
 			console.warn( 'Browser does not support Web MIDI.' );
 		}
+	}
+
+	/**
+	 * Called when Web MIDI access attempt succeed.
+	 *
+	 * Will start the MIDI service configuration and connection depending on found MIDI I/O ports.
+	 *
+	 * @param midiAccess
+	 * 	The Web MIDI Access object on which to operate I/O connections.
+	 */
+	private onMIDISuccess( midiAccess/*WebMidi.MIDIAccess*/ ):void
+	{
+		console.info('Web MIDI successfully accessed');
+
+		//TODO remove eventListener / disconnect from webMidi
+		midiAccess.addEventListener( 'statechange', ( event/*WebMidi.MIDIConnectionEvent*/ ) =>
+		{
+			console.info( `Midi Access statechange event:`, event);
+			console.log( event );
+		} );
+
+		if( midiAccess.inputs.size > 0 )
+		{
+			this.inputs = midiAccess.inputs;
+
+			// Converting MIDIInputMap to an indexed Array.
+			const inputs/*WebMidi.MIDIInput[]*/ = Array.from(this.inputs, input => input[1]);
+
+			// Browsers not supporting console.table won't support MIDI either.
+			console.table( inputs );
+
+			//TODO Create a visual interface to choose for the MIDI connection.
+			const firstDisconnectedInput/*WebMidi.MIDIInput[]*/ = inputs.find( input/*MidiInput*/ => input.state === 'connected' && input.connection === 'closed' );
+			if( firstDisconnectedInput )
+				this.connectInput(firstDisconnectedInput);
+			else
+				console.warn(`Can't find any available MIDI port to connect to.`);
+		}
+		else
+			console.warn('No input MIDI port detected.');
+
+		if( midiAccess.outputs.size > 0 )
+			this.outputs = midiAccess.outputs;
+		else
+			console.warn('No output MIDI port detected.');
 	}
 
 	/**
@@ -119,6 +164,17 @@ export class WebMIDIService
 	}
 
 	/**
+	 * Called on any incoming MIDI statechange event from a connected MIDI input port.
+	 *
+	 * @param event
+	 * 	The corresponding MIDI statechange event.
+	 */
+	private onStateChange( event ):void
+	{
+		console.info( `Midi Input statechange event:`, event );
+	}
+
+	/**
 	 * Called on each «Program Change» MIDI message.
 	 *
 	 * @param {number} channel
@@ -154,50 +210,6 @@ export class WebMIDIService
 		this.noteSource.next( midiNoteMessage );
 	}
 
-	/**
-	 * Called when Web MIDI access attempt succeed.
-	 *
-	 * Will start the MIDI service configuration and connection depending on found MIDI I/O ports.
-	 *
-	 * @param midiAccess
-	 * 	The Web MIDI Access object on which to operate I/O connections.
-	 */
-	private onMIDISuccess( midiAccess/*WebMidi.MIDIAccess*/ ):void
-	{
-		console.info('Web MIDI successfully accessed');
-
-		midiAccess.addEventListener( 'statechange', ( event/*WebMidi.MIDIConnectionEvent*/ ) =>
-		{
-			console.info( `Midi Access statechange event:`, event);
-			console.log( event );
-		} );
-
-		if( midiAccess.inputs.size > 0 )
-		{
-			this.inputs = midiAccess.inputs;
-
-			// Converting MIDIInputMap to an indexed Array.
-			const inputs/*WebMidi.MIDIInput[]*/ = Array.from(this.inputs, input => input[1]);
-
-			// Browsers not supporting console.table won't support MIDI either.
-			console.table( inputs );
-
-			//TODO Create an interface to choose for the MIDI connection.
-			const firstDisconnectedInput/*WebMidi.MIDIInput[]*/ = inputs.find( input/*MidiInput*/ => input.state === 'connected' && input.connection === 'closed' );
-			if( firstDisconnectedInput )
-				this.connectInput(firstDisconnectedInput);
-			else
-				console.warn(`Can't find any available MIDI port to connect to.`);
-		}
-		else
-			console.warn('No input MIDI port detected.');
-
-		if( midiAccess.outputs.size > 0 )
-			this.outputs = midiAccess.outputs;
-		else
-			console.warn('No output MIDI port detected.');
-	}
-
 	// noinspection JSMethodCanBeStatic
 	/**
 	 * Called when the MIDI access attempt to Web MIDI API failed.
@@ -213,15 +225,28 @@ export class WebMIDIService
 	}
 
 	/**
-	 * Connect to the given MIDI input port to start receiving MIDI messages.
+	 * Connect the service to the given MIDI input port to start receiving MIDI messages from it.
 	 *
-	 * @param input
+	 * @param {WebMidi.MIDIInput} input
 	 * 	The MIDI input port from which to start receiving messages.
 	 */
 	private connectInput( input/*WebMidi.MIDIInput*/ ):void
 	{
-		console.log( `Connected to MIDI input port: ${input.name}` );
-		input.addEventListener( 'statechange', event => console.info( `Midi Input statechange event:`, event) );
-		input.addEventListener( 'midimessage', ( event/*WebMidi.MIDIMessageEvent*/ ) => this.onMidiMessage( event ) );
+		console.info( `Connected to MIDI input port: ${input.name}` );
+		input.addEventListener( 'statechange', this.stateChangeEventListener );
+		input.addEventListener( 'midimessage', this.midiMessageEventListener );
+	}
+
+	/**
+	 * Disconnect the service from the given MIDI input port to stop receiving MIDI messages from it.
+	 *
+	 * @param {WebMidi.MIDIInput} input
+	 * 	The MIDI input port from which to start receiving messages.
+	 */
+	private disconnectInput( input/*WebMidi.MIDIInput*/ ):void
+	{
+		console.info( `Disconnected from MIDI input port: ${input.name}` );
+		input.removeEventListener( 'statechange', this.stateChangeEventListener );
+		input.removeEventListener( 'midimessage', this.midiMessageEventListener );
 	}
 }

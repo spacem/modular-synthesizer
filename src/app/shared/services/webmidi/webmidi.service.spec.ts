@@ -36,25 +36,25 @@ describe( 'WebMIDIService', () =>
 		expect( service ).toBeTruthy();
 	} ) );
 
-	it( `::browserHasMidi() should return true when requestMIDIAccess is available`, () =>
+	it( `::browserHasWebMidi() should return true when requestMIDIAccess is available`, () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
 		const service = TestBed.get( WebMIDIService );
 
-		expect( service.browserHasMidi() ).toBe(true);
+		expect( service.browserHasWebMidi() ).toBe(true);
 	} );
 
-	it( `::browserHasMidi() should return false when requestMIDIAccess is unavailable`, () =>
+	it( `::browserHasWebMidi() should return false when requestMIDIAccess is unavailable`, () =>
 	{
 		const documentMock2 = {	defaultView:{navigator:{}}};
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
 		const service = TestBed.get( WebMIDIService );
 
-		expect( service.browserHasMidi() ).toBe(false);
+		expect( service.browserHasWebMidi() ).toBe(false);
 	} );
 
-	it( `::setupMidi() should log that: 'Browser supports Web MIDI.'`, () =>
+	it( `::connectWebMidi() should log that: 'Browser supports Web MIDI.'`, () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
@@ -63,13 +63,13 @@ describe( 'WebMIDIService', () =>
 		spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(new Promise(function(){}));
 		const spy = spyOn( console, 'info' );
 
-		service.setupMidi();
+		service.connectWebMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalledWith('Browser supports Web MIDI.');
 	} );
 
-	it( `::setupMidi() should log that: 'Browser does not support Web MIDI.'`, () =>
+	it( `::connectWebMidi() should log that: 'Browser does not support Web MIDI.'`, () =>
 	{
 		const documentMock2 = {	defaultView:{navigator:{}}};
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
@@ -77,13 +77,13 @@ describe( 'WebMIDIService', () =>
 
 		const spy = spyOn( console, 'warn' );
 
-		service.setupMidi();
+		service.connectWebMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalledWith('Browser does not support Web MIDI.');
 	} );
 
-	it( `::setupMidi() should invoke requestMIDIAccess promise`, () =>
+	it( `::connectWebMidi() should invoke requestMIDIAccess promise`, () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
@@ -94,13 +94,13 @@ describe( 'WebMIDIService', () =>
 		const spy = spyOn( documentMock2.defaultView.navigator, 'requestMIDIAccess' ).and.returnValue(fakePromise);
 		spyOn( console, 'info' );
 
-		service.setupMidi();
+		service.connectWebMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalled();
 	} );
 
-	it( `::setupMidi() requestMIDIAccess promise should call ::onMIDISuccess() when succeeding`, () =>
+	it( `::connectWebMidi() requestMIDIAccess promise should call ::onMIDISuccess() when succeeding`, () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
@@ -114,13 +114,13 @@ describe( 'WebMIDIService', () =>
 
 		const spy = spyOn( service, 'onMIDISuccess' );
 
-		service.setupMidi();
+		service.connectWebMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalledWith('midiSuccess');
 	} );
 
-	it( `::setupMidi() requestMIDIAccess promise should call ::onMIDIFailure() when failing`, () =>
+	it( `::connectWebMidi() requestMIDIAccess promise should call ::onMIDIFailure() when failing`, () =>
 	{
 		const documentMock2 = lodash.cloneDeep(documentMock);
 		TestBed.overrideProvider(DOCUMENT, { useValue: documentMock2 });
@@ -134,7 +134,7 @@ describe( 'WebMIDIService', () =>
 
 		const spy = spyOn( service, 'onMIDIFailure' );
 
-		service.setupMidi();
+		service.connectWebMidi();
 
 		// noinspection JSIgnoredPromiseFromCall
 		expect( spy ).toHaveBeenCalledWith('midiFailure');
