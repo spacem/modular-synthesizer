@@ -6,7 +6,8 @@
 		"ng": "ng",
 		"start": "ng build --prod --aot --named-chunks --output-path dist --base-href=/ && node node_modules/http-server/bin/http-server dist -o",
 		"ng:serve": "ng serve -o",
-		"ng:publish": "ng test --single-run --code-coverage && ng build --prod --aot --named-chunks --output-path dist --base-href=/blogfiles/modular-synthesizer/",
+		"ng:publish": "ng build --prod --aot --named-chunks --output-path dist --base-href=/blogfiles/modular-synthesizer/",
+		"ng:deploy": "ng test --single-run --code-coverage && npm run ng:publish",
 		"test": "ng test",
 		"lint": "ng lint",
 		"e2e": "ng e2e"

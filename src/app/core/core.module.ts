@@ -3,9 +3,9 @@ import {CommonModule} from '@angular/common';
 import {WindowService} from './services/window/window.service';
 
 @NgModule({
+	providers:[WindowService],
 	imports: [
 		CommonModule
-	],
-	exports: [WindowService]
+	]
 })
 export class CoreModule {}
