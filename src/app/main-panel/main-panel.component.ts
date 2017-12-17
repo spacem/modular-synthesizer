@@ -22,7 +22,7 @@ export class MainPanelComponent implements OnInit
 	ngOnInit()
 	{
 		//TODO Create a menu to configure MIDI when MIDI is detected.
-		this.webMIDIService.setupMidi();
+		this.webMIDIService.connectWebMidi();
 
 		this.start();
 	}

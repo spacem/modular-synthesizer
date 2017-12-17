@@ -48,9 +48,10 @@ export class WebMIDIService
 		{
 			console.info( 'Browser supports Web MIDI.' );
 
-			// Can't use this.windowService.get('navigator.requestMIDIAccess') because the browser doesn't want a reference to a native function and warn about an illegal access.
+			// Can't simply use this.windowService.get('navigator.requestMIDIAccess') because the browser doesn't want a
+			// reference to a native function and warn about an illegal access.
 			// noinspection TypeScriptUnresolvedFunction
-			this.windowService.get('navigator').requestMIDIAccess().then
+			this.windowService.get('navigator')['requestMIDIAccess']().then
 			(
 				midiAccess => this.onMIDISuccess( midiAccess ),
 				message => this.onMIDIFailure( message )

@@ -35,8 +35,15 @@ export class OscillatorComponent implements OnInit, OnDestroy
 
 	public setNote( midiNoteMessage:MidiNoteMessage ):void
 	{
-		const tone = ToneHelper.noteToFrequency(midiNoteMessage.note);
-		this.oscillatorService.setTone(tone);
+		if(midiNoteMessage.on)
+		{
+			const tone = ToneHelper.noteToFrequency(midiNoteMessage.note);
+			this.oscillatorService.setTone(tone);
+		}
+		else
+		{
+			this.setTone(0);
+		}
 	}
 
 	public setTone( tone:number ):void
@@ -60,7 +67,6 @@ export class OscillatorComponent implements OnInit, OnDestroy
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
 		this.oscillatorService.connect(this.mainPanelService.getMainGain());
 		this.oscillatorService.start();
-		this.setTone(0);
 	}
 
 	public stop():void

@@ -8,10 +8,6 @@ export class OscillatorService
 	private tone:number;
 	private waveformType:OscillatorType;
 
-	constructor()
-	{
-	}
-
 	public getTone():number
 	{
 		return this.tone;
@@ -56,6 +52,8 @@ export class OscillatorService
 	public start():void
 	{
 		this.oscillatorNode.start( 0 );
+
+		// Needed because it will default to 440Hz otherwise.
 		this.setTone( 0 );
 	}
 
