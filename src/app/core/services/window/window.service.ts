@@ -42,18 +42,35 @@ export class WindowService
 	/**
 	 * Check for the existence of a particular window property
 	 *
+	 * @param {string} property
+	 * 	The property name to check it exists.
+	 *
+	 * 	e.g: 'navigator'
+	 *
+	 * @returns {boolean}
+	 * 	The property exists on window or not.
+	 */
+	public has<K extends keyof Window>( property:K ):boolean
+	{
+		return typeof this.getWindow()[property] !== 'undefined';
+	}
+
+	// noinspection JSUnusedGlobalSymbols
+	/**
+	 * Check for the existence of a particular window property using a path.
+	 *
 	 * It doesn't use lodash.has, because some window property are not enumerable, so we have to retrieve it first to
 	 * test for their existence.
 	 *
-	 * @param path
+	 * @param {string} path
 	 * 	The property path name to check it exists.
 	 *
 	 * 	e.g: 'navigator.languages.length'
 	 *
-	 * @returns
+	 * @returns {boolean}
 	 * 	The property exists on window or not.
 	 */
-	public has<K extends keyof Window>( path:K ):boolean
+	public hasPath( path:string ):boolean
 	{
 		return typeof lodash.get( this.getWindow(), path ) !== 'undefined';
 	}
@@ -61,18 +78,37 @@ export class WindowService
 	/**
 	 * Return the requested window property.
 	 *
-	 * @param path
+	 * @param {string} path
 	 * 	The requested property path to get.
 	 *
 	 * 	e.g: 'navigator.languages.length'
 	 *
-	 * @param defaultValue
+	 * @param {any} defaultValue
 	 * 	The value to return when the searched property doesn't exist onto window.
 	 *
-	 * @returns
+	 * @returns {boolean}
 	 * 	The requested property value on Window.
 	 */
 	public get<K extends keyof Window>( path:K, defaultValue?:Window[K] ):Window[K]
+	{
+		return lodash.get( this.getWindow(), path, defaultValue);
+	}
+
+	/**
+	 * Return the requested window property using a path.
+	 *
+	 * @param {string} path
+	 * 	The requested property path to get.
+	 *
+	 * 	e.g: 'navigator.languages.length'
+	 *
+	 * @param {any} defaultValue
+	 * 	The value to return when the searched property doesn't exist onto window.
+	 *
+	 * @returns {boolean}
+	 * 	The requested property value on Window.
+	 */
+	public getPath( path:string, defaultValue?:any ):any
 	{
 		return lodash.get( this.getWindow(), path, defaultValue);
 	}

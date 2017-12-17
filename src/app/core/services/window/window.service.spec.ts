@@ -71,16 +71,16 @@ describe( 'WindowService', () =>
 		expect( service.has( 'console' ) ).toBe( false );
 	} );
 
-	it( `::has() should return true when window has the requested property using a path`, () =>
+	it( `::hasPath() should return true when window has the requested property using a path`, () =>
 	{
 		const service = TestBed.get( WindowService );
-		expect( service.has( 'navigator.languages.length' ) ).toBe( true );
+		expect( service.hasPath( 'navigator.languages.length' ) ).toBe( true );
 	} );
 
-	it( `::has() should return false when window does not have the requested property using a path`, () =>
+	it( `::hasPath() should return false when window does not have the requested property using a path`, () =>
 	{
 		const service = TestBed.get( WindowService );
-		expect( service.has( 'navigator.userAgent.length' ) ).toBe( false );
+		expect( service.hasPath( 'navigator.userAgent.length' ) ).toBe( false );
 	} );
 
 	it( '::get() should return the requested property value on the browser window', () =>
@@ -89,10 +89,10 @@ describe( 'WindowService', () =>
 		expect( service.get( 'name' ) ).toBe( 'mockedWindowName' );
 	} );
 
-	it( '::get() should return the requested property value on the browser window using a path', () =>
+	it( '::getPath() should return the requested property value on the browser window using a path', () =>
 	{
 		const service = TestBed.get( WindowService );
-		expect( service.get( 'navigator.languages.length' ) ).toBe( 4 );
+		expect( service.getPath( 'navigator.languages.length' ) ).toBe( 4 );
 	} );
 
 	it( `::get() should return undefined when the requested property value doesn't exist on the browser window`, () =>
@@ -101,10 +101,10 @@ describe( 'WindowService', () =>
 		expect( service.get( 'screenX' ) ).toBeUndefined();
 	} );
 
-	it( `::get() should return undefined when the requested property value doesn't exist on the browser window using a path`, () =>
+	it( `::getPath() should return undefined when the requested property value doesn't exist on the browser window using a path`, () =>
 	{
 		const service = TestBed.get( WindowService );
-		expect( service.get( 'navigator.userAgent.length' ) ).toBeUndefined();
+		expect( service.getPath( 'navigator.userAgent.length' ) ).toBeUndefined();
 	} );
 
 	it( `::get() should return the default value when the requested property value doesn't exist on the browser window`, () =>
@@ -114,10 +114,10 @@ describe( 'WindowService', () =>
 		expect( service.get( 'screenX', foo ) ).toBe(foo);
 	} );
 
-	it( `::get() should return the default value when the requested property value doesn't exist on the browser window using a path`, () =>
+	it( `::getPath() should return the default value when the requested property value doesn't exist on the browser window using a path`, () =>
 	{
 		const foo = 'bar';
 		const service = TestBed.get( WindowService );
-		expect( service.get( 'navigator.userAgent.length', foo ) ).toBe(foo);
+		expect( service.getPath( 'navigator.userAgent.length', foo ) ).toBe(foo);
 	} );
 } );
