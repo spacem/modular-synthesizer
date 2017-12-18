@@ -21,7 +21,8 @@ export class WebMIDIService
 	private outputs/*WebMidi.MIDIOutputMap*/;
 
 	private midiMessageEventListener:Function = this.onMidiMessage.bind(this);
-	private stateChangeEventListener:Function = this.onStateChange.bind(this);
+	private inputStateChangeEventListener:Function = this.onStateChange.bind(this);
+	private midiAccessStateChangeEventListener:Function = this.onMidiAccessStateChange.bind(this);
 
 	constructor( private windowService:WindowService ){}
 
@@ -76,11 +77,7 @@ export class WebMIDIService
 		console.info('Web MIDI successfully accessed');
 
 		//TODO remove eventListener / disconnect from webMidi
-		midiAccess.addEventListener( 'statechange', ( event/*WebMidi.MIDIConnectionEvent*/ ) =>
-		{
-			console.info( `Midi Access statechange event:`, event);
-			console.log( event );
-		} );
+		midiAccess.addEventListener( 'statechange', this.midiAccessStateChangeEventListener);
 
 		if( midiAccess.inputs.size > 0 )
 		{
@@ -119,7 +116,7 @@ export class WebMIDIService
 	private onMidiMessage( event/*WebMidi.MIDIMessageEvent*/ ):void
 	{
 		// Implementation for passthru, but it needs to avoid loopback on emitting port.
-		//this.outputs.forEach( output =>	output.send(event.data, event.timeStamp) );
+		//this.outputs.forEach( output => output.send(event.data, event.timeStamp) );
 
 		const data:Uint8Array = event.data;
 		const timestamp:number = event.timeStamp;
@@ -129,6 +126,13 @@ export class WebMIDIService
 		const status:number = data[0];
 		const b1:number = data[1];
 		const b2:number = data[2];
+
+		/*
+			TODO implement, convert Uint8 to number
+			@sse https://github.com/cwilso/midi-synth/blob/master/js/midi.js
+			const cmd = (data[0] as number) >> 4;
+			const channel = (data[0] as number) & 0xf;
+		*/
 
 		switch(true)
 		{
@@ -141,7 +145,7 @@ export class WebMIDIService
 			// Note On (channel 1-16)
 			case status>=144 && status<=159:
 				console.log( `Note On: channel=${status-144+1}, midiNote=${b1}, velocity=${b2}` );
-				this.onMidiNoteMessage( status-144+1, b1, b2, true );
+				this.onMidiNoteMessage( status-144+1, b1, b2, b2>0 /* If velocity is 0 note is sent as off, a current MIDI behavior */ );
 			break;
 
 			// Control (channel 1-16)
@@ -215,16 +219,27 @@ export class WebMIDIService
 
 	// noinspection JSMethodCanBeStatic
 	/**
-	 * Called when the MIDI access attempt to Web MIDI API failed.
+	 * Called when access request to Web MIDI failed.
 	 *
-	 * @param message
+	 * @param {string} message
 	 * 	The MIDI input port from which to start receiving messages.
-	 *
-	 *
 	 */
 	private onMIDIFailure( message:string ):void
 	{
 		console.log('Failed to get MIDI access - ' + message );
+	}
+
+	// noinspection JSMethodCanBeStatic
+	/**
+	 * Called on midi access state change.
+	 *
+	 * @param {WebMidi.MIDIConnectionEvent} event
+	 * 	The Midi Access statechange event emitted by the Web Midi API.
+	 */
+	private onMidiAccessStateChange( event/*WebMidi.MIDIConnectionEvent*/ ):void
+	{
+		console.info( `Midi access statechange event:`, event);
+		console.log( event );
 	}
 
 	/**
@@ -236,7 +251,7 @@ export class WebMIDIService
 	private connectInput( input/*WebMidi.MIDIInput*/ ):void
 	{
 		console.info( `Connected to MIDI input port: ${input.name}` );
-		input.addEventListener( 'statechange', this.stateChangeEventListener );
+		input.addEventListener( 'statechange', this.inputStateChangeEventListener );
 		input.addEventListener( 'midimessage', this.midiMessageEventListener );
 	}
 
@@ -249,7 +264,7 @@ export class WebMIDIService
 	private disconnectInput( input/*WebMidi.MIDIInput*/ ):void
 	{
 		console.info( `Disconnected from MIDI input port: ${input.name}` );
-		input.removeEventListener( 'statechange', this.stateChangeEventListener );
+		input.removeEventListener( 'statechange', this.inputStateChangeEventListener );
 		input.removeEventListener( 'midimessage', this.midiMessageEventListener );
 	}
 }
