@@ -5,7 +5,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {KeyboardModule} from './modules/input-controllers/keyboard/keyboard.module';
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
 import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
-import { OscillatorModule } from './modules/instruments/oscillator/oscillator.module';
+import { OscillatorModule } from './modules/instruments/theremin/theremin.module';
 import {WindowService} from '../core/services/window/window.service';
 
 describe('MainPanelComponent', () => {

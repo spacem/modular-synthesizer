@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
 import {WebMIDIService} from '../shared/services/webmidi/webmidi.service';
 import { KeyboardComponent } from './modules/input-controllers/keyboard/keyboard.component';
-import { OscillatorComponent } from './modules/instruments/oscillator/oscillator.component';
+import { OscillatorComponent } from './modules/instruments/theremin/theremin.component';
 
 @Component({
   selector: 'app-main-panel',
@@ -36,14 +36,14 @@ export class MainPanelComponent implements OnInit
 	{
 		this.playButton.nativeElement.innerText = 'Stop';
 		this.mainPanelService.start();
-		this.oscillator.start();
+		this.oscillator.connect();
 		this.started = true;
 	}
 
 	public stop():void
 	{
 		this.playButton.nativeElement.innerText = 'Play';
-		this.oscillator.stop();
+		this.oscillator.disconnect();
 		this.mainPanelService.stop();
 		this.started = false;
 	}

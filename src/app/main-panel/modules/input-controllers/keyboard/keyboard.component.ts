@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
-import { OscillatorService } from '../../instruments/oscillator/oscillator.service';
 
 @Component({
 	selector: 'app-keyboard',
@@ -9,17 +8,16 @@ import { OscillatorService } from '../../instruments/oscillator/oscillator.servi
 })
 export class KeyboardComponent implements OnInit
 {
-
-	constructor(private mainPanelService:MainPanelService, private oscillatorService:OscillatorService){}
+	constructor(private mainPanelService:MainPanelService){}
 
 	ngOnInit()
 	{
 	}
 
 	//TODO Transmit notes, not tones.
-	setTone(tone:number)
+	setTone( tone:number )
 	{
-		//TODO Make the real connection thing.
-		this.oscillatorService.setTone(tone);
+		//TODO /!\ Make the real internal MIDI connection thing.
+		//this.oscillatorService.setTone(tone);
 	}
 }
