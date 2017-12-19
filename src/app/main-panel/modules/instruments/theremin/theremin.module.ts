@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OscillatorComponent } from './oscillator.component';
+import { OscillatorComponent } from './theremin.component';
 
 @NgModule( {
 	imports: [
