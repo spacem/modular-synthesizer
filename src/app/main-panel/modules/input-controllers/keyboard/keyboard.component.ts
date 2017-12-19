@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 
 @Component({
@@ -6,13 +6,9 @@ import { MainPanelService } from '../../../../shared/services/main-panel/main-pa
 	templateUrl: './keyboard.component.html',
 	styleUrls: ['./keyboard.component.scss']
 })
-export class KeyboardComponent implements OnInit
+export class KeyboardComponent
 {
 	constructor(private mainPanelService:MainPanelService){}
-
-	ngOnInit()
-	{
-	}
 
 	//TODO Transmit notes, not tones.
 	setTone( tone:number )

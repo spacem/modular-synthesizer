@@ -1,6 +1,6 @@
-import {Component, Host, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {Key} from '../../../../models/key';
-import {KeyboardComponent} from '../keyboard.component';
+import { Component, Host, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Key } from '../../../../models/key';
+import { KeyboardComponent } from '../keyboard.component';
 
 /**
 * User Interface component for the musical keyboard component.
@@ -13,7 +13,7 @@ import {KeyboardComponent} from '../keyboard.component';
 	templateUrl: './keyboard-keys.component.html',
 	styleUrls: ['./keyboard-keys.component.scss']
 })
-export class KeyboardKeysComponent implements OnInit, OnChanges
+export class KeyboardKeysComponent implements OnChanges
 {
 	/**
 	 * The very lower key the keyboard will ever display: corresponding to key C-1 at near 8Hz.
@@ -138,8 +138,6 @@ export class KeyboardKeysComponent implements OnInit, OnChanges
 	}
 
 	constructor( @Host() private keyboard:KeyboardComponent ){}
-
-	ngOnInit(){}
 
 	ngOnChanges( changes:SimpleChanges )
 	{
