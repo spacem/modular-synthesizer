@@ -2,8 +2,6 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
-import { MidiNoteMessage } from '../../../../shared/models/midi/midi-note-message';
-import { ToneHelper } from '../../../../shared/helpers/tone-helper';
 import { Voice } from '../../../../shared/models/voice/voice';
 
 @Component( {
@@ -25,7 +23,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	ngOnInit()
 	{
-		this.voice = new Voice(1);
+		this.voice = new Voice(20);
 
 		//this.noteSourceSubscription = this.webMIDIService.noteSource$.subscribe(note => this.setNote(note) );
 		this.programSubscription = this.webMIDIService.programSource$.subscribe(program => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][program.program%4] as OscillatorType ) );

@@ -1,6 +1,6 @@
 export class Voice
 {
-	protected oscillatorNode:OscillatorNode;
+	protected oscs:OscillatorNode[] = [];
 	private outNode:AudioNode;
 
 	/**
@@ -9,52 +9,42 @@ export class Voice
 	 * @param {number} oscillatorNumber
 	 * 	The number of allocatable oscillator.
 	 */
-	constructor( private oscillatorNumber:number=2 )
-	{
-
-	}
+	constructor( private oscillatorNumber:number=2 ){}
 
 	public setTone( tone:number ):void
 	{
-		if( this.oscillatorNode )
-		{
-			this.oscillatorNode.frequency.setValueAtTime( tone, this.oscillatorNode.context.currentTime );
-		}
-		else
-			throw Error( `Trying to set oscillator tone on an oscillator that's not connected.` );
+		const currentTime = this.outNode.context.currentTime;
+		//TODO Clamp the value, based on output frequency/2 => 48000Hz = -24000/24000
+		this.oscs.forEach( (osc,index) => osc.frequency.setValueAtTime( tone*(index+1)*.01, currentTime ) );
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void
 	{
-		if( this.oscillatorNode )
-			this.oscillatorNode.type = waveformType;
+		this.oscs.forEach( osc => osc.type = waveformType );
 	}
 
-	public connect( node:AudioNode )
+	public connect( outNode:AudioNode )
 	{
-		if( !this.oscillatorNode )
-			this.createOscillatorNode( node );
-		else
-			throw Error( `Trying to connect a new node on an already connected oscillator.` );
-
-		this.outNode = node;
+		this.oscs = Array.from({length:this.oscillatorNumber}, ()=>this.createOscillatorNode(outNode));
+		this.outNode = outNode;
 	}
 
 	public disconnect():void
 	{
-		this.oscillatorNode.disconnect( this.outNode );
-		this.oscillatorNode = null;
+		this.oscs.forEach( osc => osc.disconnect( this.outNode ) );
+		this.oscs = [];
 	}
 
-	private createOscillatorNode( outNode:AudioNode )
+	private createOscillatorNode( outNode:AudioNode ):OscillatorNode
 	{
 		if( outNode )
 		{
-			this.oscillatorNode = outNode.context.createOscillator();
-			this.oscillatorNode.connect( outNode );
-			this.oscillatorNode.frequency.setValueAtTime( 0, this.oscillatorNode.context.currentTime );
-			this.oscillatorNode.start( 0 );
+			const oscillatorNode:OscillatorNode = outNode.context.createOscillator();
+			oscillatorNode.connect( outNode );
+			oscillatorNode.frequency.setValueAtTime( 0, outNode.context.currentTime );
+			oscillatorNode.start( 0 );
 
+			return oscillatorNode;
 		}
 		else
 			throw Error(`Trying to create an OscillatorNode without any output AudioNode.`);
