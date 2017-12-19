@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OscillatorComponent } from './theremin.component';
+import { ThereminComponent } from './theremin.component';
 
 @NgModule( {
 	imports: [
 		CommonModule
 	],
-	declarations: [ OscillatorComponent ],
-	exports: [ OscillatorComponent ]
+	declarations: [ ThereminComponent ],
+	exports: [ ThereminComponent ]
 } )
 export class OscillatorModule
 {

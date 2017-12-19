@@ -7,40 +7,53 @@ import { ToneHelper } from '../../../../shared/helpers/tone-helper';
 import { Voice } from '../../../../shared/models/voice/voice';
 
 @Component( {
-	selector: 'app-oscillator',
+	selector: 'app-theremin',
 	templateUrl: './theremin.component.html',
 	styleUrls: [ './theremin.component.scss' ]
 } )
-export class OscillatorComponent implements OnInit, OnDestroy
+export class ThereminComponent implements OnInit, OnDestroy
 {
 	@ViewChild('waveform') waveformSelect:ElementRef;
 	@ViewChild('tone') toneRange:ElementRef;
+	@ViewChild('pad') pad:ElementRef;
 
-	private noteSourceSubscription:Subscription;
+	//private noteSourceSubscription:Subscription;
 	private programSubscription:Subscription;
 	private voice:Voice;
 
-	constructor( private mainPanelService:MainPanelService,  private webMIDIService:WebMIDIService ){}
+	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService ){}
 
 	ngOnInit()
 	{
-		this.noteSourceSubscription = this.webMIDIService.noteSource$.subscribe(note => this.setNote(note) );
+		this.voice = new Voice(1);
+
+		//this.noteSourceSubscription = this.webMIDIService.noteSource$.subscribe(note => this.setNote(note) );
 		this.programSubscription = this.webMIDIService.programSource$.subscribe(program => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][program.program%4] as OscillatorType ) );
 	}
 
 	ngOnDestroy()
 	{
-		this.noteSourceSubscription.unsubscribe();
+		//this.noteSourceSubscription.unsubscribe();
 		this.programSubscription.unsubscribe();
 	}
 
-	public setNote( midiNoteMessage:MidiNoteMessage ):void
+	// public setNote( midiNoteMessage:MidiNoteMessage ):void
+	// {
+	// 	const tone = ToneHelper.noteToFrequency(midiNoteMessage.note);
+	// 	if(midiNoteMessage.on)
+	// 		this.setTone(tone);
+	// 	else
+	// 		this.setTone(0);
+	// }
+
+	public start():void
 	{
-		const tone = ToneHelper.noteToFrequency(midiNoteMessage.note);
-		if(midiNoteMessage.on)
-			this.setTone(tone);
-		else
-			this.setTone(0);
+
+	}
+
+	public stop():void
+	{
+
 	}
 
 	public setTone( tone:number ):void
@@ -57,8 +70,6 @@ export class OscillatorComponent implements OnInit, OnDestroy
 
 	public connect():void
 	{
-		this.voice = new Voice();
-
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
 		this.voice.connect(this.mainPanelService.getMainGain());
 		this.setWaveformType(this.waveformSelect.nativeElement.value);
@@ -67,5 +78,42 @@ export class OscillatorComponent implements OnInit, OnDestroy
 	public disconnect():void
 	{
 		this.voice.disconnect();
+	}
+	public onMouseMove($event:MouseEvent):void
+	{
+		if( $event )
+		{
+			const target:HTMLElement = $event.target as HTMLElement;
+
+			const x:number = Math.max(0, 		Math.min($event.clientX - target.offsetLeft,		 target.offsetWidth) );
+			const y:number = Math.max(0, 		Math.min($event.clientY - target.offsetTop,		 target.offsetHeight) );
+
+			this.onMove(x,y,target.offsetWidth,target.offsetHeight);
+		}
+
+		$event.preventDefault();
+	}
+
+	public onTouchMove($event:TouchEvent):void
+	{
+		if( $event.touches && $event.touches[0] )
+		{
+			const touch:Touch = $event.touches[0];
+			const target:HTMLElement = $event.target as HTMLElement;
+
+			const x:number = Math.max(0, 		Math.min(touch.clientX - target.offsetLeft,		 target.offsetWidth) );
+			const y:number = Math.max(0, 		Math.min(touch.clientY - target.offsetTop,		 target.offsetHeight) );
+
+			this.onMove(x,y,target.offsetWidth,target.offsetHeight);
+		}
+
+		$event.preventDefault();
+	}
+
+	public onMove( x:number, y:number, width:number, height:number ):void
+	{
+		const maxFreq:number = 8000;
+		const tone:number = maxFreq/(width/x);
+		this.setTone(tone);
 	}
 }
