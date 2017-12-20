@@ -35,6 +35,8 @@ export class Voice
 		const context:AudioContext = outNode.context;
 		const oscillatorNode:OscillatorNode = context.createOscillator();
 		oscillatorNode.frequency.setValueAtTime( 0, context.currentTime );
+		oscillatorNode.onended = error => console.error(error);
+		oscillatorNode.detune.value = 127;
 		oscillatorNode.start( 0 );
 
 		oscillatorNode.connect( outNode );
@@ -61,7 +63,7 @@ export class Voice
 		{
 			// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
 			if( Math.abs(tone) > 1.40130e-45 )
-				osc.frequency.exponentialRampToValueAtTime(index ? tone + .25 * index : tone, currentTime + .01 * (index + 1));
+				osc.frequency.exponentialRampToValueAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1));
 		});
 	}
 

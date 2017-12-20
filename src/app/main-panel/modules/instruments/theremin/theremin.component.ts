@@ -19,6 +19,8 @@ export class ThereminComponent implements OnInit, OnDestroy
 	private programSubscription:Subscription;
 	private voice:Voice;
 
+	public maxFrequency:number = 4000;
+
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService ){}
 
 	ngOnInit()
@@ -67,7 +69,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 	public connect():void
 	{
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),6);
+		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),2);
 		this.setWaveformType(this.waveformSelect.nativeElement.value);
 	}
 
@@ -108,7 +110,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	public onMove( x:number, y:number, width:number, height:number ):void
 	{
-		const maxFreq:number = 8000;
+		const maxFreq:number = this.maxFrequency;
 		const tone:number = maxFreq/(width/x);
 		this.setTone(tone);
 	}
