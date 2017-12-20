@@ -23,8 +23,6 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	ngOnInit()
 	{
-		this.voice = new Voice(20);
-
 		//this.noteSourceSubscription = this.webMIDIService.noteSource$.subscribe(note => this.setNote(note) );
 		this.programSubscription = this.webMIDIService.programSource$.subscribe(program => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][program.program%4] as OscillatorType ) );
 	}
@@ -56,7 +54,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	public setTone( tone:number ):void
 	{
-		this.voice.setTone(tone);
+		this.voice.setTone(Number(tone));
 		this.toneRange.nativeElement.value = tone;
 	}
 
@@ -69,7 +67,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 	public connect():void
 	{
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice.connect(this.mainPanelService.getMainGain());
+		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),6);
 		this.setWaveformType(this.waveformSelect.nativeElement.value);
 	}
 
