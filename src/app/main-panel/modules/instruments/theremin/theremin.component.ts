@@ -14,6 +14,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 	@ViewChild('waveform') waveformSelect:ElementRef;
 	@ViewChild('tone') toneRange:ElementRef;
 	@ViewChild('pad') pad:ElementRef;
+	@ViewChild('voices') voices:ElementRef;
 
 	//private noteSourceSubscription:Subscription;
 	private programSubscription:Subscription;
@@ -68,15 +69,20 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	public connect():void
 	{
+		if( this.voice )
+			this.voice.disconnect();
+
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),2);
+		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),this.voices.nativeElement.value);
 		this.setWaveformType(this.waveformSelect.nativeElement.value);
+		this.setTone(this.toneRange.nativeElement.value);
 	}
 
 	public disconnect():void
 	{
 		this.voice.disconnect();
 	}
+
 	public onMouseMove($event:MouseEvent):void
 	{
 		if( $event )
@@ -112,6 +118,9 @@ export class ThereminComponent implements OnInit, OnDestroy
 	{
 		const maxFreq:number = this.maxFrequency;
 		const tone:number = maxFreq/(width/x);
+
 		this.setTone(tone);
+		//this.voice.setDetune(256/(height/y));
+		this.voice.setFilter(127/(height/y));
 	}
 }

@@ -5,6 +5,7 @@
 	<option>triangle</option>
 </select>
 
-<input #tone style="width:100%" title="tone" type="range" value="0" min="0" max="{{maxFrequency}}" step="1" (mousemove)="setTone(tone.value)" (touchmove)="setTone(tone.value)">
+<input #voices min="0" max="16" type="number" value="2" (change)="connect()">
+<input #tone style="width:100%" title="tone" type="range" value="440" min="0" max="{{maxFrequency}}" step="1" (mousemove)="setTone(tone.value)" (touchmove)="setTone(tone.value)">
 
 <div class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)"></div>
