@@ -1,7 +1,8 @@
 export class Voice
 {
-	protected oscs:OscillatorNode[] = [];
+	protected oscillators:OscillatorNode[] = [];
 	private outNode:AudioNode;
+	private filter:BiquadFilterNode;
 
 	/**
 	 * Factory method for the voice.
@@ -19,13 +20,17 @@ export class Voice
 	public static createVoice( outNode:AudioNode, oscillatorNumber:number=2 ):Voice
 	{
 		if( !outNode )
-			throw Error(`Trying to create an OscillatorNode without attaching it yo any output AudioNode.`);
+			throw Error(`Trying to create an OscillatorNode without attaching it to any output AudioNode.`);
 
-		const context:AudioContext = outNode.context;
-
+		// Fabrication
 		const voice = new Voice();
-		voice.oscs = Array.from({length:oscillatorNumber},() => Voice.createOscillator(outNode) );
+		voice.oscillators = Array.from({length:oscillatorNumber},() => Voice.createOscillator(outNode) );
+		voice.filter = Voice.createFilter(outNode);
 		voice.outNode = outNode;
+
+		// Connection
+		voice.oscillators.forEach( oscillator => oscillator.connect( voice.filter ) );
+		voice.filter.connect( voice.outNode );
 
 		return voice;
 	}
@@ -36,10 +41,7 @@ export class Voice
 		const oscillatorNode:OscillatorNode = context.createOscillator();
 		oscillatorNode.frequency.setValueAtTime( 0, context.currentTime );
 		oscillatorNode.onended = error => console.error(error);
-		oscillatorNode.detune.value = 127;
 		oscillatorNode.start( 0 );
-
-		oscillatorNode.connect( outNode );
 
 		return oscillatorNode;
 	}
@@ -48,34 +50,54 @@ export class Voice
 	{
 		const context:AudioContext = outNode.context;
 		const lowPassFilter:BiquadFilterNode = context.createBiquadFilter();
-		lowPassFilter.type = 'lowpass';
-		lowPassFilter.frequency.value = 500;
-		lowPassFilter.Q.value = 5;
+		lowPassFilter.type = 'notch';
+		lowPassFilter.frequency.setTargetAtTime(0, context.currentTime, 15 );
+		lowPassFilter.Q.setTargetAtTime(0, context.currentTime, 15);
 
 		return lowPassFilter;
 	}
 
+	public setDetune( value:number ):void
+	{
+		console.log(value);
+
+		// @see https://www.chromestatus.com/features/5287995770929152
+		this.oscillators.forEach( osc => osc.detune.setTargetAtTime( value, this.outNode.context.currentTime, 15 ) );
+	}
+
+	public setFilter( value:number ):void
+	{
+		console.log(value);
+		const context:AudioContext = this.outNode.context;
+		this.filter.Q.setTargetAtTime( value, context.currentTime, 15);
+		this.filter.frequency.setTargetAtTime(value*100, context.currentTime, 15 );
+	}
+
 	public setTone( tone:number ):void
 	{
-		const currentTime = this.outNode.context.currentTime;
+		const currentTime:number = this.outNode.context.currentTime;
+
 		//TODO Clamp the value, based on output frequency/2 => 48000Hz = -24000/24000
-		this.oscs.forEach( (osc,index) =>
+		this.oscillators.forEach( (osc, index) =>
 		{
 			// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
 			if( Math.abs(tone) > 1.40130e-45 )
 				osc.frequency.exponentialRampToValueAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1));
+			else
+				osc.frequency.setTargetAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1), 15);
 		});
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void
 	{
-		this.oscs.forEach( osc => osc.type = waveformType );
+		this.oscillators.forEach(osc => osc.type = waveformType );
 	}
 
 	public disconnect():void
 	{
-		this.oscs.forEach( osc => osc.disconnect( this.outNode ) );
-		this.oscs = [];
+		this.oscillators.forEach(osc => osc.disconnect( this.filter ) );
+		this.filter.disconnect( this.outNode );
+		this.oscillators = [];
 	}
 
 }
