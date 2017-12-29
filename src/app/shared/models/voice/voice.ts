@@ -1,3 +1,5 @@
+import { tryCatch } from 'rxjs/util/tryCatch';
+
 export class Voice
 {
 	protected oscillators:OscillatorNode[] = [];
@@ -80,11 +82,17 @@ export class Voice
 		//TODO Clamp the value, based on output frequency/2 => 48000Hz = -24000/24000
 		this.oscillators.forEach( (osc, index) =>
 		{
-			// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
-			if( Math.abs(tone) > 1.40130e-45 )
-				osc.frequency.exponentialRampToValueAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1));
-			else
-				osc.frequency.setTargetAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1), 15);
+			try{
+				// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
+				if( Math.abs(tone) > 1.40130e-45 )
+					osc.frequency.exponentialRampToValueAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1));
+				else
+					osc.frequency.setTargetAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1), 15);
+			}catch(e)
+			{
+				console.error(`Trying to set tone "${tone}" led to an error`, e);
+			}
+
 		});
 	}
 

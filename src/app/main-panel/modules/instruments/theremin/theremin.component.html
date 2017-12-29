@@ -6,7 +6,6 @@
 </select>
 
 <input #voices min="0" max="16" type="number" value="2" (change)="connect()">
-<input #xRange title="x" type="range" 					value="0" min="0" max="100" step="1" (mousemove)="setX(xRange.value)" (touchmove)="setX(xRange.value)">
-<input #yRange title="y" type="range" orient="vertical" value="0" min="-100" max="0" step="1" (mousemove)="setY(-yRange.value)" (touchmove)="setY(-yRange.value)">
-
+<input #xRange title="x" class="xRange" type="range" value="0" min="0" max="100" step="1" (mousemove)="setX(xRange.value)" (touchmove)="setX(xRange.value)">
 <div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)"></div>
+<input #yRange title="y" class="yRange" type="range" orient="vertical" value="0" min="-100" max="0" step="1" (mousemove)="setY(-yRange.value)" (touchmove)="setY(-yRange.value)">

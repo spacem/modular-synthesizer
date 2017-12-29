@@ -54,7 +54,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	public setTone( tone:number ):void
 	{
-		this.voice.setTone(Number(tone));
+		this.voice.setTone(tone);
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void
@@ -144,12 +144,13 @@ export class ThereminComponent implements OnInit, OnDestroy
 	 */
 	public setX( percent:number ):void
 	{
-		const table = Array(100).fill(0).map((e,i) => this.easingHelper.easeInCirc( i, i, 100, 100 ));
-		console.log(table);
+		percent = Number(percent);
 
-		const log:number = table[Math.round(percent)];
-		const tone:number = this.maxFrequency * log/100;
-		this.setTone(tone);
+		const minValue = 0;
+		const maxValue = 24000;
+		const eased = percent === 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
+
+		this.setTone(eased);
 
 		this.xRange.nativeElement.value = percent;
 	}
@@ -165,6 +166,8 @@ export class ThereminComponent implements OnInit, OnDestroy
 		//const maxDetune:number = 256;
 		//const detune:number = maxDetune*(100/percent);
 		//this.voice.setFilter(detune);
+
+		percent = Number(percent);
 
 		const maxFilter:number = 127;
 		const filter:number = maxFilter * percent/100;
