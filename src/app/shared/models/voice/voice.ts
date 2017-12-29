@@ -69,7 +69,6 @@ export class Voice
 
 	public setFilter( value:number ):void
 	{
-		console.log(value);
 		const context:AudioContext = this.outNode.context;
 		this.filter.Q.setTargetAtTime( value, context.currentTime, 15);
 		this.filter.frequency.setTargetAtTime(value*100, context.currentTime, 15 );
@@ -78,6 +77,8 @@ export class Voice
 	public setTone( tone:number ):void
 	{
 		const currentTime:number = this.outNode.context.currentTime;
+
+		console.log(tone);
 
 		//TODO Clamp the value, based on output frequency/2 => 48000Hz = -24000/24000
 		this.oscillators.forEach( (osc, index) =>
