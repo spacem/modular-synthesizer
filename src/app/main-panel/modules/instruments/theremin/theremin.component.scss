@@ -12,3 +12,23 @@
 	height:400px;
 	border:double thin white;
 }
+
+input[type=range][orient=vertical]
+{
+	writing-mode: bt-lr; /* IE */
+	-webkit-appearance: slider-vertical; /* WebKit */
+	width: 8px;
+	height: 175px;
+	padding: 0 5px;
+}
+
+
+.xRange
+{
+	width:100%;
+}
+
+.yRange
+{
+	height:100%;
+}
