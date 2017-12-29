@@ -4,8 +4,9 @@ import { ThereminComponent } from './theremin.component';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import {WindowService} from '../../../../core/services/window/window.service';
+import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 
-describe( 'OscillatorComponent', () =>
+describe( 'ThereminComponent', () =>
 {
 	let component:ThereminComponent;
 	let fixture:ComponentFixture<ThereminComponent>;
@@ -14,7 +15,7 @@ describe( 'OscillatorComponent', () =>
 	{
 		TestBed.configureTestingModule( {
 			declarations: [ ThereminComponent ],
-			providers: [MainPanelService,WebMIDIService,WindowService]
+			providers: [MainPanelService,WebMIDIService,WindowService,EasingHelper]
 		} )
 			.compileComponents();
 	} ) );

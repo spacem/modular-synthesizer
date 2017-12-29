@@ -3,6 +3,7 @@ import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.serv
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Voice } from '../../../../shared/models/voice/voice';
+import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 
 
 @Component( {
@@ -24,7 +25,7 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 	public maxFrequency:number = 8000;
 
-	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService ){}
+	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
 
 	ngOnInit()
 	{
@@ -143,14 +144,14 @@ export class ThereminComponent implements OnInit, OnDestroy
 	 */
 	public setX( percent:number ):void
 	{
-		//percent = this.percentLinearToLog(percent);
+		const table = Array(100).fill(0).map((e,i) => this.easingHelper.easeInCirc( i, i, 100, 100 ));
+		console.log(table);
 
-		const tone:number = this.maxFrequency * percent/100;
+		const log:number = table[Math.round(percent)];
+		const tone:number = this.maxFrequency * log/100;
 		this.setTone(tone);
 
 		this.xRange.nativeElement.value = percent;
-
-		//console.log(Array(100).fill(0).map((e,i) => this.percentLinearToLog(i) ));
 	}
 
 	/**
@@ -171,18 +172,4 @@ export class ThereminComponent implements OnInit, OnDestroy
 
 		this.yRange.nativeElement.value = -percent;
 	}
-	//
-	// public percentLinearToLog( n:number )
-	// {
-	// 	if( n <= 0 )
-	// 		return 0;
-	//
-	// 	const minLog:number =  Math.log10(1);
-	// 	const maxLog:number = Math.log10(100);
-	// 	const range:number = maxLog - minLog;
-	//
-	// 	//return (Math.exp(n)-1)/(Math.E-1);
-	//
-	// 	return 100*(Math.log10(n) - minLog) / range;
-	// }
 }
