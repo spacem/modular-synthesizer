@@ -14,6 +14,7 @@ export class MainPanelComponent implements AfterViewInit
 	@ViewChild('play') playButton:ElementRef;
 	@ViewChild('keyboard') keyboard:KeyboardComponent;
 	@ViewChild('theremin') theremin:ThereminComponent;
+	@ViewChild('volume') volume:ElementRef;
 
 	protected started:boolean = false;
 
@@ -36,6 +37,7 @@ export class MainPanelComponent implements AfterViewInit
 	{
 		this.playButton.nativeElement.innerText = 'Stop';
 		this.mainPanelService.start();
+		this.mainPanelService.setVolume(this.volume.nativeElement.value/100);
 		this.theremin.connect();
 		this.started = true;
 	}
@@ -46,5 +48,17 @@ export class MainPanelComponent implements AfterViewInit
 		this.theremin.disconnect();
 		this.mainPanelService.stop();
 		this.started = false;
+	}
+
+	/**
+	 * Set the main volume.
+	 *
+	 * @param {number} volume
+	 * 	Main volume expressed in 0-1.
+	 */
+	public setVolume( volume:number )
+	{
+		this.mainPanelService.setVolume( volume );
+		this.volume.nativeElement.value = volume*100;
 	}
 }

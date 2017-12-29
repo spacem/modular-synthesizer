@@ -18,12 +18,17 @@ export class MainPanelService
 		this.audioContext = new (window['AudioContext'] || window['webkitAudioContext'])();
 		this.mainGain = this.audioContext.createGain();
 		this.mainGain.connect(this.audioContext.destination);
-		this.mainGain.gain.setValueAtTime(1, this.audioContext.currentTime);
 	}
 
 	public stop():void
 	{
 		if( this.mainGain )
-			this.mainGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+			this.setVolume(0);
+	}
+
+	public setVolume( volume:number ):void
+	{
+		if( this.mainGain )
+			this.mainGain.gain.setValueAtTime(volume, this.audioContext.currentTime);
 	}
 }

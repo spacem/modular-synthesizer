@@ -7,6 +7,7 @@ import {MainPanelService} from '../shared/services/main-panel/main-panel.service
 import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
 import { OscillatorModule } from './modules/instruments/theremin/theremin.module';
 import {WindowService} from '../core/services/window/window.service';
+import { EasingHelper } from '../shared/helpers/easing/easing-helper';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -16,7 +17,7 @@ describe('MainPanelComponent', () => {
 		TestBed.configureTestingModule({
 			imports: [RouterTestingModule,KeyboardModule,OscillatorModule],
 			declarations: [MainPanelComponent],
-			providers:[MainPanelService,WebMIDIService,WindowService]
+			providers:[MainPanelService,WebMIDIService,WindowService,EasingHelper]
 		})
 			.compileComponents();
 	}));
