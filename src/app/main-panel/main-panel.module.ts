@@ -4,7 +4,7 @@ import { MainPanelComponent } from './main-panel.component';
 import { MainPanelRoutingModule } from './main-panel-routing.module';
 import { KeyboardModule } from './modules/input-controllers/keyboard/keyboard.module';
 import { SharedModule } from '../shared/shared.module';
-import { OscillatorModule } from './modules/instruments/theremin/theremin.module';
+import { OscillatorModule } from './modules/input-controllers/theremin/theremin.module';
 
 @NgModule( {
 	imports: [

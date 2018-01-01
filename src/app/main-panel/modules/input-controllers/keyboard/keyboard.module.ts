@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {KeyboardKeysComponent} from './keyboard-keys/keyboard-keys.component';
 import { KeyboardComponent } from './keyboard.component';
-import { OscillatorModule } from '../../instruments/theremin/theremin.module';
+import { OscillatorModule } from '../theremin/theremin.module';
 
 @NgModule({
 	imports: [

@@ -4,6 +4,7 @@ import { MainPanelService } from '../../../../shared/services/main-panel/main-pa
 import { Subscription } from 'rxjs/Subscription';
 import { Voice } from '../../../../shared/models/voice/voice';
 import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
+import { IInputController } from '../../../models/iinput-controller';
 
 
 @Component( {
@@ -11,7 +12,7 @@ import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 	templateUrl: './theremin.component.html',
 	styleUrls: [ './theremin.component.scss' ]
 } )
-export class ThereminComponent implements OnInit, OnDestroy
+export class ThereminComponent implements OnInit, OnDestroy, IInputController
 {
 	@ViewChild('waveform') waveformSelect:ElementRef;
 	@ViewChild('xRange') xRange:ElementRef;
@@ -149,12 +150,6 @@ export class ThereminComponent implements OnInit, OnDestroy
 		const minValue = 0;
 		const maxValue = 24000;
 		const eased = percent >= 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
-
-		// harmonics
-		//const log:number = this.easingHelper.easeInCirc( Math.round(percent), Math.round(percent), 100, 100 );
-		//const eased:number = percent >= 100 ? 100 : this.maxFrequency * log/100;
-		// //osc.frequency.exponentialRampToValueAtTime(index ? tone + .25 * index : tone, currentTime + .1 * (index + 1));
-		// harmonics
 
 		this.setTone(eased);
 

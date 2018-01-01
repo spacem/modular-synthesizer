@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
 import {WebMIDIService} from '../shared/services/webmidi/webmidi.service';
 import { KeyboardComponent } from './modules/input-controllers/keyboard/keyboard.component';
-import { ThereminComponent } from './modules/instruments/theremin/theremin.component';
+import { ThereminComponent } from './modules/input-controllers/theremin/theremin.component';
 
 @Component({
   selector: 'app-main-panel',
@@ -39,6 +39,7 @@ export class MainPanelComponent implements AfterViewInit
 		this.mainPanelService.start();
 		this.mainPanelService.setVolume(this.volume.nativeElement.value/100);
 		this.theremin.connect();
+		this.keyboard.connect();
 		this.started = true;
 	}
 
