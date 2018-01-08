@@ -1,5 +1,3 @@
-import { tryCatch } from 'rxjs/util/tryCatch';
-
 export class Voice
 {
 	protected oscillators:OscillatorNode[] = [];
@@ -41,9 +39,12 @@ export class Voice
 	{
 		const context:AudioContext = outNode.context;
 		const oscillatorNode:OscillatorNode = context.createOscillator();
+
+		// Cannot call start more than once.
+		oscillatorNode.start( context.currentTime );
+
+		// Automatically set to 440hz by default, need to be muted.
 		oscillatorNode.frequency.setValueAtTime( 0, context.currentTime );
-		oscillatorNode.onended = error => console.error(error);
-		oscillatorNode.start( 0 );
 
 		return oscillatorNode;
 	}
@@ -76,8 +77,6 @@ export class Voice
 
 	public setTone( tone:number ):void
 	{
-		tone += .000000000001;
-
 		const currentTime:number = this.outNode.context.currentTime;
 		const sampleRate:number = this.outNode.context.sampleRate;
 
@@ -86,19 +85,25 @@ export class Voice
 			try
 			{
 				const nTone:number = Math.max(0, Math.min(tone * (index+1), sampleRate/2) );
-				const nTime:number = currentTime + 10/(nTone);
+				const nTime:number = currentTime + 1/(nTone+1);
 
 				// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
 				if( Math.abs(tone) > 1.40130e-45 )
 					osc.frequency.exponentialRampToValueAtTime( nTone, nTime );
 				else
-					osc.frequency.setTargetAtTime( nTone, nTime, 15);
+					osc.frequency.setValueAtTime( 0, currentTime );
 			}
 			catch(e)
 			{
 				console.error(`Trying to set tone "${tone}" led to error:`, e);
 			}
 		});
+	}
+
+	public stop():void
+	{
+		const currentTime:number = this.outNode.context.currentTime;
+		this.oscillators.forEach(osc =>	osc.stop(currentTime) );
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void

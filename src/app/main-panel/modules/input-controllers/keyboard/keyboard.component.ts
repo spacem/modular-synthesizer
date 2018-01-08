@@ -8,16 +8,11 @@ import { IInputController } from '../../../models/iinput-controller';
 	templateUrl: './keyboard.component.html',
 	styleUrls: ['./keyboard.component.scss']
 })
-export class KeyboardComponent implements OnInit, IInputController
+export class KeyboardComponent implements IInputController
 {
 	private voice:Voice;
 
 	constructor(private mainPanelService:MainPanelService){}
-
-	ngOnInit()
-	{
-		this.connect();
-	}
 
 	public connect():void
 	{
@@ -38,6 +33,7 @@ export class KeyboardComponent implements OnInit, IInputController
 	setTone( tone:number )
 	{
 		console.log( tone );
+
 		//TODO /!\ Make the real internal MIDI connection thing.
 		this.voice.setTone(tone);
 	}
