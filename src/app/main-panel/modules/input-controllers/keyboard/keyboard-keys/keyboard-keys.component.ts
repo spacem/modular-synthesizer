@@ -183,7 +183,7 @@ export class KeyboardKeysComponent implements OnChanges
 	keyDown( key:Key )
 	{
 		console.log(key.frequency);
-		this.playNote(key.frequency);
+		this.keyboard.keyDown(key);
 		key.pressed = true;
 	}
 
@@ -196,13 +196,7 @@ export class KeyboardKeysComponent implements OnChanges
 	 */
 	keyUp( key:Key )
 	{
-		this.playNote(0);
+		this.keyboard.keyUp(key);
 		key.pressed = false;
-	}
-
-	//TODO Will be removed when implementing connexion between components.
-	playNote( frequency:number )
-	{
-		this.keyboard.setTone(frequency);
 	}
 }

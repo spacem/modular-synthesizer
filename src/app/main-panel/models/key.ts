@@ -43,6 +43,13 @@ export class Key
 	public frequency:number=0;
 
 	/**
+	 * Note velocity.
+	 *
+	 * @type {number}
+	 */
+	public velocity:number=127;
+
+	/**
 	 * Current state of the key (released or pressed).
 	 *
 	 * @type {boolean}
@@ -54,7 +61,7 @@ export class Key
 	 * note.
 	 *
 	 * @param {number} note
-	 * 	The note number in the given octave.
+	 * 	The note number referring to its note position using C-1 as the reference zero note.
 	 */
 	constructor( note:number=0 )
 	{

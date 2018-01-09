@@ -65,22 +65,28 @@ export class WebMIDIService
 	}
 
 	/**
-	 * Send a MIDI message on all available connec
+	 * Shortcut the midi system (it is currently not possible to create virtual loopback with Web MIDI) to emit a MIDI
+	 * note event directly by the current service.
+	 *
+	 * @param {number} note
+	 *  The
 	 */
-	public sendMIDINote( note )
+	public sendMIDINote( channel:number, note:number, velocity:number, on:boolean ):void
 	{
 		// Converting MIDIInputMap to an indexed Array.
-		const outputs/*WebMidi.MIDIInput[]*/ = Array.from(this.outputs, o => o[1]);
+		const outputs/*WebMidi.MIDIInput[]*/ = Array.from(this.outputs || [], o => o[1]);
 
 		// Short-circuiting the system to be able to loopback without any real connected outputs.
-		if(outputs.length === 0 )
+		if( outputs.length === 0 )
 		{
-			const data:Uint8Array = new Uint8Array(8);
-
+			console.log( `sendMIDINote: channel=${channel}, midiNote=${note}, velocity=${velocity}, on=${on}` );
+			this.onMidiNoteMessage( channel, note, velocity, on );
 		}
 		else
 		{
-			const output:WebMidi.MIDIInput = outputs[0];
+			console.log('Sending MIDI to external devices is not yet implemented');
+			console.log( `sendMIDINote: channel=${channel}, midiNote=${note}, velocity=${velocity}, on=${on}` );
+			this.onMidiNoteMessage( channel, note, velocity, on );
 		}
 	}
 
