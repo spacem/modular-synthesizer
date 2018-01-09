@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Voice } from '../../../../shared/models/voice/voice';
 import { IInputController } from '../../../models/iinput-controller';
+import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 
 @Component({
 	selector: 'app-keyboard',
@@ -12,7 +13,7 @@ export class KeyboardComponent implements IInputController
 {
 	private voice:Voice;
 
-	constructor(private mainPanelService:MainPanelService){}
+	constructor(private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService){}
 
 	public connect():void
 	{
@@ -33,6 +34,8 @@ export class KeyboardComponent implements IInputController
 	setTone( tone:number )
 	{
 		console.log( tone );
+
+		this.webMIDIService.sendMIDINote('')
 
 		//TODO /!\ Make the real internal MIDI connection thing.
 		this.voice.setTone(tone);

@@ -65,11 +65,31 @@ export class WebMIDIService
 	}
 
 	/**
+	 * Send a MIDI message on all available connec
+	 */
+	public sendMIDINote( note )
+	{
+		// Converting MIDIInputMap to an indexed Array.
+		const outputs/*WebMidi.MIDIInput[]*/ = Array.from(this.outputs, o => o[1]);
+
+		// Short-circuiting the system to be able to loopback without any real connected outputs.
+		if(outputs.length === 0 )
+		{
+			const data:Uint8Array = new Uint8Array(8);
+
+		}
+		else
+		{
+			const output:WebMidi.MIDIInput = outputs[0];
+		}
+	}
+
+	/**
 	 * Called when Web MIDI access attempt succeed.
 	 *
 	 * Will start the MIDI service configuration and connection depending on found MIDI I/O ports.
 	 *
-	 * @param midiAccess
+	 * @param {WebMidi.MIDIAccess} midiAccess
 	 * 	The Web MIDI Access object on which to operate I/O connections.
 	 */
 	private onMIDISuccess( midiAccess/*WebMidi.MIDIAccess*/ ):void
@@ -90,9 +110,9 @@ export class WebMIDIService
 			console.table( inputs );
 
 			//TODO Create a visual interface to choose for the MIDI connection.
-			const firstDisconnectedInput/*WebMidi.MIDIInput[]*/ = inputs.find( input/*MidiInput*/ => input.state === 'connected' && input.connection === 'closed' );
-			if( firstDisconnectedInput )
-				this.connectInput(firstDisconnectedInput);
+			const firstFoundInput/*WebMidi.MIDIInput[]*/ = inputs.find( input/*MidiInput*/ => input.state === 'connected' && input.connection === 'closed' );
+			if( firstFoundInput )
+				this.connectInput(firstFoundInput);
 			else
 				console.warn(`Can't find any available MIDI port to connect to.`);
 		}
