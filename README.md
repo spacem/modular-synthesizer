@@ -25,6 +25,15 @@ You can [run a live demo](https://tekool.net/blogfiles/modular-synthesizer/) (mi
 ### Test
 - `ng test`
 
+## Usage
+
+### Web MIDI
+
+Not required but, on Windows, if you want to test MIDI without having any physical MIDI device nearby, you can download and install:
+
+- [loopMIDI](http://www.tobias-erichsen.de/software/loopmidi.html) for a virtual loopback MIDI cable.
+- [Virtual MIDI Piano Keyboard](http://vmpk.sourceforge.net/) for a virtual external MIDI keyboard.
+
 ## Resources
 
 ### Web Audio API
