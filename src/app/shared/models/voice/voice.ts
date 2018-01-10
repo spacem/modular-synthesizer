@@ -11,21 +11,21 @@ export class Voice
 	 * @param {AudioNode} outNode
 	 * 	The audionode to connect to.
 	 *
-	 * @param {number} oscillatorNumber
+	 * @param {number} oscillatorsNumber
 	 * 	The number of allocatable oscillators for one voice. Should not be confused with polyphony voices number. This
 	 * 	one just set the number of oscillators per sound patch, per voice so.
 	 *
 	 * @returns {Voice}
 	 *	The newly created voice.
 	 */
-	public static createVoice( outNode:AudioNode, oscillatorNumber:number=2 ):Voice
+	public static createVoice( outNode:AudioNode, oscillatorsNumber:number=2 ):Voice
 	{
 		if( !outNode )
 			throw Error(`Trying to create an OscillatorNode without attaching it to any output AudioNode.`);
 
 		// Fabrication
 		const voice = new Voice();
-		voice.oscillators = Array.from({length:oscillatorNumber},() => Voice.createOscillator(outNode) );
+		voice.oscillators = Array.from({length:oscillatorsNumber},() => Voice.createOscillator(outNode) );
 		voice.filter = Voice.createFilter(outNode);
 		voice.outNode = outNode;
 
@@ -76,16 +76,32 @@ export class Voice
 		this.filter.frequency.setTargetAtTime(value*100, context.currentTime, 15 );
 	}
 
-	public setTone( tone:number ):void
+	public setTones( tones:number[] ):void
 	{
-		const currentTime:number = this.outNode.context.currentTime;
-		const sampleRate:number = this.outNode.context.sampleRate;
-
 		this.oscillators.forEach( (osc, index) =>
 		{
+			if( tones && tones[index]>=0 )
+				this.setTone(index,tones[index]);
+		});
+	}
+
+	public getOscillatorsNumber():number
+	{
+		return this.oscillators.length;
+	}
+
+	public setTone( oscIndex:number, tone:number, time:number=-1 )
+	{
+		const currentTime:number = time<0 ? this.outNode.context.currentTime : time;
+		const sampleRate:number = this.outNode.context.sampleRate;
+
+		if( this.oscillators && this.oscillators[oscIndex] )
+		{
+			const osc:OscillatorNode = this.oscillators[oscIndex];
+
 			try
 			{
-				const nTone:number = Math.max(0, Math.min(tone * (index+1), sampleRate/2) );
+				const nTone:number = Math.max(0, Math.min(tone, sampleRate/2) );
 				const nTime:number = currentTime + 1/(nTone+1);
 
 				if( this.ramp )
@@ -105,7 +121,7 @@ export class Voice
 			{
 				console.error(`Trying to set tone "${tone}" led to error:`, e);
 			}
-		});
+		}
 	}
 
 	public stop():void

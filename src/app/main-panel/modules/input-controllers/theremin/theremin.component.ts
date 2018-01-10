@@ -55,7 +55,8 @@ export class ThereminComponent implements OnInit, OnDestroy, IInputController
 
 	public setTone( tone:number ):void
 	{
-		this.voice.setTone(tone);
+		const tones:number[] = Array.from({length:this.voice.getOscillatorsNumber()} ).map( (value, index) => (index+1)*tone );
+		this.voice.setTones(tones);
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void

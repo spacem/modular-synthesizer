@@ -34,11 +34,12 @@ export class KeyboardComponent implements IInputController
 		{
 			const note:Note = new Note(midiNoteMessage.note);
 
+
 			//FIXME Implement polyphony
 			if( midiNoteMessage.on )
-				this.voice.setTone( note.frequency );
+				this.voice.setTones( [note.frequency] );
 			else
-				this.voice.setTone( 0 );
+				this.voice.setTones( [0] );
 		});
 	}
 
