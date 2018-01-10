@@ -3,6 +3,7 @@ export class Voice
 	protected oscillators:OscillatorNode[] = [];
 	private outNode:AudioNode;
 	private filter:BiquadFilterNode;
+	private ramp:boolean = false;
 
 	/**
 	 * Factory method for the voice.
@@ -87,11 +88,18 @@ export class Voice
 				const nTone:number = Math.max(0, Math.min(tone * (index+1), sampleRate/2) );
 				const nTime:number = currentTime + 1/(nTone+1);
 
-				// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
-				if( Math.abs(tone) > 1.40130e-45 )
-					osc.frequency.exponentialRampToValueAtTime( nTone, nTime );
+				if( this.ramp )
+				{
+					// To avoid => RangeError: Failed to execute 'exponentialRampToValueAtTime' on 'AudioParam': The float target value provided (0) should not be in the range (-1.40130e-45, 1.40130e-45)
+					if( Math.abs(tone) > 1.40130e-45 )
+						osc.frequency.exponentialRampToValueAtTime( nTone, nTime );
+					else
+						osc.frequency.setValueAtTime( 0, currentTime );
+				}
 				else
-					osc.frequency.setValueAtTime( 0, currentTime );
+				{
+					osc.frequency.setValueAtTime( nTone, currentTime );
+				}
 			}
 			catch(e)
 			{

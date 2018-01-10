@@ -34,11 +34,11 @@ export class KeyboardComponent implements IInputController
 		{
 			const note:Note = new Note(midiNoteMessage.note);
 
+			//FIXME Implement polyphony
 			if( midiNoteMessage.on )
 				this.voice.setTone( note.frequency );
-			// FIXME Need to set off only the targeted tone
-			//else
-			//	this.voice.setTone( 0 );
+			else
+				this.voice.setTone( 0 );
 		});
 	}
 
@@ -52,13 +52,13 @@ export class KeyboardComponent implements IInputController
 	{
 		console.log( 'down:', note );
 
-		this.webMIDIService.sendMIDINote(this.channel, note.number, note.velocity, true);
+		this.webMIDIService.sendMIDINote( this.channel, note.number, note.velocity, true );
 	}
 
 	keyUp( note:Note )
 	{
 		console.log( 'up:', note );
 
-		this.webMIDIService.sendMIDINote(this.channel, note.number, note.velocity, false);
+		this.webMIDIService.sendMIDINote( this.channel, note.number, note.velocity, false );
 	}
 }
