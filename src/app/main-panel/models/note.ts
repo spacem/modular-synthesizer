@@ -1,6 +1,6 @@
 import { ToneHelper } from '../../shared/helpers/tone/tone-helper';
 
-export class Key
+export class Note
 {
 	/**
 	 * Chromatic scale octave base reference with scientific pitch notation.
@@ -40,41 +40,44 @@ export class Key
 	 *
 	 * @type {number}
 	 */
-	public frequency:number=0;
+	public frequency:number = 0;
 
 	/**
 	 * Note velocity.
 	 *
 	 * @type {number}
 	 */
-	public velocity:number=127;
+	public velocity:number = 127;
 
 	/**
-	 * Current state of the key (released or pressed).
+	 * Current state of the note (on or off).
 	 *
 	 * @type {boolean}
 	 */
-	public pressed:boolean = false;
+	public on:boolean = false;
 
 	/**
 	 * Build a note object referring to its note position using C-1 (first note of the zero octave) as the reference zero
 	 * note.
 	 *
-	 * @param {number} note
+	 * @param {number} noteNumber
 	 * 	The note number referring to its note position using C-1 as the reference zero note.
 	 */
-	constructor( note:number=0 )
+	constructor( noteNumber:number=0 )
 	{
+		if( isNaN(Number(noteNumber)) )
+			throw( Error(`Note range error, invalid note number: ${noteNumber}`) );
+
 		// C-1 reference zero note, is obviously on the octave -1.
-		const octave = Math.floor(note/12) -1;
+		const octave = Math.floor(noteNumber/12 ) -1;
 
 		// Force the note to be contained in the 0 and 11 range.
 		// @see https://stackoverflow.com/questions/18618136/how-to-calculate-modulo-of-negative-integers-in-javascript
-		this.noteNumberInOctave = Math.abs((note%12+12)%12);
+		this.noteNumberInOctave = Math.abs((noteNumber%12+12)%12);
 
-		const octaveKey = Key.octave[this.noteNumberInOctave];
+		const octaveKey = Note.octave[this.noteNumberInOctave];
 
-		this.number = note;
+		this.number = noteNumber;
 		this.octave = octave;
 		this.accidental= octaveKey.accidental;
 		this.fr = octaveKey.fr;

@@ -1,5 +1,5 @@
 import { Component, Host, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Key } from '../../../../models/key';
+import { Note } from '../../../../models/note';
 import { KeyboardComponent } from '../keyboard.component';
 
 /**
@@ -29,7 +29,7 @@ export class KeyboardKeysComponent implements OnChanges
 	protected _octaves:number = Math.floor(KeyboardKeysComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);
 	protected _lowerKey:number = KeyboardKeysComponent.LOWER_KEY_LIMIT;
 	protected _upperKey:number = KeyboardKeysComponent.UPPER_KEY_LIMIT;
-	protected _keys:Key[] = [];
+	protected _notes:Note[] = [];
 
 	/**
 	 * Generate the keyboard layout using current min and max key with C-1 as the reference zero key (A4 being key 69).
@@ -43,12 +43,12 @@ export class KeyboardKeysComponent implements OnChanges
 	 * @return {Key[]}
 	 * 	The generated keyboard layout.
 	 */
-	public static generateKeys( lowerKey:number, upperKey:number ):Key[]
+	public static generateKeys( lowerKey:number, upperKey:number ):Note[]
 	{
 		if( isNaN(lowerKey) || isNaN(upperKey) || lowerKey>upperKey )
 			throw(Error(`Key range error: ${lowerKey} => ${upperKey}`));
 
-		const keys:Key[] = [];
+		const keys:Note[] = [];
 		for( let i=lowerKey; i<=upperKey; i++ )
 			keys.push(KeyboardKeysComponent.createKey(i));
 
@@ -64,21 +64,21 @@ export class KeyboardKeysComponent implements OnChanges
 	 * @return {Key}
 	 * 	The newly created key.
 	 */
-	public static createKey( keyNumber:number ):Key
+	public static createKey( keyNumber:number ):Note
 	{
 		if( isNaN(keyNumber) )
 			throw(Error(`Key range error: ${keyNumber}`));
 
-		return new Key(keyNumber);
+		return new Note(keyNumber);
 	}
 
 
 	/**
 	 * Displayed list of the keys on the keyboard.
 	 */
-	public get keys():Key[]
+	public get notes():Note[]
 	{
-		return this._keys;
+		return this._notes;
 	}
 
 	/**
@@ -169,34 +169,34 @@ export class KeyboardKeysComponent implements OnChanges
 			this.octave = Math.floor(lowerKey/12)-1;
 		}
 
-		this._keys = KeyboardKeysComponent.generateKeys(lowerKey,upperKey);
+		this._notes = KeyboardKeysComponent.generateKeys(lowerKey,upperKey);
 
-		console.log(this._lowerKey,this._upperKey,this._keys);
+		console.log(this._lowerKey,this._upperKey,this._notes);
 	}
 
 	/**
 	 * Process the given key as pressed.
 	 *
-	 * @param {Key} key
-	 * 	The key to mark as pressed.
+	 * @param {Note} note
+	 * 	The key corresponding to the note to mark as on.
 	 */
-	keyDown( key:Key )
+	keyDown( note:Note )
 	{
-		console.log(key.frequency);
-		this.keyboard.keyDown(key);
-		key.pressed = true;
+		console.log(note.frequency);
+		this.keyboard.keyDown(note);
+		note.on = true;
 	}
 
 	// noinspection JSUnusedLocalSymbols
 	/**
 	 * Process the given key as released.
 	 *
-	 * @param {Key} key
-	 * 	The key to mark as pressed.
+	 * @param {Note} note
+	 * 	The key corresponding to the note to mark as off.
 	 */
-	keyUp( key:Key )
+	keyUp( note:Note )
 	{
-		this.keyboard.keyUp(key);
-		key.pressed = false;
+		this.keyboard.keyUp(note);
+		note.on = false;
 	}
 }

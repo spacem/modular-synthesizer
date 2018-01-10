@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Voice } from '../../../../shared/models/voice/voice';
 import { IInputController } from '../../../models/iinput-controller';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
-import { Key } from '../../../models/key';
+import { Note } from '../../../models/note';
 import { Subscription } from 'rxjs/Subscription';
 import { MidiNoteMessage } from '../../../../shared/models/midi/midi-note-message';
 
@@ -32,7 +32,7 @@ export class KeyboardComponent implements IInputController
 		// FIXME Does it really need to be here (it reflect the key of any external keybord device attached to the same channel) ?
 		this.noteSubsription = this.webMIDIService.noteSource$.subscribe( (midiNoteMessage:MidiNoteMessage) =>
 		{
-			const note:Key = new Key(midiNoteMessage.note);
+			const note:Note = new Note(midiNoteMessage.note);
 
 			if( midiNoteMessage.on )
 				this.voice.setTone( note.frequency );
@@ -48,17 +48,17 @@ export class KeyboardComponent implements IInputController
 		this.noteSubsription.unsubscribe();
 	}
 
-	public keyDown( key:Key )
+	public keyDown( note:Note )
 	{
-		console.log( 'down:', key );
+		console.log( 'down:', note );
 
-		this.webMIDIService.sendMIDINote(this.channel, key.number, key.velocity, true);
+		this.webMIDIService.sendMIDINote(this.channel, note.number, note.velocity, true);
 	}
 
-	keyUp( key:Key )
+	keyUp( note:Note )
 	{
-		console.log( 'up:', key );
+		console.log( 'up:', note );
 
-		this.webMIDIService.sendMIDINote(this.channel, key.number, key.velocity, false);
+		this.webMIDIService.sendMIDINote(this.channel, note.number, note.velocity, false);
 	}
 }

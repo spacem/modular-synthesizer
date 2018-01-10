@@ -1,9 +1,9 @@
-import {Key} from './key';
+import {Note} from './note';
 
 describe('Key', () =>
 {
 	it('should create an instance', () =>
 	{
-		expect(new Key()).toBeTruthy();
+		expect(new Note()).toBeTruthy();
 	});
 });
