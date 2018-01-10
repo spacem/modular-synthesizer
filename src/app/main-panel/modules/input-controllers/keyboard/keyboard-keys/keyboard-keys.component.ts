@@ -1,5 +1,5 @@
 import { Component, Host, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { Note } from '../../../../models/note';
+import { Note } from '../../../../../shared/models/note/note';
 import { KeyboardComponent } from '../keyboard.component';
 
 /**

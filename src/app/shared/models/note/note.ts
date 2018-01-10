@@ -1,4 +1,4 @@
-import { ToneHelper } from '../../shared/helpers/tone/tone-helper';
+import { ToneHelper } from '../../helpers/tone/tone-helper';
 
 export class Note
 {

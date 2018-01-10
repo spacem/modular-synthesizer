@@ -3,7 +3,7 @@ import { MainPanelService } from '../../../../shared/services/main-panel/main-pa
 import { Voice } from '../../../../shared/models/voice/voice';
 import { IInputController } from '../../../models/iinput-controller';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
-import { Note } from '../../../models/note';
+import { Note } from '../../../../shared/models/note/note';
 import { Subscription } from 'rxjs/Subscription';
 import { MidiNoteMessage } from '../../../../shared/models/midi/midi-note-message';
 
