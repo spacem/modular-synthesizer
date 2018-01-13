@@ -1,19 +1,20 @@
 $size: 400px;
-$pad-size: $size - 40px;
+$pad-size: $size - 50px;
 
 :host
 {
 	display:block;
-	position:relative;
+	padding:15px;
+}
+
+.component-container
+{
 	max-width: $size;
 	max-height: $size;
 }
 
 .pad
 {
-	position:relative;
-	top:0;
-	left:0;
 	width:$pad-size;
 	height:$pad-size;
 	border:double thin white;
@@ -36,6 +37,6 @@ input[type=range][orient=vertical]
 input[type=range][orient=vertical].yRange
 {
 	display:inline-block;
-	float: right;
 	height:$pad-size;
+	margin-left:5px;
 }
