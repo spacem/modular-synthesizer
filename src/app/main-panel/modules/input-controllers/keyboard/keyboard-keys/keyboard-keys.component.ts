@@ -23,7 +23,7 @@ export class KeyboardKeysComponent implements OnChanges
 	/**
 	 * The very upper key the keyboard will ever display: corresponding to key C10 at near 16744Hz.
 	 */
-	static readonly UPPER_KEY_LIMIT:number = 120;
+	static readonly UPPER_KEY_LIMIT:number = 128;
 
 	protected _octave:number = Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12)-1;
 	protected _octaves:number = Math.floor(KeyboardKeysComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);
@@ -185,6 +185,7 @@ export class KeyboardKeysComponent implements OnChanges
 		console.log(note.frequency);
 		this.keyboard.keyDown(note);
 		note.on = true;
+		note.velocity = 127;
 	}
 
 	// noinspection JSUnusedLocalSymbols
@@ -198,5 +199,6 @@ export class KeyboardKeysComponent implements OnChanges
 	{
 		this.keyboard.keyUp(note);
 		note.on = false;
+		note.velocity = 0;
 	}
 }
