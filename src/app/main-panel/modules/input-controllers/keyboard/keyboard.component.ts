@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Voice } from '../../../../shared/models/voice/voice';
 import { IInputController } from '../../../models/iinput-controller';
@@ -16,7 +16,7 @@ import { KeyboardKeysComponent } from './keyboard-keys/keyboard-keys.component';
 })
 export class KeyboardComponent implements IInputController
 {
-	private static POLYPHONY:number = 4;
+	private static POLYPHONY:number = 128;
 
 	private voice:Voice;
 	private channel:number = 1;
@@ -42,27 +42,12 @@ export class KeyboardComponent implements IInputController
 		this.noteSubsription = this.webMIDIService.noteSource$.subscribe( (midiNoteMessage:MidiNoteMessage) =>
 		{
 			const notes:Note[] = this.keyboard.notes;
-			const note:Note = MidiHelper.createNoteFromMidiNote(midiNoteMessage);
-			const firstInactiveIndex:number = this.activeOscs.findIndex( activeNote => !notes[activeNote] || !notes[activeNote].on );
-			const alreadyActiveIndex:number = this.activeOscs.findIndex( activeNote => activeNote === midiNoteMessage.note );
+			const midiNote:Note = MidiHelper.createNoteFromMidiNote(midiNoteMessage);
+			notes[midiNote.number].on = midiNote.on;
+			notes[midiNote.number].velocity = midiNote.velocity;
 
-			// Play or unplay note depending on the note is off or its velocity is zeroed.
-			if( note.on && note.velocity>0 )
-			{
-				// Reuse the old allocated index for the note when it already is played.
-				if( alreadyActiveIndex >= 0 )
-					this.activeOscs[alreadyActiveIndex] = note.number;
-				else
-					this.activeOscs[firstInactiveIndex] = note.number;
-			}
-			else
-			{
-				this.activeOscs[firstInactiveIndex] = undefined;
-			}
-
-			//const tones:number[] = this.activeNotes.map( activeNote => activeNote && activeNote.on ? activeNote.frequency : undefined );
-
-			//this.voice.setTone( index, tone );
+			//TODO FIFO active oscillators.
+			notes.forEach( (note,index) => this.voice.setTone( index, note.on && note.velocity >= 0 ? note.frequency : 0 ) );
 		});
 	}
 

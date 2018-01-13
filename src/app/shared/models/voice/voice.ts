@@ -76,15 +76,6 @@ export class Voice
 		this.filter.frequency.setTargetAtTime(value*100, context.currentTime, 15 );
 	}
 
-	public setTones( tones:number[] ):void
-	{
-		this.oscillators.forEach( (osc, index) =>
-		{
-			if( tones && tones[index]>=0 )
-				this.setTone(index,tones[index]);
-		});
-	}
-
 	public getOscillatorsNumber():number
 	{
 		return this.oscillators.length;
@@ -92,6 +83,7 @@ export class Voice
 
 	public setTone( oscIndex:number, tone:number, time:number=-1 )
 	{
+		//console.log(`oscIndex:${oscIndex}, tone:${tone}, time:${time}`);
 		const currentTime:number = time<0 ? this.outNode.context.currentTime : time;
 		const sampleRate:number = this.outNode.context.sampleRate;
 
@@ -114,6 +106,7 @@ export class Voice
 				}
 				else
 				{
+					console.log(`oscIndex:${oscIndex}, tone:${nTone}, time:${currentTime}`);
 					osc.frequency.setValueAtTime( nTone, currentTime );
 				}
 			}

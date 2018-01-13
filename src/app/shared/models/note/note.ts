@@ -43,7 +43,7 @@ export class Note
 	public frequency:number = 0;
 
 	/**
-	 * Note velocity.
+	 * Note velocity (an integer from 0 to 127).
 	 *
 	 * @type {number}
 	 */
@@ -60,24 +60,27 @@ export class Note
 	 * Build a note object referring to its note position using C-1 (first note of the zero octave) as the reference zero
 	 * note.
 	 *
-	 * @param {number} noteNumber
+	 * @param {number} number
 	 * 	The note number referring to its note position using C-1 as the reference zero note.
+	 *
+	 * @param {number} velocity
+	 * 	The note velocity (an integer from 0 to 127).
 	 */
-	constructor( noteNumber:number=0 )
+	constructor( number:number=0, velocity:number=0 )
 	{
-		if( isNaN(Number(noteNumber)) )
-			throw( Error(`Note range error, invalid note number: ${noteNumber}`) );
+		if( isNaN(Number(number)) )
+			throw( Error(`Note range error, invalid note number: ${number}`) );
 
 		// C-1 reference zero note, is obviously on the octave -1.
-		const octave = Math.floor(noteNumber/12 ) -1;
+		const octave = Math.floor(number/12 ) -1;
 
 		// Force the note to be contained in the 0 and 11 range.
 		// @see https://stackoverflow.com/questions/18618136/how-to-calculate-modulo-of-negative-integers-in-javascript
-		this.noteNumberInOctave = Math.abs((noteNumber%12+12)%12);
+		this.noteNumberInOctave = Math.abs((number%12+12)%12);
 
 		const octaveKey = Note.octave[this.noteNumberInOctave];
 
-		this.number = noteNumber;
+		this.number = number;
 		this.octave = octave;
 		this.accidental= octaveKey.accidental;
 		this.fr = octaveKey.fr;
@@ -85,5 +88,6 @@ export class Note
 		this.scientificName = octaveKey.en + octave;
 
 		this.frequency = ToneHelper.noteToFrequency(this.number);
+		this.velocity = Math.max(0,Math.min(Math.floor(velocity),127));
 	}
 }
