@@ -11,5 +11,7 @@
 		[upperKey]="keyboard.upperKey*1"
 		[octave]="keyboard.octave*1"
 		[octaves]="keyboard.octaves*1"
+		(keyDown)="keyDown($event)"
+		(keyUp)="keyUp($event)"
 	></app-keyboard-keys>
 </div>

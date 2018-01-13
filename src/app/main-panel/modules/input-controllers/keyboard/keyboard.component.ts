@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Voice } from '../../../../shared/models/voice/voice';
 import { IInputController } from '../../../models/iinput-controller';
@@ -7,6 +7,7 @@ import { Note } from '../../../../shared/models/note/note';
 import { Subscription } from 'rxjs/Subscription';
 import { MidiNoteMessage } from '../../../../shared/models/midi/midi-note-message';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
+import { KeyboardKeysComponent } from './keyboard-keys/keyboard-keys.component';
 
 @Component({
 	selector: 'app-keyboard',
@@ -20,7 +21,11 @@ export class KeyboardComponent implements IInputController
 	private voice:Voice;
 	private channel:number = 1;
 	private noteSubsription:Subscription;
-	private activeNotes:Note[] = Array.from({length:KeyboardComponent.POLYPHONY});
+
+	@ViewChild('keyboard') keyboard:KeyboardKeysComponent;
+
+	// FIFO of active oscillators on the voice, each entry is a keyboard note number.
+	private activeOscs:number[] = Array.from({length:KeyboardComponent.POLYPHONY});
 
 	constructor(private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService){}
 
@@ -36,26 +41,28 @@ export class KeyboardComponent implements IInputController
 		// FIXME Does it really need to be here (it reflect the key of any external keyboard device attached to the same channel) ?
 		this.noteSubsription = this.webMIDIService.noteSource$.subscribe( (midiNoteMessage:MidiNoteMessage) =>
 		{
+			const notes:Note[] = this.keyboard.notes;
 			const note:Note = MidiHelper.createNoteFromMidiNote(midiNoteMessage);
-			const firstInactiveIndex:number = this.activeNotes.findIndex( activeNote => !activeNote || !activeNote.on );
-			const alreadyActiveIndex:number = this.activeNotes.findIndex( activeNote => activeNote && activeNote.number === midiNoteMessage.note );
+			const firstInactiveIndex:number = this.activeOscs.findIndex( activeNote => !notes[activeNote] || !notes[activeNote].on );
+			const alreadyActiveIndex:number = this.activeOscs.findIndex( activeNote => activeNote === midiNoteMessage.note );
 
 			// Play or unplay note depending on the note is off or its velocity is zeroed.
 			if( note.on && note.velocity>0 )
 			{
 				// Reuse the old allocated index for the note when it already is played.
 				if( alreadyActiveIndex >= 0 )
-					this.activeNotes[alreadyActiveIndex] = note;
+					this.activeOscs[alreadyActiveIndex] = note.number;
 				else
-					this.activeNotes[firstInactiveIndex] = note;
+					this.activeOscs[firstInactiveIndex] = note.number;
 			}
 			else
 			{
-				this.activeNotes[firstInactiveIndex] = undefined;
+				this.activeOscs[firstInactiveIndex] = undefined;
 			}
 
-			const tones:number[] = this.activeNotes.map( activeNote => activeNote && activeNote.on ? activeNote.frequency : undefined );
-			this.voice.setTones( tones );
+			//const tones:number[] = this.activeNotes.map( activeNote => activeNote && activeNote.on ? activeNote.frequency : undefined );
+
+			//this.voice.setTone( index, tone );
 		});
 	}
 
@@ -72,7 +79,7 @@ export class KeyboardComponent implements IInputController
 		this.webMIDIService.sendMIDINote( this.channel, note.number, 127, true );
 	}
 
-	keyUp( note:Note )
+	public keyUp( note:Note )
 	{
 		console.log( 'up:', note );
 

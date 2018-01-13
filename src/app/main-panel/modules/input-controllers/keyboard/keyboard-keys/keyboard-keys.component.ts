@@ -1,6 +1,5 @@
-import { Component, Host, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Host, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Note } from '../../../../../shared/models/note/note';
-import { KeyboardComponent } from '../keyboard.component';
 
 /**
 * User Interface component for the musical keyboard component.
@@ -30,6 +29,9 @@ export class KeyboardKeysComponent implements OnChanges
 	protected _lowerKey:number = KeyboardKeysComponent.LOWER_KEY_LIMIT;
 	protected _upperKey:number = KeyboardKeysComponent.UPPER_KEY_LIMIT;
 	protected _notes:Note[] = [];
+
+	@Output() keyDown = new EventEmitter<Note>();
+	@Output() keyUp = new EventEmitter<Note>();
 
 	/**
 	 * Generate the keyboard layout using current min and max key with C-1 as the reference zero key (A4 being key 69).
@@ -137,8 +139,6 @@ export class KeyboardKeysComponent implements OnChanges
 			this._upperKey = value;
 	}
 
-	constructor( @Host() private keyboard:KeyboardComponent ){}
-
 	ngOnChanges( changes:SimpleChanges )
 	{
 		let	lowerKey:number, upperKey:number;
@@ -180,12 +180,12 @@ export class KeyboardKeysComponent implements OnChanges
 	 * @param {Note} note
 	 * 	The key corresponding to the note to mark as on.
 	 */
-	keyDown( note:Note )
+	public onKeyDown( note:Note )
 	{
 		console.log(note.frequency);
-		this.keyboard.keyDown(note);
 		note.on = true;
 		note.velocity = 127;
+		this.keyDown.emit(note);
 	}
 
 	// noinspection JSUnusedLocalSymbols
@@ -195,10 +195,10 @@ export class KeyboardKeysComponent implements OnChanges
 	 * @param {Note} note
 	 * 	The key corresponding to the note to mark as off.
 	 */
-	keyUp( note:Note )
+	public onKeyUp( note:Note )
 	{
-		this.keyboard.keyUp(note);
 		note.on = false;
 		note.velocity = 0;
+		this.keyUp.emit(note);
 	}
 }
