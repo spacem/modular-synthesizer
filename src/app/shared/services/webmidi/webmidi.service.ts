@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { WindowService } from '../../../core/services/window/window.service';
 import { MidiNoteMessage } from '../../models/midi/midi-note-message';
 import { MidiProgramChangeMessage } from '../../models/midi/midi-program-change-message';
+import { MidiControlChangeMessage } from '../../models/midi/midi-control-change-message';
 
 /**
  * Main entry point and adapter for the browser Web MIDI API.
@@ -16,6 +17,9 @@ export class WebMIDIService
 
 	private programSource:Subject<MidiProgramChangeMessage> = new Subject<MidiProgramChangeMessage>();
 	public programSource$:Observable<MidiProgramChangeMessage> = this.programSource.asObservable();
+
+	private controlSource:Subject<MidiControlChangeMessage> = new Subject<MidiControlChangeMessage>();
+	public controlSource$:Observable<MidiControlChangeMessage> = this.controlSource.asObservable();
 
 	private inputs/*WebMidi.MIDIInputMap*/;
 	private outputs/*WebMidi.MIDIOutputMap*/;
@@ -177,6 +181,7 @@ export class WebMIDIService
 			// Control (channel 1-16)
 			case status>=176 && status<=191:
 				console.info(`Control: channel=${status-176+1}, control=${b1}, value=${b2}`);
+				this.onControlChangeMessage( status-176+1, b1, b2 );
 			break;
 
 			// Program (channel 1-16)
@@ -220,6 +225,24 @@ export class WebMIDIService
 	{
 		const midiProgramChangeMessage:MidiProgramChangeMessage = new MidiProgramChangeMessage( channel, program );
 		this.programSource.next( midiProgramChangeMessage );
+	}
+
+	/**
+	 * Called on each MIDI «Control Change» message.
+	 *
+	 * @param {number} channel
+	 * 	The MIDI channel to which the MIDI «Control Change» is sent.
+	 *
+	 * @param {number} control
+	 * 	The control number associated to the MIDI «Control Change» message.
+	 *
+	 * @param {number} value
+	 * 	The control value associated to the MIDI «Control Change» message.
+	 */
+	private onControlChangeMessage( channel:number, control:number, value:number ):void
+	{
+		const midiControlChangeMessage:MidiControlChangeMessage = new MidiControlChangeMessage( channel, control, value );
+		this.controlSource.next( midiControlChangeMessage );
 	}
 
 	/**
