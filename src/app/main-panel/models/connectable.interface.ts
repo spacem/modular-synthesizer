@@ -1,4 +1,4 @@
-export interface IInputController
+export interface Connectible
 {
 	connect():void;
 	disconnect():void;
