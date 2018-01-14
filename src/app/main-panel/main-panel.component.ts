@@ -47,6 +47,7 @@ export class MainPanelComponent implements AfterViewInit
 	{
 		this.playButton.nativeElement.innerText = 'Play';
 		this.theremin.disconnect();
+		this.keyboard.disconnect();
 		this.mainPanelService.stop();
 		this.started = false;
 	}
