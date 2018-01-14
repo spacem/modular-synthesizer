@@ -106,7 +106,7 @@ export class Voice
 				}
 				else
 				{
-					console.log(`oscIndex:${oscIndex}, tone:${nTone}, time:${currentTime}`);
+					//console.log(`oscIndex:${oscIndex}, tone:${nTone}, time:${currentTime}`);
 					osc.frequency.setValueAtTime( nTone, currentTime );
 				}
 			}
@@ -130,9 +130,15 @@ export class Voice
 
 	public disconnect():void
 	{
-		this.oscillators.forEach(osc => osc.disconnect( this.filter ) );
-		this.filter.disconnect( this.outNode );
+		if(  this.filter )
+		{
+			if( this.outNode )
+				this.filter.disconnect( this.outNode );
+
+			this.oscillators.forEach( osc => osc.disconnect( this.filter ) );
+		}
+
+		this.outNode = null;
 		this.oscillators = [];
 	}
-
 }
