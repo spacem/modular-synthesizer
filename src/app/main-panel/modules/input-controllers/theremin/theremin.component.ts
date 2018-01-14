@@ -19,7 +19,8 @@ import { Note } from '../../../../shared/models/note/note';
 } )
 export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 {
-	public static readonly MAX_FREQUENCY:number = 8000;
+	public static readonly MIN_FREQUENCY:number = 60;
+	public static readonly MAX_FREQUENCY:number = 250;
 
 	@ViewChild('waveform') waveform:ElementRef;
 	@ViewChild('xRange') xRange:ElementRef;
@@ -46,8 +47,11 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 
 	public playNote( note:Note ):void
 	{
-		if( note.on && note.velocity>0 )
-			this.setTone(note.frequency);
+		if( note.on && note.velocity>0 && note.frequency>0 )
+		{
+			const percent:number = 100/(ToneHelper.noteToFrequency(128)/note.frequency);
+			this.setX(percent);
+		}
 		else
 			this.setTone(0);
 	}
@@ -74,7 +78,8 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
 		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),+this.voices.nativeElement.value);
 		this.setWaveformType(this.waveform.nativeElement.value);
-		this.setTone(+this.xRange.nativeElement.value);
+		this.setX(+this.xRange.nativeElement.value);
+		this.setY(+this.yRange.nativeElement.value);
 
 		this.midiConnect();
 	}
@@ -127,7 +132,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 
 	public setVoices( number:number ):void
 	{
-		this.voices.nativeElement.value = Math.max(+this.voices.nativeElement.min, Math.min(Number(number), +this.voices.nativeElement.max));
+		this.voices.nativeElement.value = '' + Math.max(+this.voices.nativeElement.min, Math.min(Number(number), +this.voices.nativeElement.max));
 		this.connect();
 	}
 
@@ -207,7 +212,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	{
 		percent = Number(percent);
 
-		const minValue = 0;
+		const minValue = ThereminComponent.MIN_FREQUENCY;
 		const maxValue = ThereminComponent.MAX_FREQUENCY;
 		const eased = percent >= 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
 
