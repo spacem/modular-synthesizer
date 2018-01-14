@@ -1,10 +1,15 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Voice } from '../../../../shared/models/voice/voice';
 import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
-import { IInputController } from '../../../models/iinput-controller';
+import { Connectible } from '../../../models/connectable.interface';
+import { MidiNoteMessage } from '../../../../shared/models/midi/midi-note-message';
+import { ToneHelper } from '../../../../shared/helpers/tone/tone-helper';
+import { MidiDevice } from '../../../models/midi-device.interface';
+import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
+import { Note } from '../../../../shared/models/note/note';
 
 
 @Component( {
@@ -12,46 +17,40 @@ import { IInputController } from '../../../models/iinput-controller';
 	templateUrl: './theremin.component.html',
 	styleUrls: [ './theremin.component.scss' ]
 } )
-export class ThereminComponent implements OnInit, OnDestroy, IInputController
+export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 {
-	@ViewChild('waveform') waveformSelect:ElementRef;
+	public static readonly MAX_FREQUENCY:number = 8000;
+
+	@ViewChild('waveform') waveform:ElementRef;
 	@ViewChild('xRange') xRange:ElementRef;
 	@ViewChild('yRange') yRange:ElementRef;
 	@ViewChild('pad') pad:ElementRef;
 	@ViewChild('voices') voices:ElementRef;
 
-	//private noteSourceSubscription:Subscription;
-	private programSubscription:Subscription;
-	private voice:Voice;
+	public midiMute:boolean;
+	public midiChannel:number = 2;
+	public midiProgram:number;
+	public midiPitch:number;
 
-	public maxFrequency:number = 8000;
+	private midiNoteSubscription:Subscription;
+	private midiProgramSubscription:Subscription;
+	private midiControlSubscription:Subscription;
+	private voice:Voice;
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
 
-	ngOnInit()
-	{
-		//this.noteSourceSubscription = this.webMIDIService.noteSource$.subscribe(note => this.setNote(note) );
-		this.programSubscription = this.webMIDIService.programSource$.subscribe(program => this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][program.program%4] as OscillatorType ) );
-	}
-
 	ngOnDestroy()
 	{
-		//this.noteSourceSubscription.unsubscribe();
-		this.programSubscription.unsubscribe();
+		this.disconnect();
 	}
 
-	// public setNote( midiNoteMessage:MidiNoteMessage ):void
-	// {
-	// 	const tone = ToneHelper.noteToFrequency(midiNoteMessage.note);
-	// 	if(midiNoteMessage.on)
-	// 		this.setTone(tone);
-	// 	else
-	// 		this.setTone(0);
-	// }
-
-	public start():void{}
-
-	public stop():void{}
+	public playNote( note:Note ):void
+	{
+		if( note.on && note.velocity>0 )
+			this.setTone(note.frequency);
+		else
+			this.setTone(0);
+	}
 
 	public setTone( tone:number ):void
 	{
@@ -64,23 +63,81 @@ export class ThereminComponent implements OnInit, OnDestroy, IInputController
 	public setWaveformType( waveformType:OscillatorType ):void
 	{
 		this.voice.setWaveformType(waveformType);
-		this.waveformSelect.nativeElement.value = waveformType;
+		this.waveform.nativeElement.value = waveformType;
 	}
 
 	public connect():void
 	{
-		if( this.voice )
-			this.voice.disconnect();
+		// Always disconnect first.
+		this.disconnect();
 
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),this.voices.nativeElement.value);
-		this.setWaveformType(this.waveformSelect.nativeElement.value);
-		this.setTone(this.xRange.nativeElement.value);
+		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),+this.voices.nativeElement.value);
+		this.setWaveformType(this.waveform.nativeElement.value);
+		this.setTone(+this.xRange.nativeElement.value);
+
+		this.midiConnect();
 	}
 
 	public disconnect():void
 	{
-		this.voice.disconnect();
+		this.midiDisconnect();
+
+		if( this.voice )
+			this.voice.disconnect();
+	}
+
+	//TODO Implement
+	public start(){}
+	public stop(){}
+
+	public midiConnect()
+	{
+		this.midiNoteSubscription = this.webMIDIService.noteSource$.subscribe(midiNoteMessage =>
+		{
+			if( midiNoteMessage.channel === this.midiChannel )
+			{
+				const note:Note = MidiHelper.createNoteFromMidiNote(midiNoteMessage);
+				this.playNote(note);
+			}
+		} );
+
+		this.midiProgramSubscription = this.webMIDIService.programSource$.subscribe(midiProgramChangeMessage =>
+		{
+			if( midiProgramChangeMessage.channel === this.midiChannel )
+				this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][midiProgramChangeMessage.program%4] as OscillatorType );
+		});
+
+		this.midiControlSubscription = this.webMIDIService.controlSource$.subscribe(midiControlChangeMessage =>
+		{
+			if( midiControlChangeMessage.channel === this.midiChannel )
+			{
+				switch( midiControlChangeMessage.control )
+				{
+					case 64:
+						this.setVoices(midiControlChangeMessage.value);
+					break;
+
+					default:
+						console.warn(`The control ${midiControlChangeMessage.control} is not handled by Theremin`);
+				}
+			}
+		});
+	}
+
+	public setVoices( number:number ):void
+	{
+		this.voices.nativeElement.value = Math.max(+this.voices.nativeElement.min, Math.min(Number(number), +this.voices.nativeElement.max));
+		this.connect();
+	}
+
+	public midiDisconnect()
+	{
+		if( this.midiNoteSubscription )
+			this.midiNoteSubscription.unsubscribe();
+
+		if( this.midiProgramSubscription )
+			this.midiProgramSubscription.unsubscribe();
 	}
 
 	/**
@@ -151,7 +208,7 @@ export class ThereminComponent implements OnInit, OnDestroy, IInputController
 		percent = Number(percent);
 
 		const minValue = 0;
-		const maxValue = 24000;
+		const maxValue = ThereminComponent.MAX_FREQUENCY;
 		const eased = percent >= 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
 
 		this.setTone(eased);
