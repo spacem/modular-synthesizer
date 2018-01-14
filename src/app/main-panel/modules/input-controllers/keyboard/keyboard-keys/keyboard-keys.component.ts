@@ -15,14 +15,14 @@ import { Note } from '../../../../../shared/models/note/note';
 export class KeyboardKeysComponent implements OnChanges
 {
 	/**
-	 * The very lower key the keyboard will ever display: corresponding to key C-1 at near 8Hz.
+	 * The very lower key the keyboard will ever display: zero being key C-1 at near 8Hz.
 	 */
 	static readonly LOWER_KEY_LIMIT:number = 0;
 
 	/**
-	 * The very upper key the keyboard will ever display: corresponding to key C10 at near 16744Hz.
+	 * The very upper key the keyboard will ever display: 127 being key C10 at near 16744Hz.
 	 */
-	static readonly UPPER_KEY_LIMIT:number = 128;
+	static readonly UPPER_KEY_LIMIT:number = 127;
 
 	protected _octave:number = Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12)-1;
 	protected _octaves:number = Math.floor(KeyboardKeysComponent.UPPER_KEY_LIMIT/12) - Math.floor(KeyboardKeysComponent.LOWER_KEY_LIMIT/12);

@@ -5,7 +5,7 @@
 		(mousedown)="onKeyDown(note)"
 		(mouseup)="onKeyUp(note)"
 		(mouseleave)="!note.on || onKeyUp(note)"
-		[ngClass]="{'key_sharp':note.accidental, 'key_natural':!note.accidental,'key_pressed':note.on}"
+		[ngClass]="{'key--sharp':note.accidental, 'key--natural':!note.accidental,'key--pressed':note.on}"
 	>
 		{{note.scientificName}}
 	</li>

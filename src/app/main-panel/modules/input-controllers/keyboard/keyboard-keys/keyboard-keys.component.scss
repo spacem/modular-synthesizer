@@ -7,9 +7,11 @@
 	text-align: center;
 	user-select: none;
 	cursor:pointer;
+
+	transition: background-color 100ms ease-in ;
 }
 
-.key_natural
+.key--natural
 {
 	width:50px;
 	padding:90px 0 3px 0;
@@ -17,13 +19,13 @@
 	border: black thin solid;
 	color:black;
 
-	&.key_pressed
+	&.key--pressed
 	{
 		background-color: #b9d7e8;
 	}
 }
 
-.key_sharp
+.key--sharp
 {
 	width:35px;
 	padding:40px 0 3px 0;
@@ -36,7 +38,7 @@
 	position: relative;
 	z-index: 100;
 
-	&.key_pressed
+	&.key--pressed
 	{
 		background-color: #596163;
 	}
