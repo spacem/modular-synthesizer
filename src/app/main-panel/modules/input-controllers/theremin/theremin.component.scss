@@ -19,6 +19,7 @@ $pad-size: $size - 50px;
 	height:$pad-size;
 	border:double thin white;
 	display: inline-block;
+	cursor:none;
 }
 
 .dot{
