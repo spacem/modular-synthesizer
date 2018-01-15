@@ -1,16 +1,14 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
-import { Voice } from '../../../../shared/models/voice/voice';
+import { PolyphonicOscillator } from '../../../../shared/models/polyphonic-oscillator/polyphonic-oscillator';
 import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 import { Connectible } from '../../../models/connectable.interface';
-import { MidiNoteMessage } from '../../../../shared/models/midi/midi-note-message';
 import { ToneHelper } from '../../../../shared/helpers/tone/tone-helper';
 import { MidiDevice } from '../../../models/midi-device.interface';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
 import { Note } from '../../../../shared/models/note/note';
-
 
 @Component( {
 	selector: 'app-theremin',
@@ -23,8 +21,6 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	public static readonly MAX_FREQUENCY:number = 250;
 
 	@ViewChild('waveform') waveform:ElementRef;
-	@ViewChild('xRange') xRange:ElementRef;
-	@ViewChild('yRange') yRange:ElementRef;
 	@ViewChild('pad') pad:ElementRef;
 	@ViewChild('voices') voices:ElementRef;
 
@@ -36,7 +32,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 	private midiControlSubscription:Subscription;
-	private voice:Voice;
+	private voice:PolyphonicOscillator;
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
 
@@ -61,7 +57,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		const tones:number[] = Array.from({length:this.voice.getOscillatorsNumber()} ).map( (value, index) => (index+1)*tone );
 
 		//TODO Create a multiplexer component for this.
-		tones.forEach( (value,index) => this.voice.setTone(index,value) );
+		tones.forEach( (value,index) => this.voice.setTone( value, -1, index ) );
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void
@@ -76,10 +72,10 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		this.disconnect();
 
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),+this.voices.nativeElement.value);
+		this.voice = PolyphonicOscillator.create(this.mainPanelService.getMainGain(),+this.voices.nativeElement.value);
 		this.setWaveformType(this.waveform.nativeElement.value);
-		this.setX(+this.xRange.nativeElement.value);
-		this.setY(+this.yRange.nativeElement.value);
+		this.setX(0);
+		this.setY(0);
 
 		this.midiConnect();
 	}
@@ -217,8 +213,6 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		const eased = percent >= 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
 
 		this.setTone(eased);
-
-		this.xRange.nativeElement.value = percent;
 	}
 
 	/**
@@ -231,14 +225,12 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	{
 		//const maxDetune:number = 256;
 		//const detune:number = maxDetune*(100/percent);
-		//this.voice.setFilter(detune);
+		//this.polyphonic-oscillator.setFilter(detune);
 
 		percent = Number(percent);
 
 		const maxFilter:number = 127;
 		const filter:number = maxFilter * percent/100;
 		this.voice.setFilter(filter);
-
-		this.yRange.nativeElement.value = -percent;
 	}
 }

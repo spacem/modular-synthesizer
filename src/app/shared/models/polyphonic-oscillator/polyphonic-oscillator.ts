@@ -1,4 +1,4 @@
-export class Voice
+export class PolyphonicOscillator
 {
 	protected oscillators:OscillatorNode[] = [];
 	private outNode:AudioNode;
@@ -6,7 +6,7 @@ export class Voice
 	private ramp:boolean = false;
 
 	/**
-	 * Factory method for the oscillator.
+	 * Factory method for the polyphonic-oscillator.
 	 *
 	 * @param {AudioNode} outNode
 	 * 	The audio node to connect to.
@@ -14,18 +14,18 @@ export class Voice
 	 * @param {number} polyphony
 	 * 	The number of polyphony voices (expressed in term of micro-oscillator) allocatable for one graphical oscillator.
 	 *
-	 * @returns {Voice}
-	 *	The newly created oscillator.
+	 * @returns {PolyphonicOscillator}
+	 *	The newly created polyphonic-oscillator.
 	 */
-	public static createVoice( outNode:AudioNode, polyphony:number=1 ):Voice
+	public static create( outNode:AudioNode, polyphony:number=1 ):PolyphonicOscillator
 	{
 		if( !outNode )
 			throw Error(`Trying to create an OscillatorNode without attaching it to any output AudioNode.`);
 
 		// Fabrication
-		const voice = new Voice();
-		voice.oscillators = Array.from({length:polyphony},() => Voice.createOscillator(outNode) );
-		voice.filter = Voice.createFilter(outNode);
+		const voice = new PolyphonicOscillator();
+		voice.oscillators = Array.from({length:polyphony},() => PolyphonicOscillator.createOscillator(outNode) );
+		voice.filter = PolyphonicOscillator.createFilter(outNode);
 		voice.outNode = outNode;
 
 		// Connection
@@ -70,9 +70,12 @@ export class Voice
 
 	public setFilter( value:number ):void
 	{
-		const context:AudioContext = this.outNode.context;
-		this.filter.Q.setTargetAtTime( value, context.currentTime, 15);
-		this.filter.frequency.setTargetAtTime(value*100, context.currentTime, 15 );
+		if( this.outNode )
+		{
+			const context:AudioContext = this.outNode.context;
+			this.filter.Q.setTargetAtTime( value, context.currentTime, 15);
+			this.filter.frequency.setTargetAtTime(value*100, context.currentTime, 15 );
+		}
 	}
 
 	public getOscillatorsNumber():number

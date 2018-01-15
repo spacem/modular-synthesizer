@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
-import { Voice } from '../../../../shared/models/voice/voice';
+import { PolyphonicOscillator } from '../../../../shared/models/polyphonic-oscillator/polyphonic-oscillator';
 import { Connectible } from '../../../models/connectable.interface';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { Note } from '../../../../shared/models/note/note';
@@ -23,7 +23,7 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 	public midiProgram:number;
 	public midiPitch:number;
 
-	private voice:Voice;
+	private voice:PolyphonicOscillator;
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 
@@ -46,7 +46,7 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 		this.disconnect();
 
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = Voice.createVoice(this.mainPanelService.getMainGain(),KeyboardComponent.POLYPHONY);
+		this.voice = PolyphonicOscillator.create(this.mainPanelService.getMainGain(),KeyboardComponent.POLYPHONY);
 		this.setWaveformType(this.waveform.nativeElement.value);
 
 		this.midiConnect();
@@ -108,7 +108,7 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 		notes.forEach( (value,index) =>
 		{
 			if(this.voice)
-				this.voice.setTone( index, value.on && value.velocity >= 0 ? value.frequency : 0);
+				this.voice.setTone( value.on && value.velocity >= 0 ? value.frequency : 0, -1, index );
 		});
 	}
 
