@@ -23,6 +23,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	@ViewChild('waveform') waveform:ElementRef;
 	@ViewChild('pad') pad:ElementRef;
 	@ViewChild('voices') voices:ElementRef;
+	@ViewChild('dot') dot:ElementRef;
 
 	public midiMute:boolean;
 	public midiChannel:number = 2;
@@ -213,6 +214,8 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		const eased = percent >= 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
 
 		this.setTone(eased);
+
+		this.dot.nativeElement.style.left = percent + '%';
 	}
 
 	/**
@@ -232,5 +235,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		const maxFilter:number = 127;
 		const filter:number = maxFilter * percent/100;
 		this.voice.setFilter(filter);
+
+		this.dot.nativeElement.style.top = percent + '%';
 	}
 }

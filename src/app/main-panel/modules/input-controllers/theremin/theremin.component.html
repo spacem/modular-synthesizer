@@ -7,5 +7,7 @@
 	</select>
 
 	<input #voices min="0" max="16" type="number" value="6" (change)="setVoices(voices.value)">
-	<div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)"></div>
+	<div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)">
+		<div #dot class="dot">°</div>
+	</div>
 </div>
