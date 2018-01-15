@@ -129,7 +129,13 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 
 	public setVoices( number:number ):void
 	{
-		this.voices.nativeElement.value = '' + Math.max(+this.voices.nativeElement.min, Math.min(Number(number), +this.voices.nativeElement.max));
+		number = Math.max(+this.voices.nativeElement.min, Math.min(Number(number), +this.voices.nativeElement.max));
+
+		// Prevent WebMIDI to flood us with control messages at an incredible high rate (investigate possible bug).
+		if( number === this.voice.getOscillatorsNumber() )
+			return;
+
+		this.voices.nativeElement.value = number ;
 		this.connect();
 	}
 
