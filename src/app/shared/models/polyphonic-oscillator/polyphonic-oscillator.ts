@@ -121,8 +121,30 @@ export class PolyphonicOscillator
 
 	public stop():void
 	{
-		const currentTime:number = this.outNode.context.currentTime;
-		this.oscillators.forEach(osc =>	osc.stop(currentTime) );
+		if(  this.filter )
+		{
+			this.oscillators.forEach( osc => osc.disconnect( this.filter ) );
+
+			if( this.outNode )
+			{
+				const currentTime:number = this.outNode.context.currentTime;
+
+				this.filter.Q.cancelScheduledValues( currentTime );
+				this.filter.frequency.cancelScheduledValues( currentTime );
+				this.filter.disconnect( this.outNode );
+			}
+
+		}
+
+		if( this.outNode )
+		{
+			const currentTime:number = this.outNode.context.currentTime;
+			this.oscillators.forEach(osc =>
+			{
+				osc.frequency.cancelScheduledValues(currentTime);
+				osc.stop(currentTime);
+			});
+		}
 	}
 
 	public setWaveformType( waveformType:OscillatorType ):void
@@ -132,13 +154,7 @@ export class PolyphonicOscillator
 
 	public disconnect():void
 	{
-		if(  this.filter )
-		{
-			if( this.outNode )
-				this.filter.disconnect( this.outNode );
-
-			this.oscillators.forEach( osc => osc.disconnect( this.filter ) );
-		}
+		this.stop();
 
 		this.outNode = null;
 		this.oscillators = [];
