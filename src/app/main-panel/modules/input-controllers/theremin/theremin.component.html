@@ -1,12 +1,17 @@
 <div class="component-container">
-	<select title="Waveform type" #waveform (change)="setWaveformType(waveform.value)">
-		<option>sine</option>
-		<option>square</option>
-		<option>sawtooth</option>
-		<option selected>triangle</option>
+	<select title="Waveform type" [(ngModel)]="waveform" (ngModelChange)="setWaveform($event)">
+		<option *ngFor="let value of waveforms" [ngValue]="value" [selected]="value === waveform">{{value}}</option>
 	</select>
 
-	<input #voices min="0" max="16" type="number" value="6" (change)="setVoices(voices.value)">
+	<select title="Easing type" [(ngModel)]="easing" (ngModelChange)="setEasing($event)">
+		<option *ngFor="let value of easings" [ngValue]="value" [selected]="value === easing">{{value}}</option>
+	</select>
+
+	<input #voices title="Number of voices" [min]="minVoice" [max]="maxVoice" type="number" [(ngModel)]="voiceNumber" (ngModelChange)="setVoices($event)">
+
+	<input #minFrequencyInput title="Minimum frequency" min="0" max="24000" type="number" step="10" [(ngModel)]="minFrequency" (ngModelChange)="setMinFrequency($event)">
+	<input #maxFrequencyInput title="Maximum frequency" min="0" max="24000" type="number" step="10" [(ngModel)]="maxFrequency" (ngModelChange)="setMaxFrequency($event)">
+
 	<div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)">
 		<div #dot class="dot">°</div>
 	</div>

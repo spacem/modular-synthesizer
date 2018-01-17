@@ -18,17 +18,38 @@ import { Note } from '../../../../shared/models/note/note';
 export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 {
 	public static readonly MIN_FREQUENCY:number = 60;
-	public static readonly MAX_FREQUENCY:number = 250;
+	public static readonly MAX_FREQUENCY:number = 1000; //TODO Limit to the current sound card sample rate
 
-	@ViewChild('waveform') waveform:ElementRef;
+	public static readonly MIN_VOICE:number = 1;
+	public static readonly MAX_VOICE:number = 16;
+
 	@ViewChild('pad') pad:ElementRef;
-	@ViewChild('voices') voices:ElementRef;
 	@ViewChild('dot') dot:ElementRef;
+	@ViewChild('voices') voices:ElementRef;
+
+	public easings:(keyof EasingHelper)[] = EasingHelper.easings;
+	public waveforms:OscillatorType[] =
+	[
+		'sawtooth',
+		'sine',
+		'square',
+		'triangle'
+	];
 
 	public midiMute:boolean;
 	public midiChannel:number = 2;
 	public midiProgram:number;
 	public midiPitch:number;
+
+	public easing:keyof EasingHelper = 'easeInExpo';
+	public voiceNumber:number = 1;
+	public waveform:OscillatorType = 'sine';
+
+	public minVoice:number = 1;
+	public maxVoice:number = 16;
+
+	public minFrequency:number = ThereminComponent.MIN_FREQUENCY;
+	public maxFrequency:number = ThereminComponent.MAX_FREQUENCY;
 
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
@@ -61,10 +82,10 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		tones.forEach( (value,index) => this.voice.setTone( value, -1, index ) );
 	}
 
-	public setWaveformType( waveformType:OscillatorType ):void
+	public setWaveform( waveformType:OscillatorType ):void
 	{
 		this.voice.setWaveformType(waveformType);
-		this.waveform.nativeElement.value = waveformType;
+		this.waveform = waveformType;
 	}
 
 	public connect():void
@@ -73,8 +94,8 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		this.disconnect();
 
 		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = PolyphonicOscillator.create(this.mainPanelService.getMainGain(),+this.voices.nativeElement.value);
-		this.setWaveformType(this.waveform.nativeElement.value);
+		this.voice = PolyphonicOscillator.create(this.mainPanelService.getMainGain(),+this.voiceNumber);
+		this.setWaveform(this.waveform);
 		this.setX(0);
 		this.setY(0);
 
@@ -107,7 +128,7 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 		this.midiProgramSubscription = this.webMIDIService.programSource$.subscribe(midiProgramChangeMessage =>
 		{
 			if( midiProgramChangeMessage.channel === this.midiChannel )
-				this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][midiProgramChangeMessage.program%4] as OscillatorType );
+				this.setWaveform( this.waveforms[midiProgramChangeMessage.program%4] );
 		});
 
 		this.midiControlSubscription = this.webMIDIService.controlSource$.subscribe(midiControlChangeMessage =>
@@ -129,14 +150,19 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 
 	public setVoices( number:number ):void
 	{
-		number = Math.max(+this.voices.nativeElement.min, Math.min(Number(number), +this.voices.nativeElement.max));
+		number = Math.max(this.minVoice, Math.min(Number(number), this.maxVoice));
 
 		// Prevent WebMIDI to flood us with control messages at an incredible high rate (investigate possible bug).
 		if( number === this.voice.getOscillatorsNumber() )
 			return;
 
-		this.voices.nativeElement.value = number ;
+		this.voiceNumber = number;
 		this.connect();
+	}
+
+	public setEasing( easing:keyof EasingHelper ):void
+	{
+		this.easing = easing ;
 	}
 
 	public midiDisconnect()
@@ -215,9 +241,9 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	{
 		percent = Number(percent);
 
-		const minValue = ThereminComponent.MIN_FREQUENCY;
-		const maxValue = ThereminComponent.MAX_FREQUENCY;
-		const eased = percent >= 100 ? 100 : this.easingHelper.easeInExpo( percent, minValue, maxValue-minValue, 100 );
+		const minValue = this.minFrequency;
+		const maxValue = this.maxFrequency;
+		const eased = this.easingHelper.easeInQuart( percent, minValue, maxValue-minValue, 100 );
 
 		this.setTone(eased);
 
@@ -232,16 +258,40 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	 */
 	public setY( percent:number ):void
 	{
-		//const maxDetune:number = 256;
-		//const detune:number = maxDetune*(100/percent);
-		//this.polyphonic-oscillator.setFilter(detune);
+		const maxDetune:number = 6.8;
+		const detune:number = maxDetune*(100/(1+percent)) - 3.4;
+		this.voice.setDetune(detune);
 
 		percent = Number(percent);
 
-		const maxFilter:number = 127;
-		const filter:number = maxFilter * percent/100;
-		this.voice.setFilter(filter);
+		// const maxFilter:number = 127;
+		// const filter:number = maxFilter * percent/100;
+		// this.voice.setDetune(filter);
 
 		this.dot.nativeElement.style.top = percent + '%';
+	}
+
+	/**
+	 * Set the minimum frequency the pad can play on the tone coordinate.
+	 *
+	 * @param {number} frequency
+	 * 	The minimum frequency the pad can play on the tone coordinate.
+	 */
+	public setMinFrequency( frequency:number ):void
+	{
+		this.minFrequency = Number(frequency);
+		this.connect();
+	}
+
+	/**
+	 * Set the maximum frequency the pad can play on the tone coordinate.
+	 *
+	 * @param {number} frequency
+	 * 	The maximum frequency the pad can play on the tone coordinate.
+	 */
+	public setMaxFrequency( frequency:number ):void
+	{
+		this.maxFrequency = Number(frequency);
+		this.connect();
 	}
 }
