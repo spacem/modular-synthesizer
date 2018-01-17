@@ -2,40 +2,6 @@ import { EasingHelper } from './easing-helper';
 
 describe( 'EasingHelper', () =>
 {
-	const equationNames:(keyof EasingHelper)[] =
-	[
-		'linearEase',
-		'easeInQuad',
-		'easeOutQuad',
-		'easeInOutQuad',
-		'easeInCubic',
-		'easeOutCubic',
-		'easeInOutCubic',
-		'easeInQuart',
-		'easeOutQuart',
-		'easeInOutQuart',
-		'easeInQuint',
-		'easeOutQuint',
-		'easeInOutQuint',
-		'easeInSine',
-		'easeOutSine',
-		'easeInOutSine',
-		'easeInExpo',
-		'easeOutExpo',
-		'easeInOutExpo',
-		'easeInCirc',
-		'easeOutCirc',
-		'easeInOutCirc',
-		'easeInElastic',
-		'easeOutElastic',
-		'easeInOutElastic',
-		'easeInBack',
-		'easeOutBack',
-		'easeInOutBack',
-		'easeInBounce',
-		'easeOutBounce',
-		'easeInOutBounce'
-	];
 
 	it( 'should create an instance', () =>
 	{
@@ -77,7 +43,7 @@ describe( 'EasingHelper', () =>
 
 	it( 'expect any of the equation name passed to "ease" method to call the equivalent method name', () =>
 	{
-		equationNames.forEach( equationName =>
+		EasingHelper.easings.forEach( equationName =>
 		{
 			const instance = new EasingHelper();
 			const spy = spyOn(instance,equationName);
@@ -88,7 +54,7 @@ describe( 'EasingHelper', () =>
 
 	it( 'expect any of the ease equation to return a number', () =>
 	{
-		equationNames.forEach( equationName =>
+		EasingHelper.easings.forEach( equationName =>
 		{
 			const instance = new EasingHelper();
 			const result:number = instance.ease(equationName,1,2,3,4, 1.70158);

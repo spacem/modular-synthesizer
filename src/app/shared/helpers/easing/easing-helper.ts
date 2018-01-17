@@ -4,6 +4,46 @@ import { Injectable } from '@angular/core';
 export class EasingHelper
 {
 	/**
+	 * Complete list of the available equation names, strictly respecting the name of the corresponding class method.
+	 *
+	 * @type {(keyof EasingHelper)[]}
+	 */
+	public static readonly easings:(keyof EasingHelper)[] =
+	[
+		'linearEase',
+		'easeInQuad',
+		'easeOutQuad',
+		'easeInOutQuad',
+		'easeInCubic',
+		'easeOutCubic',
+		'easeInOutCubic',
+		'easeInQuart',
+		'easeOutQuart',
+		'easeInOutQuart',
+		'easeInQuint',
+		'easeOutQuint',
+		'easeInOutQuint',
+		'easeInSine',
+		'easeOutSine',
+		'easeInOutSine',
+		'easeInExpo',
+		'easeOutExpo',
+		'easeInOutExpo',
+		'easeInCirc',
+		'easeOutCirc',
+		'easeInOutCirc',
+		'easeInElastic',
+		'easeOutElastic',
+		'easeInOutElastic',
+		'easeInBack',
+		'easeOutBack',
+		'easeInOutBack',
+		'easeInBounce',
+		'easeOutBounce',
+		'easeInOutBounce'
+	];
+
+	/**
 	 * Entry method to access all the equation by their string names.
 	 *
 	 * @param {string} name
