@@ -5,6 +5,7 @@ import { MainPanelService } from '../../../../shared/services/main-panel/main-pa
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import {WindowService} from '../../../../core/services/window/window.service';
 import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
+import { FormsModule } from '@angular/forms';
 
 describe( 'ThereminComponent', () =>
 {
@@ -14,6 +15,7 @@ describe( 'ThereminComponent', () =>
 	beforeEach( async( () =>
 	{
 		TestBed.configureTestingModule( {
+			imports: [FormsModule],
 			declarations: [ ThereminComponent ],
 			providers: [MainPanelService,WebMIDIService,WindowService,EasingHelper]
 		} )
