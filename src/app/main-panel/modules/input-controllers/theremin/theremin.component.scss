@@ -31,6 +31,8 @@ $pad-size: $size - 50px;
 	display:block;
 	margin-left:-3px;
 	margin-top:-4px;
+	max-width:10px;
+	max-height:10px;
 }
 
 input[type=range][orient=vertical]

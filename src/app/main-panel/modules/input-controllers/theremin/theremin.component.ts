@@ -45,16 +45,35 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	public voiceNumber:number = 1;
 	public waveform:OscillatorType = 'sine';
 
-	public minVoice:number = 1;
-	public maxVoice:number = 16;
+	public minVoice:number = ThereminComponent.MIN_VOICE;
+	public maxVoice:number = ThereminComponent.MAX_VOICE;
 
 	public minFrequency:number = ThereminComponent.MIN_FREQUENCY;
 	public maxFrequency:number = ThereminComponent.MAX_FREQUENCY;
+
+	public logarithmicX:boolean = true;
 
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 	private midiControlSubscription:Subscription;
 	private voice:PolyphonicOscillator;
+
+	// @see https://stackoverflow.com/questions/846221/logarithmic-slider
+	public static logarithmicScale
+	(
+		value:number,
+		minFrom:number, maxFrom:number,
+		minTo:number, maxTo:number
+	):number
+	{
+		const minLog = Math.log(minTo+.00000000000000000001);
+		const maxLog = Math.log(maxTo+.00000000000000000001);
+
+		// calculate adjustment factor
+		const scale = (maxLog-minLog) / (maxFrom-minFrom);
+
+		return Math.exp(minLog + scale*(value-minTo));
+	}
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
 
@@ -241,11 +260,12 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	{
 		percent = Number(percent);
 
-		const minValue = this.minFrequency;
-		const maxValue = this.maxFrequency;
-		const eased = this.easingHelper.easeInQuart( percent, minValue, maxValue-minValue, 100 );
+		//const eased = this.easingHelper.easeInQuart( percent, minValue, maxValue-minValue, 100 );
 
-		this.setTone(eased);
+		if( this.logarithmicX )
+			this.setTone( ThereminComponent.logarithmicScale( percent, 0,100, this.minFrequency, this.maxFrequency ) );
+		else
+			this.setTone( (this.maxFrequency-this.minFrequency)*(percent/100) );
 
 		this.dot.nativeElement.style.left = percent + '%';
 	}
@@ -293,5 +313,16 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	{
 		this.maxFrequency = Number(frequency);
 		this.connect();
+	}
+
+	/**
+	 * Evaluate the X coordinate value on a logarithmic scale.
+	 *
+	 * @param {boolean} logarithmicX
+	 * 	Evaluate the X coordinate value on a logarithmic scale.
+	 */
+	public setLogarithmicX( logarithmicX:boolean ):void
+	{
+		this.logarithmicX = logarithmicX;
 	}
 }
