@@ -30,6 +30,8 @@ export class KeyboardKeysComponent implements OnChanges
 	protected _upperKey:number = KeyboardKeysComponent.UPPER_KEY_LIMIT;
 	protected _notes:Note[] = [];
 
+	public mouseDown:boolean = false;
+
 	@Output() keyDown = new EventEmitter<Note>();
 	@Output() keyUp = new EventEmitter<Note>();
 
