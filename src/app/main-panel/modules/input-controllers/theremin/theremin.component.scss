@@ -1,56 +1,68 @@
-$size: 500px;
-$pad-size: $size - 50px;
+$height: 500px;
+$pad-size: 450px;
+$plain: #121517;
+$parameters-width: 200px;
 
-:host
-{
-	display:block;
-	padding:15px;
+$width: $pad-size + $parameters-width;
+
+:host {
+	margin: 10px;
+	position: relative;
+
+	max-width: $width;
+	max-height: $height;
+
+	border: $plain solid 5px;
+	display: flex;
+	flex-direction: row;
+	//flex-wrap: nowrap;
+	align-items: stretch;
+	align-content: stretch;
 }
 
-.component-container
-{
-	max-width: $size;
-	max-height: $size;
+.parameters {
+	border: bisque solid thin;
+	background: $plain;
+
+	order: 0;
+	width:$parameters-width;
 }
 
-.pad
-{
-	width:$pad-size;
-	height:$pad-size;
-	border:double thin white;
-	display: inline-block;
-	cursor:none;
+.pad {
+	order: 1;
+
+	width: $pad-size;
+	height: $pad-size;
+	background: lighten($plain,10);
+	cursor: none;
 }
 
-.dot{
-	position:relative;
-	top:0;
-	left:0;
-	color:white;
+.dot {
+	position: relative;
+	top: 0;
+	left: 0;
+	color: white;
 	user-select: none;
-	display:block;
-	margin-left:-3px;
-	margin-top:-4px;
-	max-width:10px;
-	max-height:10px;
+	display: block;
+	margin-left: -3px;
+	margin-top: -4px;
+	max-width: 10px;
+	max-height: 10px;
 }
 
-input[type=range][orient=vertical]
-{
+input[type=range][orient=vertical] {
 	writing-mode: bt-lr; /* IE */
 	-webkit-appearance: slider-vertical; /* WebKit */
 	width: 8px;
 	padding: 0 5px;
 }
 
-.xRange
-{
-	width:$pad-size;
+.xRange {
+	width: $pad-size;
 }
 
-input[type=range][orient=vertical].yRange
-{
-	display:inline-block;
-	height:$pad-size;
-	margin-left:5px;
+input[type=range][orient=vertical].yRange {
+	display: inline-block;
+	height: $pad-size;
+	margin-left: 5px;
 }
