@@ -4,6 +4,7 @@ import {WebMIDIService} from '../shared/services/webmidi/webmidi.service';
 import { KeyboardComponent } from './modules/input-controllers/keyboard/keyboard.component';
 import { ThereminComponent } from './modules/input-controllers/theremin/theremin.component';
 
+
 @Component({
   selector: 'app-main-panel',
   templateUrl: './main-panel.component.html',

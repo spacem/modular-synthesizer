@@ -26,6 +26,7 @@
 		"core-js": "^2.5.3",
 		"lodash-es": "^4.17.0",
 		"rxjs": "^5.5.6",
+		"tone": "^0.11.11",
 		"zone.js": "^0.8.20"
 	},
 	"devDependencies": {
@@ -36,6 +37,7 @@
 		"@types/jasminewd2": "~2.0.2",
 		"@types/lodash-es": "^4.17.0",
 		"@types/node": "^8.5.8",
+		"@types/tone": "git+https://github.com/tekool/TypeScript.git",
 		"@types/webmidi": "^2.0.2",
 		"codelyzer": "^4.0.2",
 		"http-server": "^0.10.0",

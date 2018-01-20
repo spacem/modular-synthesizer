@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -9,6 +9,8 @@ import { ToneHelper } from '../../../../shared/helpers/tone/tone-helper';
 import { MidiDevice } from '../../../models/midi-device.interface';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
 import { Note } from '../../../../shared/models/note/note';
+import * as Tone from 'tone';
+import { KeyboardKeysComponent } from '../keyboard/keyboard-keys/keyboard-keys.component';
 
 @Component( {
 	selector: 'app-theremin',
@@ -56,7 +58,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 	private midiControlSubscription:Subscription;
-	private voice:PolyphonicOscillator;
+	private synth:Tone.PolySynth;
 
 	public notes:Note[];
 
@@ -102,15 +104,12 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 
 	public setTone( tone:number ):void
 	{
-		const tones:number[] = Array.from({length:this.voice.getOscillatorsNumber()} ).map( (value, index) => (index+1)*tone );
-
-		//TODO Create a multiplexer component for this.
-		tones.forEach( (value,index) => this.voice.setTone( value, -1, index ) );
+		this.synth.triggerAttack(tone);
 	}
 
 	public setWaveform( waveformType:OscillatorType ):void
 	{
-		this.voice.setWaveformType(waveformType);
+		this.connect();
 		this.waveform = waveformType;
 	}
 
@@ -119,11 +118,16 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 		// Always disconnect first.
 		this.disconnect();
 
-		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = PolyphonicOscillator.create(this.mainPanelService.getMainGain(),+this.voiceNumber);
-		this.setWaveform(this.waveform);
-		this.setX(0);
-		this.setY(0);
+		this.synth = new Tone.PolySynth(6, Tone.Synth, {
+			'oscillator' : {
+				'type': this.waveform,
+				'partials' : [0, 2, 3, 4],
+			}
+		}).toMaster();
+
+		//this.setWaveform(this.waveform);
+		//this.setX(0);
+		//this.setY(0);
 
 		this.midiConnect();
 	}
@@ -132,8 +136,8 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	{
 		this.midiDisconnect();
 
-		if( this.voice )
-			this.voice.disconnect();
+		if( this.synth )
+			this.synth.dispose();
 	}
 
 	//TODO Implement
@@ -179,7 +183,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 		number = Math.max(this.minVoice, Math.min(Number(number), this.maxVoice));
 
 		// Prevent WebMIDI to flood us with control messages at an incredible high rate (investigate possible bug).
-		if( number === this.voice.getOscillatorsNumber() )
+		if( number === this.voiceNumber )
 			return;
 
 		this.voiceNumber = number;
@@ -287,7 +291,6 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	{
 		const maxDetune:number = 6.8;
 		const detune:number = maxDetune*(100/(1+percent)) - 3.4;
-		this.voice.setDetune(detune);
 
 		percent = Number(percent);
 
