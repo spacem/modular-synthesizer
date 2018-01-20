@@ -5,7 +5,8 @@ $parameters-width: 200px;
 
 $width: $pad-size + $parameters-width;
 
-:host {
+:host
+{
 	margin: 10px;
 	position: relative;
 
@@ -20,48 +21,73 @@ $width: $pad-size + $parameters-width;
 	align-content: stretch;
 }
 
-.parameters {
-	border: bisque solid thin;
+.parameters
+{
 	background: $plain;
 
 	order: 0;
-	width:$parameters-width;
+	width: $parameters-width;
 }
 
-.pad {
+.pad
+{
 	order: 1;
 
 	width: $pad-size;
 	height: $pad-size;
-	background: lighten($plain,10);
+	background: lighten($plain, 10);
 	cursor: none;
-}
-
-.dot {
 	position: relative;
-	top: 0;
-	left: 0;
-	color: white;
-	user-select: none;
-	display: block;
-	margin-left: -3px;
-	margin-top: -4px;
-	max-width: 10px;
-	max-height: 10px;
+
+	.dot
+	{
+		position: absolute;
+		top: 0;
+		left: 0;
+		color: white;
+		user-select: none;
+		display: block;
+		margin-left: -3px;
+		margin-top: -4px;
+		max-width: 10px;
+		max-height: 10px;
+	}
+
+	.notes
+	{
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		justify-content: flex-start;
+		height: 100%;
+
+		.note
+		{
+			width: 10px;
+			height: 100%;
+			border: thin solid floralwhite;
+			flex: auto 1;
+		}
+	}
 }
 
-input[type=range][orient=vertical] {
+
+input[type=range][orient=vertical]
+{
 	writing-mode: bt-lr; /* IE */
 	-webkit-appearance: slider-vertical; /* WebKit */
 	width: 8px;
 	padding: 0 5px;
 }
 
-.xRange {
+.xRange
+{
 	width: $pad-size;
 }
 
-input[type=range][orient=vertical].yRange {
+input[type=range][orient=vertical].yRange
+{
 	display: inline-block;
 	height: $pad-size;
 	margin-left: 5px;

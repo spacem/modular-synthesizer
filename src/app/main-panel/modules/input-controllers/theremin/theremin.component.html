@@ -18,5 +18,11 @@
 </section>
 
 <div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)">
+
+	<div class="notes">
+		<div *ngFor="let value of notes" class="note"></div>
+	</div>
+
 	<div #dot class="dot">°</div>
+
 </div>

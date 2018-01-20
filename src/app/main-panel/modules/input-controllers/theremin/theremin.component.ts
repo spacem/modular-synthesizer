@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
@@ -15,7 +15,7 @@ import { Note } from '../../../../shared/models/note/note';
 	templateUrl: './theremin.component.html',
 	styleUrls: [ './theremin.component.scss' ]
 } )
-export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
+export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDevice
 {
 	public static readonly MIN_FREQUENCY:number = 60;
 	public static readonly MAX_FREQUENCY:number = 1000; //TODO Limit to the current sound card sample rate
@@ -58,6 +58,8 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	private midiControlSubscription:Subscription;
 	private voice:PolyphonicOscillator;
 
+	public notes:Note[];
+
 	// @see https://stackoverflow.com/questions/846221/logarithmic-slider
 	public static logarithmicScale
 	(
@@ -76,6 +78,11 @@ export class ThereminComponent implements OnDestroy, Connectible, MidiDevice
 	}
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
+
+	public ngOnInit():void
+	{
+		this.notes = Array(10);
+	}
 
 	ngOnDestroy()
 	{
