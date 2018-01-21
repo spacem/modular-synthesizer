@@ -1,5 +1,5 @@
 <section>
-	<input #volume title="volume" type="range" value="5" min="0" max="100" step="1" (mousemove)="setVolume(volume.value/100)" (touchmove)="setVolume(volume.value/100)">
+	<input #volumeRange title="volume" type="range" value="5" min="0" max="100" step="1"  [(ngModel)]="volume" (ngModelChange)="setVolume($event)">
 	<button #play (click)="togglePlay()">Play</button>
 
 	<app-theremin #theremin></app-theremin>

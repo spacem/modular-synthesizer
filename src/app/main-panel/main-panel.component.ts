@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
-import {WebMIDIService} from '../shared/services/webmidi/webmidi.service';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { MainPanelService } from '../shared/services/main-panel/main-panel.service';
+import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
 import { KeyboardComponent } from './modules/input-controllers/keyboard/keyboard.component';
 import { ThereminComponent } from './modules/input-controllers/theremin/theremin.component';
 
@@ -15,9 +15,10 @@ export class MainPanelComponent implements AfterViewInit
 	@ViewChild('play') playButton:ElementRef;
 	@ViewChild('keyboard') keyboard:KeyboardComponent;
 	@ViewChild('theremin') theremin:ThereminComponent;
-	@ViewChild('volume') volume:ElementRef;
+	@ViewChild('volumeRange') volumeRange:ElementRef;
 
 	protected started:boolean = false;
+	protected volume:number = 100;
 
 	constructor(private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService,){}
 
@@ -38,7 +39,7 @@ export class MainPanelComponent implements AfterViewInit
 	{
 		this.playButton.nativeElement.innerText = 'Stop';
 		this.mainPanelService.start();
-		this.mainPanelService.setVolume(this.volume.nativeElement.value/100);
+		this.mainPanelService.setVolume(this.volume);
 		this.theremin.connect();
 		this.keyboard.connect();
 		this.started = true;
@@ -61,7 +62,7 @@ export class MainPanelComponent implements AfterViewInit
 	 */
 	public setVolume( volume:number )
 	{
-		this.mainPanelService.setVolume( volume );
-		this.volume.nativeElement.value = volume*100;
+		this.mainPanelService.setVolume( this.volume );
+		this.volume = volume;
 	}
 }
