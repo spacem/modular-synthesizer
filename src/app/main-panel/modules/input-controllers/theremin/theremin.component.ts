@@ -59,7 +59,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 	private midiControlSubscription:Subscription;
-	private synth:Tone.MonoSynth;
+	private synth:Tone.Synth;
 
 	public notes:Note[];
 
@@ -112,7 +112,12 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	public setWaveform( waveformType:OscillatorType ):void
 	{
 		this.waveform = waveformType;
-		this.connect();
+		this.synth.set(
+		{
+			oscillator: {
+				type: this.waveform
+			},
+		});
 	}
 
 	public connect():void
