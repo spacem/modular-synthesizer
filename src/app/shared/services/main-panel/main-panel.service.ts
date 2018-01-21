@@ -22,8 +22,7 @@ export class MainPanelService
 		Tone.Master.chain(lowBump, masterCompressor);
 
 		Tone.Master.set({
-			volume  : 0,
-			mute  : false
+			mute  : true
 		});
 
 		this.started = true;
@@ -40,11 +39,11 @@ export class MainPanelService
 		this.started = false;
 	}
 
-	// between 0-100
+	// Decibels
 	public setVolume( volume:number ):void
 	{
 		Tone.Master.set({
-			volume  : -100+volume,
+			volume  : volume,
 			mute  : false
 		});
 	}
