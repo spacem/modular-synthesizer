@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Host, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Note } from '../../../../../shared/models/note/note';
 
 /**
