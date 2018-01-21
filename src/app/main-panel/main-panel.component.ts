@@ -18,7 +18,7 @@ export class MainPanelComponent implements AfterViewInit
 	@ViewChild('volumeRange') volumeRange:ElementRef;
 
 	protected started:boolean = false;
-	protected volume:number = 100;
+	public volume:number = 100;
 
 	constructor(private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService,){}
 

@@ -4,6 +4,7 @@ import { MainPanelService } from '../../../../shared/services/main-panel/main-pa
 import { KeyboardKeysComponent } from './keyboard-keys/keyboard-keys.component';
 import { WindowService } from '../../../../core/services/window/window.service';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
+import { FormsModule } from '@angular/forms';
 
 
 describe('KeyboardComponent', () =>
@@ -14,6 +15,7 @@ describe('KeyboardComponent', () =>
 	beforeEach(async(() =>
 	{
 		TestBed.configureTestingModule({
+			imports:[FormsModule],
 			providers:[MainPanelService,WebMIDIService,WindowService],
 			declarations: [KeyboardComponent,KeyboardKeysComponent]
 		})

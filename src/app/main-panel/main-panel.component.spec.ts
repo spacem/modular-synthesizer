@@ -8,6 +8,7 @@ import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
 import { OscillatorModule } from './modules/input-controllers/theremin/theremin.module';
 import {WindowService} from '../core/services/window/window.service';
 import { EasingHelper } from '../shared/helpers/easing/easing-helper';
+import { FormsModule } from '@angular/forms';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -15,7 +16,7 @@ describe('MainPanelComponent', () => {
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
-			imports: [RouterTestingModule,KeyboardModule,OscillatorModule],
+			imports: [RouterTestingModule,KeyboardModule,OscillatorModule,FormsModule],
 			declarations: [MainPanelComponent],
 			providers:[MainPanelService,WebMIDIService,WindowService,EasingHelper]
 		})
