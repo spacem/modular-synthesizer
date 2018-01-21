@@ -2,7 +2,6 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
-import { PolyphonicOscillator } from '../../../../shared/models/polyphonic-oscillator/polyphonic-oscillator';
 import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 import { Connectible } from '../../../models/connectable.interface';
 import { ToneHelper } from '../../../../shared/helpers/tone/tone-helper';
@@ -10,7 +9,6 @@ import { MidiDevice } from '../../../models/midi-device.interface';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
 import { Note } from '../../../../shared/models/note/note';
 import * as Tone from 'tone';
-import { KeyboardKeysComponent } from '../keyboard/keyboard-keys/keyboard-keys.component';
 
 @Component( {
 	selector: 'app-theremin',
@@ -20,7 +18,7 @@ import { KeyboardKeysComponent } from '../keyboard/keyboard-keys/keyboard-keys.c
 export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDevice
 {
 	public static readonly MIN_FREQUENCY:number = 60;
-	public static readonly MAX_FREQUENCY:number = 1000; //TODO Limit to the current sound card sample rate
+	public static readonly MAX_FREQUENCY:number = 24000; //TODO Limit to the current sound card sample rate
 
 	public static readonly MIN_VOICE:number = 1;
 	public static readonly MAX_VOICE:number = 16;
@@ -53,12 +51,15 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	public minFrequency:number = ThereminComponent.MIN_FREQUENCY;
 	public maxFrequency:number = ThereminComponent.MAX_FREQUENCY;
 
+	private x:number = 0;
+	private y:number = 0;
+
 	public logarithmicX:boolean = true;
 
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 	private midiControlSubscription:Subscription;
-	private synth:Tone.PolySynth;
+	private synth:Tone.MonoSynth;
 
 	public notes:Note[];
 
@@ -104,13 +105,14 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 
 	public setTone( tone:number ):void
 	{
-		this.synth.triggerAttack(tone);
+		if( this.synth )
+			this.synth.triggerAttack(Array(this.voiceNumber).fill(tone));
 	}
 
 	public setWaveform( waveformType:OscillatorType ):void
 	{
-		this.connect();
 		this.waveform = waveformType;
+		this.connect();
 	}
 
 	public connect():void
@@ -118,18 +120,40 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 		// Always disconnect first.
 		this.disconnect();
 
-		this.synth = new Tone.PolySynth(6, Tone.Synth, {
-			'oscillator' : {
-				'type': this.waveform,
-				'partials' : [0, 2, 3, 4],
-			}
+		this.synth = new Tone.PolySynth(this.voiceNumber, Tone.Synth,
+		{
+			detune : 0,
+			oscillator : {
+				type : this.waveform
+			},
+			filter : {
+				Q : 6,
+				type : 'lowpass',
+				rolloff : -24
+			},
+			envelope : {
+				attack : 0,
+				decay : 0,
+				sustain : 1,
+				release : 1
+			},
+			filterEnvelope : {
+				attack : 0,
+				decay : 0,
+				sustain : 1,
+				release : 2,
+				baseFrequency : 600,
+				octaves : 4,
+				exponent : 2
+			},
+			partials : [0, 2, 3, 4],
 		}).toMaster();
 
-		//this.setWaveform(this.waveform);
-		//this.setX(0);
-		//this.setY(0);
+		this.setX(this.x);
+		this.setY(this.y);
 
 		this.midiConnect();
+
 	}
 
 	public disconnect():void
@@ -137,7 +161,10 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 		this.midiDisconnect();
 
 		if( this.synth )
+		{
 			this.synth.dispose();
+			this.synth = null;
+		}
 	}
 
 	//TODO Implement
@@ -183,8 +210,8 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 		number = Math.max(this.minVoice, Math.min(Number(number), this.maxVoice));
 
 		// Prevent WebMIDI to flood us with control messages at an incredible high rate (investigate possible bug).
-		if( number === this.voiceNumber )
-			return;
+		//if( number === this.voiceNumber )
+		//	return;
 
 		this.voiceNumber = number;
 		this.connect();
@@ -279,6 +306,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 			this.setTone( (this.maxFrequency-this.minFrequency)*(percent/100) );
 
 		this.dot.nativeElement.style.left = percent + '%';
+		this.x = percent;
 	}
 
 	/**
@@ -294,18 +322,18 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 
 		percent = Number(percent);
 
-		// const maxFilter:number = 127;
-		// const filter:number = maxFilter * percent/100;
-		// this.voice.setDetune(filter);
+		if( this.synth )
+			this.synth.set( {detune: detune} );
 
 		this.dot.nativeElement.style.top = percent + '%';
+		this.y = percent;
 	}
 
 	/**
-	 * Set the minimum frequency the pad can play on the tone coordinate.
+	 * Set the minimum frequency the pad can play on the tone axis.
 	 *
 	 * @param {number} frequency
-	 * 	The minimum frequency the pad can play on the tone coordinate.
+	 * 	The minimum frequency the pad can play on the tone axis.
 	 */
 	public setMinFrequency( frequency:number ):void
 	{
@@ -314,10 +342,10 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	}
 
 	/**
-	 * Set the maximum frequency the pad can play on the tone coordinate.
+	 * Set the maximum frequency the pad can play on the tone axis.
 	 *
 	 * @param {number} frequency
-	 * 	The maximum frequency the pad can play on the tone coordinate.
+	 * 	The maximum frequency the pad can play on the tone axis.
 	 */
 	public setMaxFrequency( frequency:number ):void
 	{
@@ -326,10 +354,10 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	}
 
 	/**
-	 * Evaluate the X coordinate value on a logarithmic scale.
+	 * Evaluate the X axis value on a logarithmic scale.
 	 *
 	 * @param {boolean} logarithmicX
-	 * 	Evaluate the X coordinate value on a logarithmic scale.
+	 * 	Evaluate the X axis value on a logarithmic scale.
 	 */
 	public setLogarithmicX( logarithmicX:boolean ):void
 	{
