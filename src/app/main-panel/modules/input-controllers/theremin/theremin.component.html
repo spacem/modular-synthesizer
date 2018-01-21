@@ -10,13 +10,19 @@
 
 	<input #voices title="Number of voices" type="number" [min]="minVoice" [max]="maxVoice" [(ngModel)]="voiceNumber" (ngModelChange)="setVoices($event)">
 
-	<label for="logarithmicX">Use logarithmic scale on X coordinate</label>
-	<input #expoX title="Use logarithmic scale on X coordinate" id="logarithmicX" type="checkbox" [(ngModel)]="logarithmicX" (ngModelChange)="setLogarithmicX($event)">
+	<label for="logarithmicX">Logarithmic</label>
+	<input #expoX title="Logarithmic" id="logarithmicX" type="checkbox" [(ngModel)]="logarithmicX" (ngModelChange)="setLogarithmicX($event)">
 	<input #minFrequencyInput title="Left frequency" type="number" min="0" max="24000" step="10" [(ngModel)]="minFrequency" (ngModelChange)="setMinFrequency($event)">
 	<input #maxFrequencyInput title="Right frequency" type="number" min="0" max="24000" step="10" [(ngModel)]="maxFrequency" (ngModelChange)="setMaxFrequency($event)">
 
 </section>
 
 <div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)">
+
+	<div class="notes">
+		<div *ngFor="let value of notes" class="note"></div>
+	</div>
+
 	<div #dot class="dot">°</div>
+
 </div>

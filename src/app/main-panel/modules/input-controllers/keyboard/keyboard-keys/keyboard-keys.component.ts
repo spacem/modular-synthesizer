@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Host, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Note } from '../../../../../shared/models/note/note';
 
 /**
@@ -29,6 +29,8 @@ export class KeyboardKeysComponent implements OnChanges
 	protected _lowerKey:number = KeyboardKeysComponent.LOWER_KEY_LIMIT;
 	protected _upperKey:number = KeyboardKeysComponent.UPPER_KEY_LIMIT;
 	protected _notes:Note[] = [];
+
+	public mouseDown:boolean = false;
 
 	@Output() keyDown = new EventEmitter<Note>();
 	@Output() keyUp = new EventEmitter<Note>();

@@ -1,10 +1,11 @@
-<ul>
+<ul (mousedown)="mouseDown = true" (mouseup)="mouseDown = false">
 	<li
 		class="key"
 		*ngFor="let note of notes"
 		(mousedown)="onKeyDown(note)"
 		(mouseup)="onKeyUp(note)"
 		(mouseleave)="!note.on || onKeyUp(note)"
+		(mouseenter)="!mouseDown || onKeyDown(note)"
 		[ngClass]="{'key--sharp':note.accidental, 'key--natural':!note.accidental,'key--pressed':note.on}"
 	>
 		{{note.scientificName}}

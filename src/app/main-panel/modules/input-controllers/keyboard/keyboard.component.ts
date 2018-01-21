@@ -1,6 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
-import { PolyphonicOscillator } from '../../../../shared/models/polyphonic-oscillator/polyphonic-oscillator';
 import { Connectible } from '../../../models/connectable.interface';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { Note } from '../../../../shared/models/note/note';
@@ -8,6 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
 import { KeyboardKeysComponent } from './keyboard-keys/keyboard-keys.component';
 import { MidiDevice } from '../../../models/midi-device.interface';
+import * as Tone from 'tone';
 
 @Component({
 	selector: 'app-keyboard',
@@ -16,22 +16,27 @@ import { MidiDevice } from '../../../models/midi-device.interface';
 })
 export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 {
-	private static POLYPHONY:number = 128;
+	private static POLYPHONY:number = 12;
 
 	public midiMute:boolean;
 	public midiChannel:number = 1;
 	public midiProgram:number;
 	public midiPitch:number;
 
-	private voice:PolyphonicOscillator;
+	public waveform:OscillatorType = 'sine';
+	public waveforms:OscillatorType[] =
+	[
+		'sawtooth',
+		'sine',
+		'square',
+		'triangle'
+	];
+
+	private synth:Tone.MonoSynth;
 	private midiNoteSubscription:Subscription;
 	private midiProgramSubscription:Subscription;
 
 	@ViewChild('keyboard') keyboard:KeyboardKeysComponent;
-	@ViewChild('waveform') waveform:ElementRef;
-
-	// FIFO of active oscillators on the voice, each entry is a keyboard note number.
-	private activeOscs:number[] = Array.from({length:KeyboardComponent.POLYPHONY});
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService ){}
 
@@ -45,9 +50,35 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 		// Always disconnect first
 		this.disconnect();
 
-		//TODO Make the real connection thing (probably don't need the main gain reference, just AudioContext or vice versa.
-		this.voice = PolyphonicOscillator.create(this.mainPanelService.getMainGain(),KeyboardComponent.POLYPHONY);
-		this.setWaveformType(this.waveform.nativeElement.value);
+		this.synth = new Tone.PolySynth(KeyboardComponent.POLYPHONY, Tone.Synth,
+		{
+			detune : 0,
+			volume:0,
+			oscillator : {
+				type : this.waveform
+			},
+			filter : {
+				Q : 6,
+				type : 'lowpass',
+				rolloff : -24
+			},
+			envelope : {
+				attack : .25,
+				decay : .5,
+				sustain : 5,
+				release : 1
+			},
+			filterEnvelope : {
+				attack : 0,
+				decay : 0,
+				sustain : 1,
+				release : 2,
+				baseFrequency : 600,
+				octaves : 4,
+				exponent : 2
+			},
+			partials : [0, 2, 3, 4],
+		}).toMaster();
 
 		this.midiConnect();
 	}
@@ -56,8 +87,11 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 	{
 		this.midiDisconnect();
 
-		if( this.voice )
-			this.voice.disconnect();
+		if( this.synth )
+		{
+			this.synth.dispose();
+			this.synth = null;
+		}
 	}
 
 	public midiConnect()
@@ -75,7 +109,7 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 		this.midiProgramSubscription = this.webMIDIService.programSource$.subscribe(midiProgramChangeMessage =>
 		{
 			if( midiProgramChangeMessage.channel === this.midiChannel )
-				this.setWaveformType(	['sine', 'square', 'sawtooth', 'triangle'][midiProgramChangeMessage.program%4] as OscillatorType );
+				this.setWaveform( this.waveforms[midiProgramChangeMessage.program%4] );
 		});
 	}
 
@@ -90,8 +124,8 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 
 	private playNote( note:Note )
 	{
+		// Update notes state on keyboard.
 		const notes:Note[] = this.keyboard.notes;
-
 		notes.every( value =>
 		{
 			if( value.number === note.number )
@@ -104,18 +138,24 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 			return true;
 		});
 
-		//TODO FIFO active oscillators.
-		notes.forEach( (value,index) =>
-		{
-			if(this.voice)
-				this.voice.setTone( value.on && value.velocity >= 0 ? value.frequency : 0, -1, index );
-		});
+		// 0 -> 1
+		const velocity:number = note.velocity/127;
+
+		if( note.on )
+			this.synth.triggerAttack(note.frequency,this.synth.now(),velocity);
+		else
+			this.synth.triggerRelease(note.frequency,this.synth.now(),velocity);
 	}
 
-	public setWaveformType( waveformType:OscillatorType ):void
+	public setWaveform( waveformType:OscillatorType ):void
 	{
-		this.voice.setWaveformType(waveformType);
-		this.waveform.nativeElement.value = waveformType;
+		this.waveform = waveformType;
+		this.synth.set(
+			{
+				oscillator: {
+					type: this.waveform
+				},
+			});
 	}
 
 	public keyDown( note:Note )
