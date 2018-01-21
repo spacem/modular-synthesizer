@@ -1,25 +1,31 @@
 import {Injectable} from '@angular/core';
+import * as Tone from 'tone';
 
 @Injectable()
 export class MainPanelService
 {
-	protected audioContext:AudioContext;
-	protected mainGain:GainNode;
 	private started:boolean;
-
-	public getMainGain():GainNode
-	{
-		return this.mainGain;
-	}
 
 	public start():void
 	{
 		if( this.started )
 			return;
 
-		this.audioContext = new (window['AudioContext'] || window['webkitAudioContext'])();
-		this.mainGain = this.audioContext.createGain();
-		this.mainGain.connect(this.audioContext.destination);
+		const masterCompressor = new Tone.Compressor({
+			threshold : -6,
+			ratio : 3,
+			attack : 0.5,
+			release : 0.1
+		});
+
+		const lowBump = new Tone.Filter(200, 'lowshelf');
+		Tone.Master.chain(lowBump, masterCompressor);
+
+		Tone.Master.set({
+			volume  : 0,
+			mute  : false
+		});
+
 		this.started = true;
 	}
 
@@ -28,15 +34,18 @@ export class MainPanelService
 		if( !this.started )
 			return;
 
-		this.mainGain.disconnect(this.audioContext.destination);
-		this.audioContext.close().then( () =>	this.audioContext = null );
+		//FIXME Should be disposed ?
+		Tone.Master.set({mute: true});
 
 		this.started = false;
 	}
 
+	// between 0-100
 	public setVolume( volume:number ):void
 	{
-		if( this.mainGain )
-			this.mainGain.gain.setValueAtTime(volume, this.audioContext.currentTime);
+		Tone.Master.set({
+			volume  : -100+volume,
+			mute  : false
+		});
 	}
 }
