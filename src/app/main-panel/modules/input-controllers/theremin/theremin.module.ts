@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThereminComponent } from './theremin.component';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ThereminComponent } from './theremin.component';
 
 @NgModule( {
 	imports: [
@@ -10,6 +10,4 @@ import { FormsModule } from '@angular/forms';
 	declarations: [ ThereminComponent ],
 	exports: [ ThereminComponent ]
 } )
-export class OscillatorModule
-{
-}
+export class ThereminModule{}

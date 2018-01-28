@@ -1,15 +1,16 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
-import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Subscription } from 'rxjs/Subscription';
-import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
-import { Connectible } from '../../../models/connectable.interface';
-import { ToneHelper } from '../../../../shared/helpers/tone/tone-helper';
-import { MidiDevice } from '../../../models/midi-device.interface';
-import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
-import { Note } from '../../../../shared/models/note/note';
 import * as Tone from 'tone';
+import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 import { MathHelper } from '../../../../shared/helpers/math/math-helper';
+import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
+import { ToneHelper } from '../../../../shared/helpers/tone/tone-helper';
+import { WebAudioHelper } from '../../../../shared/helpers/webaudio/webaudio-helper';
+import { Note } from '../../../../shared/models/note/note';
+import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
+import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
+import { Connectible } from '../../../models/connectable.interface';
+import { MidiDevice } from '../../../models/midi-device.interface';
 
 @Component( {
 	selector: 'app-theremin',
@@ -29,13 +30,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	@ViewChild('voices') voices:ElementRef;
 
 	public easings:(keyof EasingHelper)[] = EasingHelper.easings;
-	public waveforms:OscillatorType[] =
-	[
-		'sawtooth',
-		'sine',
-		'square',
-		'triangle'
-	];
+	public waveforms:OscillatorType[] = WebAudioHelper.WAVES;
 
 	public midiMute:boolean;
 	public midiChannel:number = 2;
@@ -301,14 +296,13 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	 */
 	public setY( percent:number ):void
 	{
-		const maxVolume:number = 0;
 		const minVolume:number = -40;
-		const detune:number = 100/(maxVolume-minVolume+.1);
+		const maxVolume:number = 0;
 
 		percent = Number(percent);
 
 		if( this.synth )
-			this.synth.set( {volume: detune} );
+			this.synth.set( {volume: MathHelper.percentToRange(percent,minVolume,maxVolume)} );
 
 		this.dot.nativeElement.style.top = percent + '%';
 		this.y = percent;
