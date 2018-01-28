@@ -1,6 +1,8 @@
+import { Injectable } from '@angular/core';
 import { MidiNoteMessage } from '../../models/midi/midi-note-message';
 import { Note } from '../../models/note/note';
 
+@Injectable()
 export class MidiHelper
 {
 	public static createNoteFromMidiNote( midiNoteMessage:MidiNoteMessage ):Note
