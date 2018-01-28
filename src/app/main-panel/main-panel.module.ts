@@ -6,7 +6,7 @@ import { MainPanelRoutingModule } from './main-panel-routing.module';
 import { MainPanelComponent } from './main-panel.component';
 import { KeyboardModule } from './modules/input-controllers/keyboard/keyboard.module';
 import { ThereminModule } from './modules/input-controllers/theremin/theremin.module';
-import { OscillatorModule } from './modules/source/oscillator/oscillator.module';
+import { OscillatorModule } from './modules/sources/oscillator/oscillator.module';
 
 @NgModule( {
 	imports: [
