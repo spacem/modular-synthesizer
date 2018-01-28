@@ -1,0 +1,25 @@
+<section>
+
+	<select title="Waveform type" [(ngModel)]="osc.type" (ngModelChange)="setType($event)">
+		<option *ngFor="let value of waveforms" [ngValue]="value" [selected]="value === waveform">{{value}}</option>
+	</select>
+
+	<label for="frequency">Frequency</label>
+	<input #frequencyRange title="frequency" id="frequency" type="range" min="0" max="24000" step="1" [(ngModel)]="osc.frequency" (ngModelChange)="setFrequency($event)">
+
+	<label for="volume">Volume</label>
+	<input #volumeRange title="volume" id="volume" type="range" min="-90" max="0" step="1" [(ngModel)]="osc.volume" (ngModelChange)="setVolume($event)">
+
+	<label for="phase">Phase</label>
+	<input #phaseRange title="phase" id="phase" type="range" min="0" max="360" step="1" [(ngModel)]="osc.phase" (ngModelChange)="setPhase($event)">
+
+	<label for="detune">Detune</label>
+	<input #phaseRange title="detune" id="detune" type="range" min="0" max="4" step=".1" [(ngModel)]="osc.detune.value" (ngModelChange)="setDetune($event)">
+
+	<label for="mute">Mute</label>
+	<input #muteCheckbox title="volume" id="mute" type="checkbox" [(ngModel)]="osc.mute" (ngModelChange)="mute($event)">
+
+	<label for="stop">Stop</label>
+	<input #muteCheckbox title="stop" id="stop" type="checkbox" [(ngModel)]="stopped" (ngModelChange)="stopped ? stop() : start()">
+
+</section>
