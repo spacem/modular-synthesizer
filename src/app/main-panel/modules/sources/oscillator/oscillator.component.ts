@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import * as Tone from 'tone';
 import { WebAudioHelper } from '../../../../shared/helpers/webaudio/webaudio-helper';
 import {Oscillator} from '../oscillator.interface';
@@ -8,13 +8,14 @@ import {Oscillator} from '../oscillator.interface';
 	templateUrl: './oscillator.component.html',
 	styleUrls: [ './oscillator.component.scss' ]
 } )
-export class OscillatorComponent implements OnInit, Oscillator
+export class OscillatorComponent implements OnInit,AfterViewInit, Oscillator
 {
 	public osc:Tone.Oscillator;
 	public stopped:boolean = true;
 	public waveforms:OscillatorType[] = WebAudioHelper.WAVES;
 
-	constructor(){}
+	@Input()
+	public envelope:Tone.Envelope;
 
 	ngOnInit()
 	{
@@ -22,10 +23,26 @@ export class OscillatorComponent implements OnInit, Oscillator
 			frequency : 440,
 			volume : -10,
 			type: 'sine'
-		}).toMaster();
+		});
 	}
 
-	setFrequency(frequency:number)
+	ngAfterViewInit()
+	{
+		//console.log( JSON.stringify( this.envelope ) );
+
+		//this.envelope = new Tone.AmplitudeEnvelope({
+		//	attack : 0.11,
+		//	decay : 0.21,
+		//	sustain : 0.09,
+		//	release : 1.2
+		//}).toMaster();
+
+		//console.log( JSON.stringify( this.envelope ) );
+
+		this.osc.connect(this.envelope);
+	}
+
+	public setFrequency(frequency:number)
 	{
 		this.osc.set({frequency});
 	}
