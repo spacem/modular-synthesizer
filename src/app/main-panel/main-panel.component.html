@@ -1,8 +1,12 @@
 <section>
-	<input #volumeRange title="volume" type="range" min="-90" max="0" step="1"  [(ngModel)]="volume" (ngModelChange)="setVolume($event)">
+
+	<input #volumeRange title="volume" type="range" min="-90" max="0" step="1" [(ngModel)]="volume" (ngModelChange)="setVolume($event)">
 	<button #play (click)="togglePlay()">Play</button>
 
 	<app-theremin #theremin></app-theremin>
 	<app-keyboard #keyboard></app-keyboard>
+
+	<app-oscillator #oscillator1></app-oscillator>
+	<app-oscillator #oscillator2></app-oscillator>
 
 </section>
