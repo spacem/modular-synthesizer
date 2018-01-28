@@ -1,4 +1,5 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { WebAudioHelper } from '../../../../shared/helpers/webaudio/webaudio-helper';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
 import { Connectible } from '../../../models/connectable.interface';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
@@ -24,13 +25,7 @@ export class KeyboardComponent implements OnDestroy, Connectible, MidiDevice
 	public midiPitch:number;
 
 	public waveform:OscillatorType = 'sine';
-	public waveforms:OscillatorType[] =
-	[
-		'sawtooth',
-		'sine',
-		'square',
-		'triangle'
-	];
+	public waveforms:OscillatorType[] = WebAudioHelper.WAVES;
 
 	private synth:Tone.MonoSynth;
 	private midiNoteSubscription:Subscription;
