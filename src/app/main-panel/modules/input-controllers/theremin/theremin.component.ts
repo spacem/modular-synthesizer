@@ -61,21 +61,6 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	private midiControlSubscription:Subscription;
 	private synth:Tone.Synth;
 
-	public notes:any[];
-
-	public static generateNotes( min:number, max:number):any[]
-	{
-		return Array.from({length:128}).map( (value,index) =>
-		{
-			const note:Note = new Note(index);
-			const next:Note = new Note(index+1);
-			return {
-				note: note,
-				next: next
-			};
-		}).filter(value => value.note.frequency > min && value.note.frequency < max );
-	}
-
 	// @see https://stackoverflow.com/questions/846221/logarithmic-slider
 	public static logarithmicScale
 	(
@@ -95,10 +80,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
 
-	public ngOnInit():void
-	{
-		this.notes = ThereminComponent.generateNotes( this.minFrequency, this.maxFrequency );
-	}
+	public ngOnInit():void{}
 
 	ngOnDestroy()
 	{
@@ -137,8 +119,6 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	{
 		// Always disconnect first.
 		this.disconnect();
-
-		this.notes = ThereminComponent.generateNotes( this.minFrequency, this.maxFrequency );
 
 		this.synth = new Tone.PolySynth(this.voiceNumber, Tone.Synth,
 		{

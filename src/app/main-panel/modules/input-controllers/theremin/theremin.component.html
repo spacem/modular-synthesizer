@@ -18,11 +18,5 @@
 </section>
 
 <div #pad class="pad" (mousedown)="start()" (mouseup)="stop()" (touchstart)="start()" (touchend)="stop()" (mousemove)="onMouseMove($event)" (touchmove)="onTouchMove($event)">
-
-	<div class="notes">
-		<div *ngFor="let item of notes" class="note" [ngStyle]="{'width.px':item.note.frequency/100}"></div>
-	</div>
-
 	<div #dot class="dot">°</div>
-
 </div>
