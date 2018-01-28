@@ -9,6 +9,7 @@ import { MidiDevice } from '../../../models/midi-device.interface';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
 import { Note } from '../../../../shared/models/note/note';
 import * as Tone from 'tone';
+import { MathHelper } from '../../../../shared/helpers/math/math-helper';
 
 @Component( {
 	selector: 'app-theremin',
@@ -60,23 +61,6 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	private midiProgramSubscription:Subscription;
 	private midiControlSubscription:Subscription;
 	private synth:Tone.Synth;
-
-	// @see https://stackoverflow.com/questions/846221/logarithmic-slider
-	public static logarithmicScale
-	(
-		value:number,
-		minFrom:number, maxFrom:number,
-		minTo:number, maxTo:number
-	):number
-	{
-		const minLog = Math.log(minTo+.00000000000000000001);
-		const maxLog = Math.log(maxTo+.00000000000000000001);
-
-		// calculate adjustment factor
-		const scale = (maxLog-minLog) / (maxFrom-minFrom);
-
-		return Math.exp(minLog + scale*(value-minTo));
-	}
 
 	constructor( private mainPanelService:MainPanelService, private webMIDIService:WebMIDIService, private easingHelper:EasingHelper ){}
 
@@ -301,7 +285,7 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 		//const eased = this.easingHelper.easeInQuart( percent, minValue, maxValue-minValue, 100 );
 
 		if( this.logarithmicX )
-			this.setTone( ThereminComponent.logarithmicScale( percent, 0,100, this.minFrequency, this.maxFrequency ) );
+			this.setTone( MathHelper.logarithmicScale( percent, 0,100, this.minFrequency, this.maxFrequency ) );
 		else
 			this.setTone( (this.maxFrequency-this.minFrequency)*(percent/100) );
 
@@ -317,13 +301,14 @@ export class ThereminComponent implements OnInit, OnDestroy, Connectible, MidiDe
 	 */
 	public setY( percent:number ):void
 	{
-		const maxDetune:number = 6.8;
-		const detune:number = maxDetune*(100/(1+percent)) - 3.4;
+		const maxVolume:number = 0;
+		const minVolume:number = -40;
+		const detune:number = 100/(maxVolume-minVolume+.1);
 
 		percent = Number(percent);
 
 		if( this.synth )
-			this.synth.set( {detune: detune} );
+			this.synth.set( {volume: detune} );
 
 		this.dot.nativeElement.style.top = percent + '%';
 		this.y = percent;

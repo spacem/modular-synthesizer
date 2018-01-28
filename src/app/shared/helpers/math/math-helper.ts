@@ -1,25 +1,42 @@
 export class MathHelper
 {
 	/**
-	 * Return the value in a range corresponding to a percentage on this range.
+	 * Return the value corresponding to a percentage on a range of two values.
 	 *
 	 * @param {number} percent
 	 * 	The percent input value.
 	 *
-	 * @param {number} bound1
-	 * 	The first boundary of the range (can be greater than the second boundary value).
+	 * @param {number} from
+	 * 	The "from" boundary of the range (can be greater than the "to" boundary value).
 	 *
-	 * @param {number} bound2
-	 *  The second boundary of the range (can be lower than the first boundary value).
+	 * @param {number} to
+	 *  The "to" boundary of the range (can be lower than the "from" boundary value).
 	 *
 	 * @returns {number}
-	 * The value in the range corresponding to the percent input value
+	 * 	The value corresponding to the percentage on the given range.
 	 */
-	static percentToRange( percent:number, bound1:number, bound2:number ):number
+	static percentToRange( percent:number, from:number, to:number ):number
 	{
-		if( bound1 > bound2 )
-			[bound2, bound1] = [bound1, bound2];
+		if( from > to )
+			[to, from] = [from, to];
 
-		return percent*(bound2 - bound1)/100 + bound1;
+		return percent*(to - from)/100 + from;
+	}
+
+	// @see https://stackoverflow.com/questions/846221/logarithmic-slider
+	public static logarithmicScale
+	(
+		value:number,
+		minFrom:number, maxFrom:number,
+		minTo:number, maxTo:number
+	):number
+	{
+		const minLog = Math.log(minTo+.00000000000000000001);
+		const maxLog = Math.log(maxTo+.00000000000000000001);
+
+		// Calculate adjustment factor
+		const scale = (maxLog-minLog) / (maxFrom-minFrom);
+
+		return Math.exp(minLog + scale*(value-minFrom));
 	}
 }
