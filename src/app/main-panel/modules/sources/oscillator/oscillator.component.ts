@@ -28,18 +28,7 @@ export class OscillatorComponent implements OnInit,AfterViewInit, Oscillator
 
 	ngAfterViewInit()
 	{
-		//console.log( JSON.stringify( this.envelope ) );
-
-		//this.envelope = new Tone.AmplitudeEnvelope({
-		//	attack : 0.11,
-		//	decay : 0.21,
-		//	sustain : 0.09,
-		//	release : 1.2
-		//}).toMaster();
-
-		//console.log( JSON.stringify( this.envelope ) );
-
-		this.osc.connect(this.envelope);
+		this.osc.connect(this.envelope).toMaster();
 	}
 
 	public setFrequency(frequency:number)

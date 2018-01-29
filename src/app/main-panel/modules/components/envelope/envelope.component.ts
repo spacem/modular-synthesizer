@@ -38,6 +38,6 @@ export class EnvelopeComponent implements OnInit, Envelope
 			decay : 0.21,
 			sustain : 0.09,
 			release : 1.2
-		}).toMaster();
+		});
 	}
 }
