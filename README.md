@@ -1,10 +1,10 @@
 # ModularSynthesizer
 
 <!-- Badges section here. -->
-![Dependency Status](https://david-dm.org/tekool/modular-synthesizer.svg)
-![devDependency Status](https://david-dm.org/tekool/modular-synthesizer.svg?type=dev)
+![Dependency Status](https://david-dm.org/tekool/modular-synthesizer/status.svg)
+![devDependency Status](https://david-dm.org/tekool/modular-synthesizer/dev-status.svg)
 
-The project is built upon [Angular](https://angular.io/) using TypeScript [TypeScript](www.typescriptlang.org/).
+The project is built upon [Angular](https://angular.io/) using TypeScript [TypeScript](https://www.typescriptlang.org/).
 
 ## Demo
 
