@@ -34,10 +34,10 @@ export class EnvelopeComponent implements OnInit, Envelope
 	ngOnInit()
 	{
 		this.envelope = new Tone.AmplitudeEnvelope({
-			attack : 0.11,
-			decay : 0.21,
-			sustain : 0.09,
-			release : 1.2
+			attack : 5,
+			decay : 5,
+			sustain : 5,
+			release : 0
 		});
 	}
 }

@@ -1,15 +1,19 @@
 <section>
 
-	<label for="attack">Attack</label>
-	<input #attackRange title="attack" id="attack" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.attack" (ngModelChange)="setAttack($event)">
+	<label for="attack">Attack:
+		<input #attackRange title="attack" id="attack" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.attack" (ngModelChange)="setAttack($event)">
+	</label>
 
-	<label for="decay">Decay</label>
-	<input #decayRange title="decay" id="decay" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.decay" (ngModelChange)="setDecay($event)">
+	<label for="decay">Decay:
+		<input #decayRange title="decay" id="decay" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.decay" (ngModelChange)="setDecay($event)">
+	</label>
 
-	<label for="sustain">Sustain</label>
-	<input #sustainRange title="sustain" id="sustain" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.sustain" (ngModelChange)="setSustain($event)">
+	<label for="sustain">Sustain:
+		<input #sustainRange title="sustain" id="sustain" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.sustain" (ngModelChange)="setSustain($event)">
+	</label>
 
-	<label for="release">Volume</label>
-	<input #releaseRange title="release" id="release" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.release" (ngModelChange)="setRelease($event)">
+	<label for="release">Release:
+		<input #releaseRange title="release" id="release" type="range" min="0" max="5" step=".1" [(ngModel)]="envelope.release" (ngModelChange)="setRelease($event)">
+	</label>
 
 </section>

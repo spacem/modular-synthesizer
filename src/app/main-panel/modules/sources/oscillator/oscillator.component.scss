@@ -1,6 +1,22 @@
+:host
+{
+	display: inline-block;
+}
+
 section
 {
 	border:#97b2c3 solid thin;
 	padding:1em;
 	margin:1em;
+	width:300px;
+}
+
+label
+{
+	display:block;
+}
+
+input[type="range"]
+{
+	width:100%;
 }

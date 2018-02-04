@@ -34,6 +34,7 @@ export class OscillatorComponent implements OnInit,AfterViewInit, Oscillator
 	public setFrequency(frequency:number)
 	{
 		this.osc.set({frequency});
+		//this.envelope.triggerAttackRelease(3);
 	}
 
 	public start():void
