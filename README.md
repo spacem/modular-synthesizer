@@ -1,5 +1,9 @@
 # ModularSynthesizer
 
+<!-- Badges section here. -->
+[![Dependency Status][david-badge]][david-badge-url]
+[![devDependency Status][david-dev-badge]][david-dev-badge-url]
+
 The project is built upon [Angular](https://angular.io/) using TypeScript [TypeScript](www.typescriptlang.org/).
 
 ## Demo
