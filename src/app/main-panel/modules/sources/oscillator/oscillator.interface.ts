@@ -1,4 +1,4 @@
-import { Source } from './source.interface';
+import { Source } from '../source.interface';
 
 export interface Oscillator extends Source
 {

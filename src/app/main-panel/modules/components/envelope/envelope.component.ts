@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Envelope } from '../envelope.interface';
+import { Envelope } from './envelope.interface';
 import * as Tone from 'tone';
 
 @Component( {

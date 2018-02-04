@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import * as Tone from 'tone';
 import { WebAudioHelper } from '../../../../shared/helpers/webaudio/webaudio-helper';
-import {Oscillator} from '../oscillator.interface';
+import {Oscillator} from './oscillator.interface';
 
 @Component( {
 	selector: 'app-oscillator',
