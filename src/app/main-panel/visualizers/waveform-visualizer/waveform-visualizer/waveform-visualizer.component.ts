@@ -37,15 +37,18 @@ export class WaveformVisualizerComponent implements AfterViewInit
 		this.waveformContext.clearRect( 0, 0, this.canvasWidth, this.canvasHeight );
 		this.waveformContext.beginPath();
 		this.waveformContext.lineJoin = 'round';
-		this.waveformContext.lineWidth = 6;
+		this.waveformContext.lineWidth = 1;
 		this.waveformContext.strokeStyle = this.waveformGradient;
-		this.waveformContext.moveTo( 0, ( values[ 0 ] / 255 ) * this.canvasHeight );
 		values.forEach( (value, i) =>
 		{
 			const val = ( value + 1 ) / 2;
 			const x = this.canvasWidth * ( i / values.length );
 			const y = val * this.canvasHeight;
-			this.waveformContext.lineTo( x, y );
+
+			if( i === 0 )
+				this.waveformContext.moveTo( x, y );
+			else
+				this.waveformContext.lineTo( x, y );
 		});
 		this.waveformContext.stroke();
 	}
