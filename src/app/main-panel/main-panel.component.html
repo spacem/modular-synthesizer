@@ -9,8 +9,7 @@
 	<app-envelope #envelope1></app-envelope>
 	<app-oscillator #oscillator1 [envelope]="envelope1.envelope"></app-oscillator>
 
-	<app-envelope #envelope2></app-envelope>
-	<app-oscillator #oscillator2 [envelope]="envelope2.envelope"></app-oscillator>
-
+	<app-waveform-visualizer #visualizer></app-waveform-visualizer>
+	<app-oscillator #oscillator2 [waveform]="visualizer.waveform"></app-oscillator>
 
 </section>

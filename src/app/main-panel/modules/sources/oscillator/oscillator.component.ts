@@ -17,10 +17,13 @@ export class OscillatorComponent implements OnInit,AfterViewInit, Oscillator
 	@Input()
 	public envelope:Tone.Envelope;
 
+	@Input()
+	public waveform:Tone.Waveform;
+
 	ngOnInit()
 	{
 		this.osc = new Tone.Oscillator({
-			frequency : 440,
+			frequency : 374,
 			volume : -10,
 			type: 'sine'
 		});
@@ -30,6 +33,9 @@ export class OscillatorComponent implements OnInit,AfterViewInit, Oscillator
 	{
 		if( this.envelope )
 			this.osc.connect(this.envelope).toMaster();
+
+		if( this.waveform )
+			this.osc.fan( this.waveform ).toMaster();
 	}
 
 	public setFrequency(frequency:number)

@@ -11,6 +11,7 @@ import { EnvelopeModule } from './modules/components/envelope/envelope.module';
 import { KeyboardModule } from './modules/input-controllers/keyboard/keyboard.module';
 import { ThereminModule } from './modules/input-controllers/theremin/theremin.module';
 import { OscillatorModule } from './modules/sources/oscillator/oscillator.module';
+import { WaveformVisualizerModule } from './visualizers/waveform-visualizer/waveform-visualizer/waveform-visualizer.module';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -18,7 +19,7 @@ describe('MainPanelComponent', () => {
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
-			imports: [RouterTestingModule,KeyboardModule,OscillatorModule,FormsModule, ThereminModule, EnvelopeModule],
+			imports: [RouterTestingModule,KeyboardModule,OscillatorModule,FormsModule, ThereminModule, EnvelopeModule, WaveformVisualizerModule],
 			declarations: [MainPanelComponent],
 			providers:[MainPanelService,WebMIDIService,WindowService,EasingHelper]
 		})
