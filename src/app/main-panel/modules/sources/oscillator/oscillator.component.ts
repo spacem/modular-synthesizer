@@ -28,7 +28,8 @@ export class OscillatorComponent implements OnInit,AfterViewInit, Oscillator
 
 	ngAfterViewInit()
 	{
-		this.osc.connect(this.envelope).toMaster();
+		if( this.envelope )
+			this.osc.connect(this.envelope).toMaster();
 	}
 
 	public setFrequency(frequency:number)

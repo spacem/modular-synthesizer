@@ -1,14 +1,16 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
-import {MainPanelComponent} from './main-panel.component';
-import {RouterTestingModule} from '@angular/router/testing';
-import {KeyboardModule} from './modules/input-controllers/keyboard/keyboard.module';
-import {MainPanelService} from '../shared/services/main-panel/main-panel.service';
-import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
-import { OscillatorModule } from './modules/input-controllers/theremin/theremin.module';
-import {WindowService} from '../core/services/window/window.service';
-import { EasingHelper } from '../shared/helpers/easing/easing-helper';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { RouterTestingModule } from '@angular/router/testing';
+import { WindowService } from '../core/services/window/window.service';
+import { EasingHelper } from '../shared/helpers/easing/easing-helper';
+import { MainPanelService } from '../shared/services/main-panel/main-panel.service';
+import { WebMIDIService } from '../shared/services/webmidi/webmidi.service';
+
+import { MainPanelComponent } from './main-panel.component';
+import { EnvelopeModule } from './modules/components/envelope/envelope.module';
+import { KeyboardModule } from './modules/input-controllers/keyboard/keyboard.module';
+import { ThereminModule } from './modules/input-controllers/theremin/theremin.module';
+import { OscillatorModule } from './modules/sources/oscillator/oscillator.module';
 
 describe('MainPanelComponent', () => {
 	let component: MainPanelComponent;
@@ -16,7 +18,7 @@ describe('MainPanelComponent', () => {
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
-			imports: [RouterTestingModule,KeyboardModule,OscillatorModule,FormsModule],
+			imports: [RouterTestingModule,KeyboardModule,OscillatorModule,FormsModule, ThereminModule, EnvelopeModule],
 			declarations: [MainPanelComponent],
 			providers:[MainPanelService,WebMIDIService,WindowService,EasingHelper]
 		})

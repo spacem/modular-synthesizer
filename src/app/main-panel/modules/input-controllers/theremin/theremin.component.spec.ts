@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { OscillatorModule } from '../../sources/oscillator/oscillator.module';
 
 import { ThereminComponent } from './theremin.component';
 import { MainPanelService } from '../../../../shared/services/main-panel/main-panel.service';
