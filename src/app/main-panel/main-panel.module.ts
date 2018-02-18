@@ -8,7 +8,7 @@ import { EnvelopeModule } from './modules/components/envelope/envelope.module';
 import { KeyboardModule } from './modules/input-controllers/keyboard/keyboard.module';
 import { ThereminModule } from './modules/input-controllers/theremin/theremin.module';
 import { OscillatorModule } from './modules/sources/oscillator/oscillator.module';
-import { WaveformVisualizerModule } from './visualizers/waveform-visualizer/waveform-visualizer/waveform-visualizer.module';
+import { WaveformVisualizerModule } from './modules/visualizers/waveform-visualizer/waveform-visualizer.module';
 
 @NgModule( {
 	imports: [
