@@ -31,8 +31,8 @@ import { RouterStateUrl } from './utils';
  * our top level state interface is just a map of keys to inner state types.
  */
 export interface State {
-	layout: fromLayout.MainState;
-	router: fromRouter.RouterReducerState<RouterStateUrl>;
+	// layout: fromLayout.MainState;
+	// router: fromRouter.RouterReducerState<RouterStateUrl>;
 }
 
 /**

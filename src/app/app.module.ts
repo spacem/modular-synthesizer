@@ -18,7 +18,7 @@ import { metaReducers, reducers } from './core/ngrx/reducers';
 		StoreModule.forRoot(reducers, { metaReducers }),
 		StoreDevtoolsModule.instrument({
 			name: 'Modular Synthesizer',
-			//logOnly: environment.production,
+			logOnly: environment.production,
 		}),
 		StoreRouterConnectingModule.forRoot({
 			stateKey: 'router',

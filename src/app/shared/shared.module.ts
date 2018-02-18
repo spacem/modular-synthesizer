@@ -14,8 +14,7 @@ import { WebMIDIService } from './services/webmidi/webmidi.service';
 @NgModule({
 	imports:
 	[
-		CommonModule,
-		DBModule.provideDB(ngrxDbSchema),
+		CommonModule
 	],
 	providers:
 	[

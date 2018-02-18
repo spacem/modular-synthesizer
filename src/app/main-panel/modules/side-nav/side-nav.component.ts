@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ToneModule } from '../../../shared/models/tone-module/tone-module';
+import { ToneModule } from '../../../core/model/tone-module/tone-module';
 import * as collection from '../../../core/ngrx/tone-module/actions/collection';
 import * as fromToneModules from '../../../core/ngrx/tone-module/reducers/';
 

@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { ToneModule } from '../../../../shared/models/tone-module/tone-module';
+import { ToneModule } from '../../../model/tone-module/tone-module';
 
 
 export enum CollectionActionTypes
