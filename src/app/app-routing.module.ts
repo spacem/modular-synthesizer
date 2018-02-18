@@ -3,8 +3,8 @@ import {RouterModule, Routes} from '@angular/router';
 
 const routes:Routes =
 [
-	{ path: '', loadChildren: 'app/main-panel/main-panel.module#MainPanelModule' },
-	{ path: '**', redirectTo: '', pathMatch: 'full' }
+	{ path: 'main-panel', loadChildren: 'app/main-panel/main-panel.module#MainPanelModule' },
+	{ path: '**', redirectTo: 'main-panel', pathMatch: 'full' }
 ];
 
 @NgModule( {
