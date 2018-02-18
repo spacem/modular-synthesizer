@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, NgZone, OnInit, ViewChild } from '@angular/core';
 import * as Tone from 'tone';
 
 /**
@@ -19,6 +19,8 @@ export class WaveformVisualizerComponent implements AfterViewInit
 
 	@ViewChild('waveform') canvasRef:ElementRef;
 	private running:boolean = true;
+
+	constructor( private ngZone:NgZone){}
 
 	ngAfterViewInit()
 	{
@@ -58,11 +60,15 @@ export class WaveformVisualizerComponent implements AfterViewInit
 		if( !this.running )
 			return;
 
-		//get the waveform values and draw it
+		// Get the waveform values and draw it.
 		const waveformValues = this.waveform.getValue();
 		this.drawWaveform( waveformValues );
 
-		// Schedule next paint
-		requestAnimationFrame(() => this.paint() );
+		// Schedule next paint but outside zone.js (not using the requestAnimationFrame monkey patch).
+		//FIXME It does not seem to work as expected so wait for Zone.js next versions @see https://github.com/angular/zone.js/issues/875 and https://github.com/angular/angular/issues/8804
+		//this.ngZone.runOutsideAngular(() => requestAnimationFrame(() => this.paint() ));
+
+		// We're out Zone.js the bad way, but it works!
+		window['__zone_symbol__requestAnimationFrame'](() => this.paint() );
 	}
 }
