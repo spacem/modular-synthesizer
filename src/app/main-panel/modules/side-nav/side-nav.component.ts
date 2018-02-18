@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ToneModule } from '../../../shared/models/tone-module/tone-module';
-import * as collection from '../../../shared/models/ngrx/tone-module/actions/collection';
-import * as fromToneModules from '../../../shared/models/ngrx/tone-module/reducers/';
+import * as collection from '../../../core/ngrx/tone-module/actions/collection';
+import * as fromToneModules from '../../../core/ngrx/tone-module/reducers/';
 
 @Component( {
 	selector: 'app-side-nav',

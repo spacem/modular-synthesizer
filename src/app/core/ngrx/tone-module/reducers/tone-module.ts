@@ -1,5 +1,5 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
-import { ToneModule } from '../../../tone-module/tone-module';
+import { ToneModule } from '../../../../shared/models/tone-module/tone-module';
 import { ToneModuleActions, ToneModuleActionTypes } from '../actions/tone-module';
 import { CollectionActions, CollectionActionTypes, } from '../actions/collection';
 

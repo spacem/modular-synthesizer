@@ -1,14 +1,20 @@
+import {
+	ActionReducerMap,
+	createSelector,
+	createFeatureSelector,
+	ActionReducer,
+	MetaReducer,
+} from '@ngrx/store';
+
 import * as fromRouter from '@ngrx/router-store';
-import { ActionReducer, ActionReducerMap, createFeatureSelector, createSelector, MetaReducer, } from '@ngrx/store';
+
 /**
  * storeFreeze prevents state from being mutated. When mutation occurs, an
  * exception will be thrown. This is useful during development mode to
  * ensure that none of the reducers accidentally mutates the state.
  */
 import { storeFreeze } from 'ngrx-store-freeze';
-import { environment } from '../../../../environments/environment';
-import * as fromLayout from './layout';
-import { RouterStateUrl } from './utils';
+import { environment } from '../../../environments/environment';
 
 /**
  * Every reducer module's default export is the reducer function itself. In
@@ -17,14 +23,16 @@ import { RouterStateUrl } from './utils';
  * notation packages up all of the exports into a single object.
  */
 
+import * as fromLayout from './layout';
+import { RouterStateUrl } from './utils';
+
 /**
  * As mentioned, we treat each reducer like a table in a database. This means
  * our top level state interface is just a map of keys to inner state types.
  */
-export interface State
-{
-	layout:fromLayout.State;
-	router:fromRouter.RouterReducerState<RouterStateUrl>;
+export interface State {
+	layout: fromLayout.MainState;
+	router: fromRouter.RouterReducerState<RouterStateUrl>;
 }
 
 /**
@@ -32,20 +40,18 @@ export interface State
  * These reducer functions are called with each dispatched action
  * and the current or initial state and return a new immutable state.
  */
-export const reducers:ActionReducerMap<State> = {
+export const reducers: ActionReducerMap<State> = {
 	layout: fromLayout.reducer,
 	router: fromRouter.routerReducer,
 };
 
 // console.log all actions
-export function logger( reducer:ActionReducer<State> ):ActionReducer<State>
-{
-	return function( state:State, action:any ):State
-	{
-		console.log( 'state', state );
-		console.log( 'action', action );
+export function logger(reducer: ActionReducer<State>): ActionReducer<State> {
+	return function(state: State, action: any): State {
+		console.log('state', state);
+		console.log('action', action);
 
-		return reducer( state, action );
+		return reducer(state, action);
 	};
 }
 
@@ -54,12 +60,14 @@ export function logger( reducer:ActionReducer<State> ):ActionReducer<State>
  * the root meta-reducer. To add more meta-reducers, provide an array of meta-reducers
  * that will be composed to form the root meta-reducer.
  */
-export const metaReducers:MetaReducer<State>[] = !environment.production ? [ logger, storeFreeze ] : [];
+export const metaReducers: MetaReducer<State>[] = !environment.production
+	? [logger, storeFreeze]
+	: [];
 
 /**
  * Layout Reducers
  */
-export const getLayoutState = createFeatureSelector<fromLayout.State>( 'layout' );
+export const getLayoutState = createFeatureSelector<fromLayout.MainState>('layout');
 
 export const getShowSidenav = createSelector(
 	getLayoutState,

@@ -7,7 +7,7 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { metaReducers, reducers } from './reducers';
+import { metaReducers, reducers } from './core/ngrx/reducers';
 
 @NgModule({
 	declarations: [
@@ -18,7 +18,7 @@ import { metaReducers, reducers } from './reducers';
 		StoreModule.forRoot(reducers, { metaReducers }),
 		StoreDevtoolsModule.instrument({
 			name: 'Modular Synthesizer',
-			logOnly: environment.production,
+			//logOnly: environment.production,
 		}),
 		StoreRouterConnectingModule.forRoot({
 			stateKey: 'router',

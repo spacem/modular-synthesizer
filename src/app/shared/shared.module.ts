@@ -7,7 +7,7 @@ import { MathHelper } from './helpers/math/math-helper';
 import { MidiHelper } from './helpers/midi/midi-helper';
 import { ToneHelper } from './helpers/tone/tone-helper';
 import { WebAudioHelper } from './helpers/webaudio/webaudio-helper';
-import { ngrxDbSchema } from './models/ngrx/db';
+import { ngrxDbSchema } from '../core/ngrx/db';
 import { MainPanelService } from './services/main-panel/main-panel.service';
 import { WebMIDIService } from './services/webmidi/webmidi.service';
 
