@@ -19,6 +19,8 @@ import { CustomRouterStateSerializer } from './core/ngrx/utils';
 	imports:
 	[
 		BrowserModule,
+
+		// ngrx imports
 		StoreModule.forRoot( reducers, { metaReducers } ),
 		StoreDevtoolsModule.instrument( {
 			name: 'Modular Synthesizer',
@@ -28,6 +30,7 @@ import { CustomRouterStateSerializer } from './core/ngrx/utils';
 		StoreRouterConnectingModule.forRoot( {
 			stateKey: 'router',
 		} ),
+
 		AppRoutingModule // <= Modules import order matters, see: https://angular.io/guide/router#module-import-order-matters
 	],
 	providers:

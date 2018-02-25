@@ -48,8 +48,8 @@ export const reducers: ActionReducerMap<State> = {
 // console.log all actions
 export function logger(reducer: ActionReducer<State>): ActionReducer<State>
 {
-	console.log( 'inited' );
-	return function(state: State, action: any): State {
+	return function(state: State, action: any): State
+	{
 		console.log('state', state);
 		console.log('action', action);
 
@@ -58,15 +58,9 @@ export function logger(reducer: ActionReducer<State>): ActionReducer<State>
 }
 
 /**
- * By default, @ngrx/store uses combineReducers with the reducer map to compose
- * the root meta-reducer. To add more meta-reducers, provide an array of meta-reducers
- * that will be composed to form the root meta-reducer.
+ * We do not want ngrx to log nor use storeFreeze in production.
  */
-export const metaReducers: MetaReducer<State>[] = !environment.production
-
-	//@see https://github.com/ngrx/platform/issues/615
-	? [logger, storeFreeze]
-	: [];
+export const metaReducers:MetaReducer<State>[] = environment.production ? [] : [logger, storeFreeze];
 
 /**
  * Layout Reducers

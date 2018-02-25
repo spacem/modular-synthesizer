@@ -7,7 +7,7 @@ import * as layout from '../app/core/ngrx/actions/layout';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss','./hamburgers.scss']
 })
 export class AppComponent
 {
@@ -16,24 +16,24 @@ export class AppComponent
 
 	constructor(private store: Store<fromRoot.State>)
 	{
-		/**
-		 * Selectors can be applied with the `select` operator which passes the state
-		 * tree to the provided selector
-		 */
 		this.showSidenav$ = this.store.pipe(select(fromRoot.getShowSidenav));
 	}
 
 	closeSidenav() {
-		/**
-		 * All state updates are handled through dispatched actions in 'container'
-		 * components. This provides a clear, reproducible history of state
-		 * updates and user interaction through the life of our
-		 * application.
-		 */
 		this.store.dispatch(new layout.CloseSidenav());
 	}
 
 	openSidenav() {
 		this.store.dispatch(new layout.OpenSidenav());
+	}
+
+	addToneModule()
+	{
+
+	}
+
+	removeToneModule()
+	{
+
 	}
 }
