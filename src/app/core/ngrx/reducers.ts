@@ -65,7 +65,7 @@ export function logger(reducer: ActionReducer<State>): ActionReducer<State>
 export const metaReducers: MetaReducer<State>[] = !environment.production
 
 	//@see https://github.com/ngrx/platform/issues/615
-	? [logger/*, storeFreeze*/]
+	? [logger, storeFreeze]
 	: [];
 
 /**
