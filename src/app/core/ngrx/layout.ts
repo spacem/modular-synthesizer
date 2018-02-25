@@ -9,8 +9,7 @@ const initialState:MainState = {
 	showSidenav: false,
 };
 
-export function reducer( state:MainState = initialState,
-						 action:LayoutActions ):MainState
+export function reducer( state:MainState = initialState, action:LayoutActions ):MainState
 {
 	switch( action.type )
 	{

@@ -1,5 +1,11 @@
 <div class="app">
 	<button (click)="openSidenav()">open</button>
 	<button (click)="closeSidenav()">close</button>
+
+	<a [routerLink]="['/abc']" routerLinkActive="active-link">abc</a>
+	<a [routerLink]="['/def']" routerLinkActive="active-link">def</a>
+	<a [routerLink]="['/ghi']" routerLinkActive="active-link">ghi</a>
+	<a [routerLink]="['/jkl']" routerLinkActive="active-link">jkl</a>
+
 	<router-outlet #appGlobalOutlet="outlet"></router-outlet>
 </div>

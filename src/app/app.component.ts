@@ -36,5 +36,4 @@ export class AppComponent
 	openSidenav() {
 		this.store.dispatch(new layout.OpenSidenav());
 	}
-
 }
