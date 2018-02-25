@@ -31,8 +31,8 @@ import { RouterStateUrl } from './utils';
  * our top level state interface is just a map of keys to inner state types.
  */
 export interface State {
-	// layout: fromLayout.MainState;
-	// router: fromRouter.RouterReducerState<RouterStateUrl>;
+	layout: fromLayout.MainState;
+	router: fromRouter.RouterReducerState<RouterStateUrl>;
 }
 
 /**
@@ -46,7 +46,9 @@ export const reducers: ActionReducerMap<State> = {
 };
 
 // console.log all actions
-export function logger(reducer: ActionReducer<State>): ActionReducer<State> {
+export function logger(reducer: ActionReducer<State>): ActionReducer<State>
+{
+	console.log( 'inited' );
 	return function(state: State, action: any): State {
 		console.log('state', state);
 		console.log('action', action);
@@ -61,7 +63,9 @@ export function logger(reducer: ActionReducer<State>): ActionReducer<State> {
  * that will be composed to form the root meta-reducer.
  */
 export const metaReducers: MetaReducer<State>[] = !environment.production
-	? [logger, storeFreeze]
+
+	//@see https://github.com/ngrx/platform/issues/615
+	? [logger/*, storeFreeze*/]
 	: [];
 
 /**
