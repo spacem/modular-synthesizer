@@ -32,7 +32,7 @@
 		"core-js": "^2.5.3",
 		"lodash-es": "^4.17.0",
 		"rxjs": "^5.5.6",
-		"tone": "^0.12.56",
+		"tone": "^0.12.72",
 		"zone.js": "^0.8.20"
 	},
 	"devDependencies": {
