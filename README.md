@@ -6,10 +6,6 @@
 
 The project is built upon [Angular](https://angular.io/) using TypeScript [TypeScript](https://www.typescriptlang.org/).
 
-## Demo
-
-You can [run a live demo](https://tekool.net/blogfiles/modular-synthesizer/) (mirror each git push while work is in progress). 
-
 ## Installation
 
 ### Install first (if needed):
