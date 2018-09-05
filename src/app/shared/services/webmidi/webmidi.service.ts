@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
+import { Subject ,  Observable } from 'rxjs';
 import { WindowService } from '../../../core/services/window/window.service';
 import { MidiNoteMessage } from '../../models/midi/midi-note-message';
 import { MidiProgramChangeMessage } from '../../models/midi/midi-program-change-message';

@@ -4,7 +4,7 @@ import { MainPanelService } from '../../../../shared/services/main-panel/main-pa
 import { Connectible } from '../../../models/connectable.interface';
 import { WebMIDIService } from '../../../../shared/services/webmidi/webmidi.service';
 import { Note } from '../../../../shared/models/note/note';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { MidiHelper } from '../../../../shared/helpers/midi/midi-helper';
 import { KeyboardKeysComponent } from './keyboard-keys/keyboard-keys.component';
 import { MidiDevice } from '../../../models/midi-device.interface';

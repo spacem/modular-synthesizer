@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class EasingHelper
 {
 	/**
@@ -75,7 +75,8 @@ export class EasingHelper
 			name = <T> 'easeNone';
 		}
 
-		return this[name](current,from,change,duration,overshoot);
+		//FIXME Remove type any
+		return (this[name] as any)(current,from,change,duration,overshoot);
 	}
 
 	/**

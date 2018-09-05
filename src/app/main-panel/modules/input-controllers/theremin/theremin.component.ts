@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import * as Tone from 'tone';
 import { EasingHelper } from '../../../../shared/helpers/easing/easing-helper';
 import { MathHelper } from '../../../../shared/helpers/math/math-helper';
