@@ -1,0 +1,21 @@
+a
+{
+	background: red;
+	color: white;
+}
+
+.active-link
+{
+	background: floralwhite;
+	color: grey;
+}
+
+.side-nav
+{
+	position:fixed;
+	z-index:1000;
+	width:380px;
+	height:100vh;
+	background:black;
+	border-right: floralwhite solid thin;
+}
