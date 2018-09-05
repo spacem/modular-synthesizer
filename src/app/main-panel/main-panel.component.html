@@ -1,9 +1,5 @@
 <section>
 
-	<aside>
-		<app-side-nav></app-side-nav>
-	</aside>
-
 	<input #volumeRange title="volume" type="range" min="-90" max="0" step="1" [(ngModel)]="volume" (ngModelChange)="setVolume($event)">
 	<button #play (click)="togglePlay()">Play</button>
 
